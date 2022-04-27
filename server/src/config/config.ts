@@ -6,8 +6,8 @@ export const CONFIG = {
 };
 
 export const initializeFolders = () => {
-  if (!fs.existsSync(`${process.env.PWD}/uploads`)) {
-    Logger.info("Upload folder does not exists yet, create /uploads folder");
-    fs.mkdirSync(`${process.env.PWD}/uploads`);
+  if (!fs.existsSync(`${process.cwd()}/uploads`)) {
+    Logger.info("Upload folder does not exist yet, create /uploads folder");
+    fs.mkdirSync(`${process.cwd()}/uploads`);
   }
 };
