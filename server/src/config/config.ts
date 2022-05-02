@@ -3,6 +3,7 @@ import { Logger } from "../lib";
 
 export const CONFIG = {
   port: process.env.PORT || 3000,
+  secret: process.env.NODE_ENV !== "production" ? "allmende-secret" : process.env.SECRET,
 };
 
 export const initializeFolders = () => {
