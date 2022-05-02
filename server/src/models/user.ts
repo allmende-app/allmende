@@ -1,4 +1,5 @@
-import { Schema, ObjectId, model } from 'mongoose';
+import { Schema, ObjectId, model, Model, Document } from 'mongoose';
+import bcrypt from "bcrypt";
 
 export interface IUser {
     name: string;
@@ -9,7 +10,16 @@ export interface IUser {
     followee: ObjectId[];
 }
 
-export const userSchema = new Schema<IUser>({
+export interface IUserDocument extends IUser, Document {
+    setPassword: (password: string) => Promise<void>;
+    checkPassword: (password: string) => Promise<boolean>;
+}
+
+export interface IUserModel extends Model<IUserDocument>{
+    findByUsername: (username: string) => Promise<IUserDocument>;
+}
+
+export const userSchema = new Schema<IUserDocument>({
     email: { type: Schema.Types.String, required: true},
     name: { type: Schema.Types.String, required: true},
     password: { type: Schema.Types.String, required: true},
@@ -21,4 +31,13 @@ export const userSchema = new Schema<IUser>({
     validateBeforeSave: true
 });
 
-export const User = model<IUser>("User", userSchema);
+userSchema.methods.setPassword = async function(password: string) {
+    const hash = bcrypt.hash(password, 10);
+    this.password = hash;
+}
+
+userSchema.methods.checkPassword = async function(password: string) {
+    return await bcrypt.compare(password, this.password);
+}
+
+export const User = model<IUserDocument, IUserModel>("User", userSchema);
