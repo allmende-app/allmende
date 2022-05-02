@@ -1,1 +1,1 @@
-export * from "./registerInput";
+export * from "./inputs";
