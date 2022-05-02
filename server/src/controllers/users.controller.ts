@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { RegisterInput } from "../interfaces";
+import { LoginInput, RegisterInput } from "../interfaces";
 import { IUser, User } from "../models";
 import { Logger } from "../lib";
 import EmailValidator from "email-validator";
@@ -8,6 +8,31 @@ import EmailValidator from "email-validator";
 declare module 'express-session' {
     interface SessionData {
       user: IUser;
+    }
+}
+
+export const postLoginUserController = async(req: Request, res: Response) => {
+    if (!req.session) {
+        Logger.warn("Unauthorized user");
+        return res.status(StatusCodes.UNAUTHORIZED).send("You are not logged in or registered");
+    }
+    if (req.body.user) {
+        const input: LoginInput = req.body.user;
+        const user = await User.findByEmail(input.email);
+        if (!user) {
+            Logger.warn("User not found");
+            return res.status(StatusCodes.NOT_FOUND).send("User not found");
+        }
+        if (!user.checkPassword(input.password)) {
+            Logger.warn("Password is incorrect");
+            return res.status(StatusCodes.BAD_REQUEST).send("Password is incorrect");
+        }
+        req.session.user = user["_id"];
+
+        user.password = undefined;
+        user.followee = undefined;
+        user.following = undefined;
+        return res.status(StatusCodes.ACCEPTED).json({user: user});
     }
 }
 
