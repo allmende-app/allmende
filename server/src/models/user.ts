@@ -2,12 +2,12 @@ import { Schema, ObjectId, model, Model, Document } from 'mongoose';
 import bcrypt from "bcrypt";
 
 export interface IUser {
-    name: string;
-    email: string;
-    password: string;
+    name?: string;
+    email?: string;
+    password?: string;
     avatarUrl?: string;
-    following: ObjectId[];
-    followee: ObjectId[];
+    following?: ObjectId[];
+    followee?: ObjectId[];
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -16,7 +16,8 @@ export interface IUserDocument extends IUser, Document {
 }
 
 export interface IUserModel extends Model<IUserDocument>{
-    findByUsername: (username: string) => Promise<IUserDocument>;
+    // findByUsername: (username: string) => Promise<IUserDocument>;
+    findByEmail: (email: string) => Promise<IUserDocument>;
 }
 
 export const userSchema = new Schema<IUserDocument>({
@@ -32,12 +33,16 @@ export const userSchema = new Schema<IUserDocument>({
 });
 
 userSchema.methods.setPassword = async function(password: string) {
-    const hash = bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(password, 10);
     this.password = hash;
 }
 
 userSchema.methods.checkPassword = async function(password: string) {
     return await bcrypt.compare(password, this.password);
+}
+
+userSchema.statics.findByEmail = async function(email: string) {
+    return this.findOne({ email });
 }
 
 export const User = model<IUserDocument, IUserModel>("User", userSchema);
