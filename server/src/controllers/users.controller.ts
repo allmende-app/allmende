@@ -76,6 +76,20 @@ export const postRegisterUserController = async(req: Request, res: Response) => 
     }
 }
 
+export const logoutUserController = (req: Request, res: Response) => {
+    if (req.session.user) {
+        req.session.destroy(err => {
+            if (err) {
+                Logger.error(err);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+            }
+            return res.status(StatusCodes.OK).send("Session destroyed");
+        });
+    } else {
+        return res.status(StatusCodes.BAD_REQUEST).send("Not logged in");
+    }
+}
+
 export const getUserController = (req: Request, res: Response) => {
     if (req.session.user) {
         return res.json({
@@ -83,5 +97,7 @@ export const getUserController = (req: Request, res: Response) => {
             b: req.session.user,
             c: req.session
         })
+    } else {
+        return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
     }
 }
