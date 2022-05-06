@@ -1,8 +1,24 @@
 version: "3.9" 
 services:
-  allmende-server: 
-    build: ./server
+  # allmende-server: 
+  #   build: ./server
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - /Users/all/logs:/var/src/allmende-server/logs
+  mongo-db:
+    image: mongo
+    restart: always
     ports:
-      - "3000:3000"
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+  redis-db:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
     volumes:
-      - /Users/all/logs:/var/src/allmende-server/logs
+      - /Users/all/redis:/data
+    
