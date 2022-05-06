@@ -1,11 +1,12 @@
 import Express from "express";
 import Routes from "./routes";
-import { morganMiddleware } from "./middlewares";
+import { morganMiddleware, sessionMiddleWare } from "./middlewares";
 
 const app = Express();
 
 app.use(Express.json());
 app.use(morganMiddleware);
+app.use(sessionMiddleWare);
 app.use(Routes);
 
 export = app;
