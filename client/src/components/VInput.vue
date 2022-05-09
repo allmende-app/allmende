@@ -2,7 +2,7 @@
   <div :class="'input-container ' + (error ? 'error' : '')">
     <div class="input-wrapper">
       <label :for="name">{{ label }}</label>
-      <input type="text" class="input-field" :name="name" :id="name" :value="value">
+      <input type="text" class="input-field" :name="name" :id="name" :value="modelValue" @input="updateValue">
     </div>
     <div class="helper-text">
       {{ helperText }}
@@ -13,6 +13,7 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import type { PropType } from "@vue/runtime-core";
+import { h, ref } from 'vue'
 
 export default defineComponent({
   name: "VInput",
@@ -20,10 +21,6 @@ export default defineComponent({
     name: {
       type: String as PropType<string>,
       required: true,
-    },
-    value: { // TODO als v-model binden!!!
-      type: String as PropType<string>,
-      default: ""
     },
     helperText: {
       type: String as PropType<string>,
@@ -34,12 +31,25 @@ export default defineComponent({
       default: ""
     },
     error: {
-      type: String as PropType<string>,
-      default: ""
+      type: Boolean as PropType<boolean>,
+      default: false
+    },
+    modelValue: {
+      type: String as PropType<string>
     }
   },
-  setup(props) {
+  setup(props, context) {
     console.log("Input loaded");
+
+    const handleInput = (value: InputEvent) => {
+      console.log("test");
+    }
+
+    const updateValue = (event: any) => {
+      context.emit('update:modelValue', event.target.value);
+    }
+
+    return { handleInput, updateValue }
   }
 })
 

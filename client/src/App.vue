@@ -28,7 +28,7 @@ import VInput from './components/VInput.vue'
         </VButton>
       </div>
 
-      <VInput error="I am the Error Message" helper-text="This is a helper text" label="Label" name="name" value="value"></VInput>
+      <VInput :error="error" helper-text="This is a helper text" label="Label" name="name" v-model="value"></VInput>
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -43,3 +43,18 @@ import VInput from './components/VInput.vue'
 <style lang="sass">
 @import "./assets/sass/app"
 </style>
+
+<script lang="ts">
+
+import { defineComponent } from "@vue/runtime-core";
+
+export default defineComponent({
+  data() {
+    return {
+      value: "test",
+      error: true
+    }
+  },
+})
+
+</script>
