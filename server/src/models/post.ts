@@ -18,6 +18,7 @@ export interface IPostDocument extends IPost, Document {
     removeComment: (comment: ObjectId) => Promise<void>;
 
     construct: (post: PostInput, user: ObjectId) => Promise<IPostDocument>;
+    changeProperties: (post: PostInput) => Promise<void>;
 }
 
 export interface IPostModel extends Model<IPostDocument> {
@@ -72,9 +73,16 @@ postSchema.methods.removeComment = async function(comment: ObjectId) {
 }
 
 postSchema.methods.construct = async function(post: PostInput, user: ObjectId) {
-    this.text = post.text;
-    this.tags = post.tags;
+    const { text, tags } = post;
+    this.text = text;
+    this.tags = tags;
     this.author = user;
+}
+
+postSchema.methods.changeProperties = async function(post: PostInput) {
+    const { text, tags } = post;
+    this.text = text;
+    this.tags = tags;
 }
 
 postSchema.statics.findByTag = async function(tag: string, page: number) {

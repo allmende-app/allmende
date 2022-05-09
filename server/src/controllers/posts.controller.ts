@@ -20,7 +20,7 @@ function createSightings(files: any[]) {
     });
 }
 
-export const postCreatePostController = async(req: Request, res: Response) => {
+export const createPostController = async(req: Request, res: Response) => {
     if (req.session && req.body) {
         const files: any = req.files;
         const parent = JSON.parse(req.body.post);
@@ -91,9 +91,41 @@ export const getPostsController = async(req: Request, res: Response) => {
     }
 }
 
-// export const putEditPostController = async(req: Request, res: Response) => {
+/**
+ * TODO: edit sightings
+ * @param req 
+ * @param res 
+ * @returns 
+ */
+export const editPostController = async(req: Request, res: Response) => {
+    if (req.session.user) {
+        const parent = JSON.parse(req.body.post);
+        const body: PostInput = parent.post;
+
+        const userId = req.session.user;
+        const postId = req.params.id;
+        const post = await Post.findById(postId);
+        if (post) {
+            if (post.author === userId) {
+                await post.changeProperties(body);
+                const doc = await post.save();
+
+                return res.status(StatusCodes.OK).json({
+                    post: doc,
+                });
+            } else {
+                return res.status(StatusCodes.NOT_ACCEPTABLE).send(`Post ${postId} does not belong to you`);
+            }
+        } else {
+            return res.status(StatusCodes.NOT_FOUND).send("Not found");
+        }    
+    } else {
+        return res.status(StatusCodes.UNAUTHORIZED).send("Not registered or logged in");
+    }
+}
+
+// export const deletePostController = async(req: Request, res: Response) => {
 //     if (req.session.user) {
-//         const body: PostInput = req.body.post;
 
 //     } else {
 //         return res.status(StatusCodes.UNAUTHORIZED).send("Not registered or logged in");

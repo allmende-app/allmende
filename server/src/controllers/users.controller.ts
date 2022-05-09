@@ -91,13 +91,32 @@ export const logoutUserController = (req: Request, res: Response) => {
     }
 }
 
-export const getUserController = (req: Request, res: Response) => {
+export const getUserController = async(req: Request, res: Response) => {
     if (req.session.user) {
-        return res.json({
-            a: req.sessionID,
-            b: req.session.user,
-            c: req.session
-        })
+        const user = await User.findById(req.session.user);
+        if (user) {
+            user.password = undefined;
+            return res.status(StatusCodes.OK).json({
+                user: user,
+            });
+        } else {
+            return res.status(StatusCodes.NOT_FOUND).send("Not found");
+        }
+    } else {
+        return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
+    }
+}
+
+export const getUserByUsernameController = async(req: Request, res: Response) => {
+    if (req.session.user) {
+        const username = req.params.username;
+        const user = await User.findByUsername(username);
+        user.password = undefined;
+        user.email = undefined;
+
+        return res.status(StatusCodes.OK).json({
+            user: user,
+        });
     } else {
         return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
     }
