@@ -1,6 +1,10 @@
 import app from "./main";
 import { CONFIG, initializeFolders, connectDB, connectRedis } from "./config";
 import { Logger } from "./lib";
+// import fetch from "node-fetch";
+import "isomorphic-fetch";
+
+const createPosts = true;
 
 app.listen(CONFIG.port, async() => {
   try {
@@ -15,3 +19,5 @@ app.listen(CONFIG.port, async() => {
     Logger.error(e);
   }
 });
+
+

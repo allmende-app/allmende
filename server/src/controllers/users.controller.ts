@@ -3,11 +3,12 @@ import { StatusCodes } from "http-status-codes";
 import { LoginInput, RegisterInput } from "../interfaces";
 import { IUser, User } from "../models";
 import { Logger } from "../lib";
+import { ObjectId } from "mongoose";
 import EmailValidator from "email-validator";
 
 declare module 'express-session' {
     interface SessionData {
-      user: IUser;
+      user: ObjectId;
     }
 }
 
@@ -30,7 +31,7 @@ export const postLoginUserController = async(req: Request, res: Response) => {
         req.session.user = user["_id"];
 
         user.password = undefined;
-        user.followee = undefined;
+        user.followers = undefined;
         user.following = undefined;
         return res.status(StatusCodes.ACCEPTED).json({user: user});
     }
@@ -57,7 +58,7 @@ export const postRegisterUserController = async(req: Request, res: Response) => 
                 return res.status(StatusCodes.BAD_REQUEST).send("Length of password is less than 8 and is not the same as confirmation password");
             }
             const user = new User();
-            user.name = input.name;
+            user.username = input.username;
             await user.setPassword(input.password);
             user.email = input.email;
 
@@ -66,7 +67,7 @@ export const postRegisterUserController = async(req: Request, res: Response) => 
             req.session.save();
 
             doc.password = undefined;
-            doc.followee = undefined;
+            doc.followers = undefined;
             doc.following = undefined;
             return res.status(StatusCodes.OK).json({user:doc});
         } catch (e) {
