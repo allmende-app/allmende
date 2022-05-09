@@ -49,7 +49,7 @@ button
   border: 2px solid transparent
   cursor: pointer
   font-family: $main-font
-
+  font-weight: 600
 
   &.primary
     background-color: $primary

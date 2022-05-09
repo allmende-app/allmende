@@ -4,7 +4,7 @@
       <label :for="name">{{ label }}</label>
       <input type="text" class="input-field" :name="name" :id="name" :value="modelValue" @input="updateValue">
     </div>
-    <div class="helper-text">
+    <div class="helper-text" v-if="helperText">
       {{ helperText }}
     </div>
   </div>
@@ -13,7 +13,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import type { PropType } from "@vue/runtime-core";
-import { h, ref } from 'vue'
 
 export default defineComponent({
   name: "VInput",
@@ -39,17 +38,12 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    console.log("Input loaded");
 
-    const handleInput = (value: InputEvent) => {
-      console.log("test");
-    }
-
-    const updateValue = (event: any) => {
+const updateValue = (event: any) => {
       context.emit('update:modelValue', event.target.value);
     }
 
-    return { handleInput, updateValue }
+    return { updateValue }
   }
 })
 
@@ -58,9 +52,11 @@ export default defineComponent({
 <style lang="sass" scoped>
 @import "../assets/sass/config.sass"
 
-// .frame-wrapper
 .input-container
+  width: 100%
   .input-wrapper
+    position: relative
+
     label
       position: absolute
       left: 12px
@@ -68,8 +64,10 @@ export default defineComponent({
       color: $font-secondary
       font-size: $font-size-footnote
 
-    .input-field
-      background-color: $layer-color-10 // TODO set correct color here!!!
+    input
+      width: 100%
+
+      background-color: $layer-color-10
       border-radius: $border-radius
       border: none
       font-family: $main-font
