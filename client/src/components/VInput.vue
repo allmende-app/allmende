@@ -2,7 +2,14 @@
   <div :class="'input-container ' + (error ? 'error' : '')">
     <div class="input-wrapper">
       <label :for="name">{{ label }}</label>
-      <input type="text" class="input-field" :name="name" :id="name" :value="modelValue" @input="updateValue">
+      <input
+        :type="type"
+        class="input-field"
+        :name="name"
+        :id="name"
+        :value="modelValue"
+        @input="updateValue"
+      >
     </div>
     <div class="helper-text" v-if="helperText">
       {{ helperText }}
@@ -35,6 +42,11 @@ export default defineComponent({
     },
     modelValue: {
       type: String as PropType<string>
+    },
+    type: {
+      type: String as PropType<string>,
+      default: 'text',
+      validator: (value: PropType<string>) => ['password', 'text'].includes(String(value))
     }
   },
   setup(props, context) {
