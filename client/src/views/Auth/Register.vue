@@ -1,10 +1,3 @@
-<script setup lang="ts">
-  import VInput from '@/components/VInput.vue'
-  import VButton from '@/components/VButton.vue'
-  import AuthLayout from '@/layouts/AuthLayout.vue'
-
-</script>
-
 <template>
   <auth-layout>
     <template v-slot:inputs>
@@ -29,35 +22,34 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import { ref } from 'vue';
+import VInput from '@/components/VInput.vue'
+import VButton from '@/components/VButton.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
-export default {
-  data() {
-    return {
-      username: "",
-      password: "",
-      password_confirm: "",
-    }
+
+export default defineComponent({
+
+  components: {
+    VInput,
+    VButton,
+    AuthLayout
   },
-  methods: {
-    validateRequest() {
-      if ("" == (this.username && this.password && this.password_confirm)) {
-        return false // TODO: use server side validation ??
-      }
-    },
 
-    sendRequest(event: Event) {
+  setup(props) {
+    const username = ref("")
+    const password = ref("")
+    const password_confirm = ref("")
+
+    const sendRequest = (event: Event) => {
       event.preventDefault()
-
-      if (this.validateRequest()) {
-        console.error("validation error");
-        return;
-      }
 
       // TODO send ajax request to server here...
       console.log("[WIP] sending ajax request");
     }
-  },
-}
+
+    return {username, password, password_confirm, sendRequest}
+  }
+})
 </script>
 
 <style lang="sass" scoped>

@@ -1,11 +1,3 @@
-<script setup lang="ts">
-  import VInput from '@/components/VInput.vue'
-  import VButton from '@/components/VButton.vue'
-  import AuthLayout from '@/layouts/AuthLayout.vue'
-  import { RouterLink } from 'vue-router'
-
-</script>
-
 <template>
   <auth-layout>
     <template v-slot:inputs>
@@ -29,27 +21,53 @@
 
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
+import {ref} from 'vue'
+import VInput from '@/components/VInput.vue'
+import VButton from '@/components/VButton.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
+import { RouterLink } from 'vue-router'
+import { useAuthStore } from '../../stores/auth';
+import { Credentials } from '../../interfaces/auth';
+import router from "@/router";
 
 export default defineComponent({
-  data() {
-    return {
-      username: "",
-      password: "",
-    }
+
+  components: {
+    VInput,
+    VButton,
+    AuthLayout
   },
 
-  methods: {
-    login: function(event: Event) {
-      event.preventDefault()
+  setup() {
 
-      console.log("login")
+    const username = ref("")
+    const password = ref("")
+
+    const authStore = useAuthStore()
+
+    const login = (event: Event) => {
+      event.preventDefault()
+      console.log("[WIP] login");
+
+      const credentials : Credentials = {username: username.value, password: password.value}
+      authStore.login(credentials)
+        .then(() => {
+          router.push("/")
+        })
+        .catch(() => {
+          // TODO: show errors in form
+        });
     }
+
+    const logout = (event: Event) => {
+      event.preventDefault()
+      authStore.logout()
+        .then(() => {
+          router.push("/auth/login")
+        })
+    }
+
+    return {authStore, login, username, password}
   },
 })
 </script>
-
-<style lang="sass" scoped>
-@import "../../assets/sass/config.sass"
-
-
-</style>
