@@ -1,5 +1,5 @@
 <template>
-  <button :class="type" @click="sayHello" :disabled="disabled">
+  <button :class="type" @click="onClick" :disabled="disabled">
     <slot></slot>
   </button>
 </template>
@@ -23,14 +23,11 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
-    emit('click')
-
-    const sayHello = () => {
-      console.log("Hello");
-      emit('click')
+    const onClick = (event: Event) => {
+      emit('click', event)
     }
 
-    return { sayHello }
+    return { onClick }
   }
 })
 
