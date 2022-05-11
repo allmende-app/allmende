@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { Logger } from "../lib";
+// import { Logger } from "../lib";
 
 export const getUploadController = async (req: Request, res: Response) => {
   if (req.file) {
