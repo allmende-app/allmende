@@ -1,10 +1,13 @@
-// import axios from 'axios'
+import axios from 'axios'
 import { useAuthStore } from './stores/auth';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import '@/styles/global.sass'
+
+// dirty workaround
+(window as any).$axios = axios
 
 // TODO: use this with axios...
 // const token = localStorage.getItem('user-token')

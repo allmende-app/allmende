@@ -24,6 +24,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/playground',
+      name: 'playground',
+      component: () => import('../views/Playground.vue'),
+      meta: {
+        requiresAuth: false,
+      }
+    },
+    {
       path: '/auth/register',
       name: 'register',
       component: () => import('../views/Auth/Register.vue'),
