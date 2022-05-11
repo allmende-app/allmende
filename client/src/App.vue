@@ -40,12 +40,7 @@ import VInput from './components/VInput.vue'
   <RouterView />
 </template>
 
-<style lang="sass">
-@import "./assets/sass/app"
-</style>
-
 <script lang="ts">
-
 import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({

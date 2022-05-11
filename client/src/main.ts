@@ -1,9 +1,10 @@
+// import axios from 'axios'
 import { useAuthStore } from './stores/auth';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia'
-import axios from 'axios'
 import App from './App.vue'
 import router from './router'
+import '@/styles/global.sass'
 
 // TODO: use this with axios...
 // const token = localStorage.getItem('user-token')

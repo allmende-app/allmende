@@ -13,7 +13,7 @@ export default defineComponent({
   props: {
     type: {
       type: String as PropType<string>,
-      default: "primary",
+      default: "secondary",
       // INFO: use arrow function here, otherwise there is an waring when instanciating VButton!
       validator: (value: PropType<string>) => ['primary', 'secondary'].includes(String(value))
     },
@@ -34,41 +34,36 @@ export default defineComponent({
 </script>
 
 <style lang="sass" scoped>
-@import "../assets/sass/config.sass"
-
-$button-border-radius: 32px
-
 button
-  background-color: #fff
-  border: none
-  border-radius: $button-border-radius
-  padding: 16px 24px
-  border: 2px solid transparent
-  cursor: pointer
-  font-family: $main-font
-  font-weight: 600
-
-  &.primary
-    background-color: $primary
-    color: $font-inverted
-    &:hover
-      background-color: $primary-hover
-    &:disabled
-      background-color: $primary-disabled
-    &:active
-      background-color: $primary-active
+  @include allmende.text-action
+  @include allmende.effect-focus
+  user-select: none
+  display: flex
+  justify-content: center
+  align-items: center
+  gap: 4px
+  border-radius: allmende.$radius-button
+  height: allmende.$button-height
+  padding: 0 allmende.$size-small
+  &.icon
+    padding: 0
+    width: allmende.$button-height
   &.secondary
-    background-color: $secondary
-    color: $font-primary
+    background: var(--action-secondary)
     &:hover
-      background-color: $secondary-hover
-    &:disabled
-      background-color: $secondary-disabled
+      background: var(--action-secondary-hover)
     &:active
-      background-color: $secondary-active
-  &:focus
-      border-color: $border-color-focus
-
-
-
+      background: var(--action-secondary-active)
+    &:disabled
+      color: var(--text-disabled)
+      background: var(--action-secondary-disabled)
+  &.primary
+    color: var(--text-inverted)
+    background: var(--action-primary)
+    &:hover
+      background: var(--action-primary-hover)
+    &:active
+      background: var(--action-primary-active)
+    &:disabled
+      background: var(--action-primary-disabled)
 </style>

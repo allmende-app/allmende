@@ -27,10 +27,8 @@
 </template>
 
 <style lang="sass">
-@import "../assets/sass/config.sass"
-
 .layout
-  background-color: $layer-color-20
+  background-color: var(--layer-20)
   background-image: url("/images/logo.svg")
   background-repeat: no-repeat
   background-position-x: 40px
@@ -44,7 +42,6 @@
     width: 100%
     padding: 15vh 0
     text-align: center
-    color: $font-primary
 
   .content
     width: 100%
@@ -79,9 +76,8 @@
 
             & > a
               padding: 8px
-              color: $font-primary
-              font-size: $font-size-action
-              font-weight: $font-size-action-weight
+              color: var(--text-primary)
+              @include allmende.text-action
               text-decoration-line: none
 
           & > *

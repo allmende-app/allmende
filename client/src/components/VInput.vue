@@ -62,53 +62,46 @@ const updateValue = (event: any) => {
 </script>
 
 <style lang="sass" scoped>
-@import "../assets/sass/config.sass"
-
 .input-container
   width: 100%
   .input-wrapper
     position: relative
-
     label
       position: absolute
       left: 12px
       margin-top: 4px
-      color: $font-secondary
-      font-size: $font-size-footnote
+      color: var(--text-secondary)
+      @include allmende.text-footnote
 
     input
       width: 100%
 
-      background-color: $layer-color-10
-      border-radius: $border-radius
+      background-color: var(--layer-10)
+      border-radius: allmende.$radius-input
       border: none
-      font-family: $main-font
-      font-size: $font-size-body
       padding: 12px
       padding-top: 24px
       padding-bottom: 10px
-
-      &:focus, &:active, &:focus-visible
-        outline: $border-color-focus solid $border-width
+      @include allmende.effect-focus
 
 
   .helper-text
     margin: 4px 12px
     font-size: 10px
-    color: $font-secondary
-    font-size: $font-size-footnote
+    color: var(--text-secondary)
+    @include allmende.text-footnote
 
   &.error
     // background-color: red
     .input-wrapper
       label
-        color: $font-error
+        color: var(--text-error)
 
       input
-        background-color: $layer-color-error
+        background-color: var(--layer-error)
 
     .helper-text
-      color: $font-error
+      color: var(--text-error)
 
 
 </style>
