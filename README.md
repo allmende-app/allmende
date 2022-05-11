@@ -16,14 +16,14 @@ This command will start a Redis (Session DB) and a Mongo (DB for everything) con
 Locally, the application is accessible via the port "3000".
 Following routes are available:
 #### Users
-- http://localhost:<PORT>/api/users/register (POST)
-- http://localhost:<PORT>/api/users/login (POST)
-- http://localhost:<PORT>/api/users/logout (DELETE)
-- http://localhost:<PORT>/api/users/ (GET)
-- http://localhost:<PORT>/api/users/<id> (GET)
+- http://localhost:PORT/api/users/register (POST)
+- http://localhost:PORT/api/users/login (POST)
+- http://localhost:PORT/api/users/logout (DELETE)
+- http://localhost:PORT/api/users/ (GET)
+- http://localhost:PORT/api/users/:ID (GET)
 #### Posts
-- http://localhost:<PORT>/api/posts/ (POST)
-- http://localhost:<PORT>/api/posts?tag=<TAG>&page=<PAGE> (GET)
+- http://localhost:PORT/api/posts/ (POST)
+- http://localhost:PORT/api/posts?tag=:TAG&page=:PAGE(GET)
 
 #### Bonus Tip!
 If you're using MacOS or Windows, use Docker Desktop. Unfortunately, Linux Distributions don't have this application. Docker Desktop provides a convenient GUI for managing images and containers. 
