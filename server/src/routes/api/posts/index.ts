@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { createPostController, getPostByIDController, getPostsController } from "../../../controllers";
+import { PostsController } from "../../../controllers";
 import { upload } from "../../../middlewares";
 
 const router = Router();
 
-router.post("/", upload.any(), createPostController);
-router.get("/", getPostsController);
-router.get("/:id", getPostByIDController);
+router.post("/", upload.any(), PostsController.createPostController);
+router.get("/", PostsController.getPostsController);
+router.get("/:id", PostsController.getPostByIDController);
+// router.put("/:id", PostsController.editPostByIDController);
 
 export = router;

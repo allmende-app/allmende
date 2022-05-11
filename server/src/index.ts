@@ -1,22 +1,19 @@
 import app from "./main";
 import { CONFIG, initializeFolders, connectDB, connectRedis } from "./config";
-import { Logger } from "./lib";
-// import fetch from "node-fetch";
-import "isomorphic-fetch";
-
-const createPosts = true;
+// import { Logger } from "./lib";
 
 app.listen(CONFIG.port, async() => {
   try {
     const res = await connectDB();
     const redisClient = connectRedis();
-    await redisClient.connect().then(() => Logger.info("Connected to Redis DB client")).catch(Logger.error);
+    await redisClient.connect().then(() => console.log("Connected to Redis DB client")).catch(console.error);
     // Logger.info("Connected to Redis DB client");
     initializeFolders();
-    Logger.info(`Connected to DB: "${res.connections[0].name}"`);
-    Logger.info(`Server listening on PORT: ${CONFIG.port}`);
+    console.log(`Connected to DB: "${res.connections[0].name}"`);
+    console.log(`Server listening on PORT: ${CONFIG.port}`);
   } catch (e) {
-    Logger.error(e);
+    // Logger.error(e);
+    console.error(e)
   }
 });
 
