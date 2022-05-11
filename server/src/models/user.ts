@@ -8,11 +8,17 @@ export interface IUser {
     avatarUrl?: string;
     following?: ObjectId[];
     followers?: ObjectId[];
+    confirmed?: boolean;
 }
 
 export interface IUserDocument extends IUser, Document {
     setPassword: (password: string) => Promise<void>;
     checkPassword: (password: string) => Promise<boolean>;
+
+    addUserToFollowing: (user: ObjectId) => Promise<ObjectId[]>;
+    removeUserFromFollowing: (user: ObjectId) => Promise<ObjectId[]>;
+
+    removeUserFromFollowers: (user: ObjectId) => Promise<ObjectId[]>;
 }
 
 export interface IUserModel extends Model<IUserDocument>{
@@ -24,9 +30,10 @@ export const userSchema = new Schema<IUserDocument>({
     email: { type: Schema.Types.String, required: true},
     username: { type: Schema.Types.String, required: true},
     password: { type: Schema.Types.String, required: true},
-    avatarUrl: String,
+    avatarUrl: { type: Schema.Types.String },
     following: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    followers: [{type: Schema.Types.ObjectId, ref: 'User'}]
+    followers: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    confirmed: { type: Boolean },
 }, {
     timestamps: true,
     validateBeforeSave: true
@@ -39,6 +46,35 @@ userSchema.methods.setPassword = async function(password: string) {
 
 userSchema.methods.checkPassword = async function(password: string) {
     return await bcrypt.compare(password, this.password);
+}
+
+userSchema.methods.addUserToFollowing = async function(user: ObjectId) {
+    if (this._id === user) return this.following;
+    if (!this.following.includes(user)) {
+        this.following.push(user);
+    }
+    return this.following;
+}
+
+userSchema.methods.removeUserFromFollowing = async function(user: ObjectId) {
+    if (this._id === user) return this.following;
+    if (this.following.includes(user)) {
+        const i = this.following.indexOf(user);
+        if (i > -1) {
+            this.following.splice(i, 1);
+        }        
+    }
+    return this.following;
+}
+
+userSchema.methods.removeUserFromFollowers = async function(user: ObjectId) {
+    if (this._id === user) return this.followers;
+    if (this.followers.includes(user)) {
+        const i = this.following.indexOf(user);
+        if (i > -1) {
+            this.following.splice(i, 1);
+        }
+    }
 }
 
 userSchema.statics.findByEmail = async function(email: string) {

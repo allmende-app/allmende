@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-// import { Logger } from "../lib";
-import { IPost, ISightingDocument, Post, Sighting, sightningSchema } from "../models";
+import { Post, Sighting } from "../models";
 import { PostInput } from "../interfaces";
 import { ObjectId } from "mongoose"
 

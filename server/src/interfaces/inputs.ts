@@ -14,3 +14,7 @@ export interface PostInput {
     text: string;
     tags: string[];
 }
+
+export interface CommentInput {
+    body: string;
+}
