@@ -10,7 +10,7 @@ const router = createRouter({
       component: HomeView,
       meta: {
         requiresAuth: false,
-      }
+      },
     },
     {
       path: '/about',
@@ -21,7 +21,7 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
       meta: {
         requiresAuth: true,
-      }
+      },
     },
     {
       path: '/playground',
@@ -29,7 +29,7 @@ const router = createRouter({
       component: () => import('../views/Playground.vue'),
       meta: {
         requiresAuth: false,
-      }
+      },
     },
     {
       path: '/auth/register',
@@ -37,7 +37,7 @@ const router = createRouter({
       component: () => import('../views/Auth/Register.vue'),
       meta: {
         requiresAuth: false,
-      }
+      },
     },
     {
       path: '/auth/login',
@@ -45,9 +45,9 @@ const router = createRouter({
       component: () => import('../views/Auth/Login.vue'),
       meta: {
         requiresAuth: false,
-      }
-    }
-  ]
+      },
+    },
+  ],
 })
 
 export default router

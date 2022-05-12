@@ -2,7 +2,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import VButton from './components/VButton.vue'
 import VInput from './components/VInput.vue'
-
 </script>
 
 <template>
@@ -41,20 +40,19 @@ import VInput from './components/VInput.vue'
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent } from '@vue/runtime-core'
 
 export default defineComponent({
   data() {
     return {
-      value: "test",
-      error: true
+      value: 'test',
+      error: true,
     }
   },
   methods: {
     axios: () => {
-      console.log("test");
-
-    }
+      console.log('test')
+    },
   },
   created() {
     // TODO catching 401 unauthorized errors
@@ -67,8 +65,7 @@ export default defineComponent({
     //     }
     //     throw err;
     //   });
-  // });
+    // });
   },
 })
-
 </script>

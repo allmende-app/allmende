@@ -1,9 +1,9 @@
 export interface User {
-  username: string,
+  username: string
   password: string
 }
 
 export interface Credentials {
-  username: string,
+  username: string
   password: string
 }

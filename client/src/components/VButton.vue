@@ -5,22 +5,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
-import type { PropType } from "@vue/runtime-core";
+import { defineComponent } from '@vue/runtime-core'
+import type { PropType } from '@vue/runtime-core'
 
 export default defineComponent({
-  emits: ["click"],
+  emits: ['click'],
   props: {
     type: {
       type: String as PropType<string>,
-      default: "secondary",
+      default: 'secondary',
       // INFO: use arrow function here, otherwise there is an waring when instanciating VButton!
-      validator: (value: PropType<string>) => ['primary', 'secondary'].includes(String(value))
+      validator: (value: PropType<string>) =>
+        ['primary', 'secondary'].includes(String(value)),
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const onClick = (event: Event) => {
@@ -28,9 +29,8 @@ export default defineComponent({
     }
 
     return { onClick }
-  }
+  },
 })
-
 </script>
 
 <style lang="sass" scoped>
