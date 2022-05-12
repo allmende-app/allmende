@@ -20,7 +20,7 @@ export const useAuthStore = defineStore({
       this.user = user
     },
 
-    login(credentials: Credentials): promise {
+    login(credentials: Credentials): Promise<unknown> {
       // TODO: send axios request to server here ... receive token and set token ...
       this.status = 'LOADING'
 

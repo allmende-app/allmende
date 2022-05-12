@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import VButton from './components/VButton.vue'
-import VInput from './components/VInput.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>

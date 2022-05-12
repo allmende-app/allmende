@@ -1,9 +1,4 @@
-<script setup lang="ts">
-import VInput from '@/components/VInput.vue'
-import VButton from '@/components/VButton.vue'
-import AuthLayout from '@/layouts/AuthLayout.vue'
-import { RouterLink } from 'vue-router'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="layout">

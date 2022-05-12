@@ -25,9 +25,8 @@ import { ref } from 'vue'
 import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
-import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
-import { Credentials } from '../../interfaces/auth'
+import type { Credentials } from '../../interfaces/auth'
 import router from '@/router'
 
 export default defineComponent({

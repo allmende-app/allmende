@@ -51,8 +51,8 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const updateValue = (event: any) => {
-      context.emit('update:modelValue', event.target.value)
+    const updateValue = (event: Event) => {
+      context.emit('update:modelValue', event?.target?.value)
     }
 
     return { updateValue }

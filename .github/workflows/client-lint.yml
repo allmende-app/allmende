@@ -41,6 +41,6 @@ jobs:
           commit_message: ':rotating_light: Fix code style issues with ${linter} for client'
           eslint: true
           eslint_dir: client/
-          eslint_extensions: .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts
+          eslint_extensions: vue,js,jsx,cjs,mjs,ts,tsx,cts,mts
           prettier: true
           prettier_dir: client/

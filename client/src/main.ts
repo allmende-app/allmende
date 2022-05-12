@@ -7,6 +7,7 @@ import router from './router'
 import '@/styles/global.sass'
 
 // dirty workaround
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(window as any).$axios = axios
 
 // TODO: use this with axios...
