@@ -20,14 +20,14 @@
 
 @mixin effect-focus
   &:focus
-    outline: 2px solid var(--text-action)
+    outline: 2px solid var(--border-focus)
     outline-offset: 2px
   // As of writing Safari doesn't support :focus-visible yet,
   // and just ignores all rules that contain :focus-visible
   &:focus-visible, &:focus
     outline: none
   &:focus-visible
-    outline: 2px solid var(--text-action)
+    outline: 2px solid var(--border-focus)
     outline-offset: 2px
 
 @mixin text-title-1
