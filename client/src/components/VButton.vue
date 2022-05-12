@@ -1,36 +1,48 @@
 <template>
-  <button :class="type" @click="onClick" :disabled="disabled">
-    <slot></slot>
+  <button
+    :class="[type, icon ? 'icon' : '']"
+    @click="onClick"
+    :disabled="disabled"
+    :aria-label="tooltip"
+    :title="tooltip"
+  >
+    <component v-if="icon" :is="icon"></component>
+    <slot v-else></slot>
   </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@vue/runtime-core'
-import type { PropType } from '@vue/runtime-core'
+<script setup lang="ts">
+import type { FunctionalComponent, PropType, SVGAttributes } from 'vue'
 
-export default defineComponent({
-  emits: ['click'],
-  props: {
-    type: {
-      type: String as PropType<string>,
-      default: 'secondary',
-      // INFO: use arrow function here, otherwise there is an waring when instanciating VButton!
-      validator: (value: PropType<string>) =>
-        ['primary', 'secondary'].includes(String(value)),
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
+const emit = defineEmits(['click'])
+
+const props = defineProps({
+  type: {
+    type: String as PropType<string>,
+    default: 'secondary',
+    validator: (value: PropType<string>) =>
+      ['primary', 'secondary'].includes(String(value)),
   },
-  setup(props, { emit }) {
-    const onClick = (event: Event) => {
-      emit('click', event)
-    }
-
-    return { onClick }
+  icon: {
+    type: Object as PropType<null | FunctionalComponent<SVGAttributes>>,
+    default: null,
+  },
+  tooltip: {
+    type: String,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 })
+
+if (props.icon && !props.tooltip) {
+  throw new Error('VButton: Buttons with icons must have a tooltip')
+}
+
+const onClick = (event: Event) => {
+  emit('click', event)
+}
 </script>
 
 <style lang="sass" scoped>
@@ -49,6 +61,7 @@ button
     padding: 0
     width: allmende.$button-height
   &.secondary
+    color: var(--text-primary)
     background: var(--action-secondary)
     &:hover
       background: var(--action-secondary-hover)
