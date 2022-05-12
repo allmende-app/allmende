@@ -1,15 +1,8 @@
-<script setup lang="ts">
-  import VInput from '@/components/VInput.vue'
-  import VButton from '@/components/VButton.vue'
-  import AuthLayout from '@/layouts/AuthLayout.vue'
-  import { RouterLink } from 'vue-router'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="layout">
-    <h1 class="headline">
-      allmende
-    </h1>
+    <h1 class="headline">allmende</h1>
     <div class="content">
       <div class="auth">
         <form action="/" method="post">
@@ -82,6 +75,4 @@
 
           & > *
             margin-left: 16px
-
-
 </style>

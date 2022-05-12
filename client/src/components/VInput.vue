@@ -9,7 +9,7 @@
         :id="name"
         :value="modelValue"
         @input="updateValue"
-      >
+      />
     </div>
     <div class="helper-text" v-if="helperText">
       {{ helperText }}
@@ -18,11 +18,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
-import type { PropType } from "@vue/runtime-core";
+import { defineComponent } from '@vue/runtime-core'
+import type { PropType } from '@vue/runtime-core'
 
 export default defineComponent({
-  name: "VInput",
+  name: 'VInput',
   props: {
     name: {
       type: String as PropType<string>,
@@ -30,35 +30,34 @@ export default defineComponent({
     },
     helperText: {
       type: String as PropType<string>,
-      default: ""
+      default: '',
     },
     label: {
       type: String as PropType<string>,
-      default: ""
+      default: '',
     },
     error: {
       type: Boolean as PropType<boolean>,
-      default: false
+      default: false,
     },
     modelValue: {
-      type: String as PropType<string>
+      type: String as PropType<string>,
     },
     type: {
       type: String as PropType<string>,
       default: 'text',
-      validator: (value: PropType<string>) => ['password', 'text'].includes(String(value))
-    }
+      validator: (value: PropType<string>) =>
+        ['password', 'text'].includes(String(value)),
+    },
   },
   setup(props, context) {
-
-const updateValue = (event: any) => {
-      context.emit('update:modelValue', event.target.value);
+    const updateValue = (event: Event) => {
+      context.emit('update:modelValue', event?.target?.value)
     }
 
     return { updateValue }
-  }
+  },
 })
-
 </script>
 
 <style lang="sass" scoped>
@@ -102,6 +101,4 @@ const updateValue = (event: any) => {
 
     .helper-text
       color: var(--text-error)
-
-
 </style>
