@@ -1,104 +1,101 @@
 <template>
-  <div :class="'input-container ' + (error ? 'error' : '')">
-    <div class="input-wrapper">
-      <label :for="name">{{ label }}</label>
+  <div :class="'textfield ' + (error ? 'error' : '')">
+    <div class="textfield-wrapper">
       <input
         :type="type"
-        class="input-field"
-        :name="name"
-        :id="name"
+        :autocomplete="autocomplete"
+        :class="{ filled: modelValue && modelValue.length > 0 }"
+        :id="inputId"
         :value="modelValue"
         @input="updateValue"
+        :aria-invalid="error ? 'true' : undefined"
+        :aria-describedby="helperText || error ? helperId : undefined"
       />
+      <label :for="inputId">{{ label }}</label>
     </div>
-    <div class="helper-text" v-if="helperText">
-      {{ helperText }}
+    <div class="helper-text" v-if="error || helperText">
+      {{ error || helperText }}
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@vue/runtime-core'
-import type { PropType } from '@vue/runtime-core'
+<script setup lang="ts">
+import { getRandomId } from '@/utils'
+import type { PropType } from 'vue'
 
-export default defineComponent({
-  name: 'VInput',
-  props: {
-    name: {
-      type: String as PropType<string>,
-      required: true,
-    },
-    helperText: {
-      type: String as PropType<string>,
-      default: '',
-    },
-    label: {
-      type: String as PropType<string>,
-      default: '',
-    },
-    error: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
-    modelValue: {
-      type: String as PropType<string>,
-    },
-    type: {
-      type: String as PropType<string>,
-      default: 'text',
-      validator: (value: PropType<string>) =>
-        ['password', 'text'].includes(String(value)),
-    },
+const inputId = getRandomId()
+const helperId = getRandomId()
+
+const emit = defineEmits(['update:modelValue'])
+
+defineProps({
+  label: {
+    type: String as PropType<string>,
+    default: '',
   },
-  setup(props, context) {
-    const updateValue = (event: Event) => {
-      context.emit('update:modelValue', event?.target?.value)
-    }
-
-    return { updateValue }
+  helperText: {
+    type: String as PropType<string | undefined>,
+  },
+  error: {
+    type: String as PropType<string | undefined>,
+  },
+  modelValue: {
+    type: String as PropType<string>,
+    required: true,
+  },
+  type: {
+    type: String as PropType<string>,
+    default: 'text',
+    validator: (value: PropType<string>) =>
+      ['password', 'text'].includes(String(value)),
+  },
+  autocomplete: {
+    type: String as PropType<string | undefined>,
   },
 })
+
+const updateValue = (event: Event) => {
+  emit('update:modelValue', (event?.target as HTMLInputElement).value)
+}
 </script>
 
 <style lang="sass" scoped>
-.input-container
-  width: 100%
-  .input-wrapper
+.textfield
+  color: var(--text-primary)
+  > .textfield-wrapper
     position: relative
-    label
-      position: absolute
-      left: 12px
-      margin-top: 4px
-      color: var(--text-secondary)
-      @include allmende.text-footnote
-
+    height: allmende.$input-height
     input
-      width: 100%
-
-      background-color: var(--layer-10)
-      border-radius: allmende.$radius-input
-      border: none
-      padding: 12px
-      padding-top: 24px
-      padding-bottom: 10px
       @include allmende.effect-focus
-
-
-  .helper-text
-    margin: 4px 12px
-    font-size: 10px
-    color: var(--text-secondary)
+      @include allmende.text-body
+      box-sizing: border-box
+      border-radius: allmende.$radius-input
+      background: var(--layer-10)
+      width: 100%
+      height: 100%
+      margin: 0
+      padding: (allmende.$size-xxsmall + 7px) allmende.$size-xxsmall (allmende.$size-xxsmall - 7px) allmende.$size-xxsmall
+    label
+      @include allmende.text-footnote
+      color: var(--text-secondary)
+      position: absolute
+      left: allmende.$size-xxsmall
+      right: initial
+      top: 50%
+      transform: translateY(-55%) scale(1.166)
+      transform-origin: left top
+      transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),color 150ms
+      pointer-events: none
+    input:focus + label, input.filled + label
+      transform: translateY(-106%) scale(1.0)
+  > .helper-text
     @include allmende.text-footnote
+    padding: 0 allmende.$size-xxsmall
+    padding-top: allmende.$size-xxxxsmall
 
   &.error
-    // background-color: red
-    .input-wrapper
-      label
-        color: var(--text-error)
-
-      input
-        background-color: var(--layer-error)
-
-    .helper-text
+    > .textfield-wrapper input
+      background-color: var(--layer-error)
+    > .helper-text, > .textfield-wrapper label
       color: var(--text-error)
 </style>

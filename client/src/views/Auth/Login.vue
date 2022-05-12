@@ -1,11 +1,17 @@
 <template>
   <auth-layout>
     <template v-slot:inputs>
-      <v-input name="username" label="Username" v-model="username"></v-input>
+      <v-input
+        name="username"
+        label="Username"
+        v-model="username"
+        autocomplete="username"
+      ></v-input>
       <v-input
         name="password"
         label="Password"
         type="password"
+        autocomplete="current-password"
         v-model="password"
       ></v-input>
     </template>
@@ -19,8 +25,7 @@
   </auth-layout>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@vue/runtime-core'
+<script setup lang="ts">
 import { ref } from 'vue'
 import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'
@@ -29,45 +34,33 @@ import { useAuthStore } from '../../stores/auth'
 import type { Credentials } from '../../interfaces/auth'
 import router from '@/router'
 
-export default defineComponent({
-  components: {
-    VInput,
-    VButton,
-    AuthLayout,
-  },
+const username = ref('')
+const password = ref('')
 
-  setup() {
-    const username = ref('')
-    const password = ref('')
+const authStore = useAuthStore()
 
-    const authStore = useAuthStore()
+const login = (event: Event) => {
+  event.preventDefault()
+  console.log('[WIP] login')
 
-    const login = (event: Event) => {
-      event.preventDefault()
-      console.log('[WIP] login')
+  const credentials: Credentials = {
+    username: username.value,
+    password: password.value,
+  }
+  authStore
+    .login(credentials)
+    .then(() => {
+      router.push('/')
+    })
+    .catch(() => {
+      // TODO: show errors in form
+    })
+}
 
-      const credentials: Credentials = {
-        username: username.value,
-        password: password.value,
-      }
-      authStore
-        .login(credentials)
-        .then(() => {
-          router.push('/')
-        })
-        .catch(() => {
-          // TODO: show errors in form
-        })
-    }
-
-    const logout = (event: Event) => {
-      event.preventDefault()
-      authStore.logout().then(() => {
-        router.push('/auth/login')
-      })
-    }
-
-    return { authStore, login, username, password }
-  },
-})
+const logout = (event: Event) => {
+  event.preventDefault()
+  authStore.logout().then(() => {
+    router.push('/auth/login')
+  })
+}
 </script>

@@ -1,8 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import LogoSvg from '@/assets/logo.svg?component'
+</script>
 
 <template>
-  <div class="layout">
-    <h1 class="headline">allmende</h1>
+  <div class="layout" data-theme="dark">
+    <h1 class="headline">
+      <span>allmende<LogoSvg /></span>
+    </h1>
     <div class="content">
       <div class="auth">
         <form action="/" method="post">
@@ -22,11 +26,10 @@
 <style lang="sass">
 .layout
   background-color: var(--layer-20)
-  background-image: url("/images/logo.svg")
   background-repeat: no-repeat
   background-position-x: 40px
   background-position-y: -200px
-  // TODO: make logo position responsible
+  // TODO: make logo position responsive
   min-height: 100vh
   height: 100%
   width: 100%
@@ -35,6 +38,18 @@
     width: 100%
     padding: 15vh 0
     text-align: center
+    overflow: hidden
+    span
+      position: relative
+      z-index: 1
+      > svg
+        position: absolute
+        color: var(--layer-05)
+        left: -130px
+        top: -370px
+        width: 557px
+        height: 557px
+        z-index: -1
 
   .content
     width: 100%
