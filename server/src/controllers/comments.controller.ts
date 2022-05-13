@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { CommentInput } from "../interfaces";
 import { Comment, Post, User } from "../models";
 
 export class CommentsController {
@@ -9,10 +10,11 @@ export class CommentsController {
                 const id = req.params.id;
                 const me = await User.findById(req.session.user);
                 const post = await Post.findById(id);
-                const body: string = req.body.comment;
+                const sendedBody: CommentInput = req.body.comment;
                 if (!id) return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
                 if (!post) return res.status(StatusCodes.NOT_FOUND).send("Post to comment not found");
                 if (me) {
+                    const { body } = sendedBody;
                     const comment = new Comment();
                     comment.construct(body, post["_id"], me["_id"]);
                     const doc = await comment.save();
@@ -34,21 +36,19 @@ export class CommentsController {
 
     static async editCommentController(req: Request, res: Response) {
         if (req.session.user) {
-            const id = req.params.id;
-            const body = req.body.comment;
+            const id: string = req.params.id;
+            const body: CommentInput = req.body.comment;
             if (!body) return res.status(StatusCodes.BAD_REQUEST).send("Bad body request"+JSON.stringify(body));
             if (id) {
-                const comment = await Comment.findById(id);
-                if (comment) {
-                    if (comment.author === req.session.user) {
-                        comment.body = body.body;
-                        const doc = await comment.save();
-                        return res.status(StatusCodes.OK).json({
-                            comment: doc,
-                        });
-                    }
+                try {
+                    const doc = await Comment.findCommentByIDAndEdit(id, req.session.user, body);
+                    return res.status(StatusCodes.OK).json({
+                        comment: doc,
+                    });
+                } catch (er) {
+                    console.error(er);
+                    return res.status(StatusCodes.UNAUTHORIZED).send(er);
                 }
-                return res.status(StatusCodes.NOT_FOUND).send("Comment not found");
             } else {
                 return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
             }
@@ -61,10 +61,15 @@ export class CommentsController {
         if (req.session.user) {
             const id = req.params.id;
             if (id) {
-                const comment = await Comment.findByIdAndDelete();
-                return res.status(StatusCodes.OK).json({
-                    comment: comment,
-                });
+                try {
+                    const doc = await Comment.findCommentByIDAndDelete(id as string, req.session.user);
+                    return res.status(StatusCodes.OK).json({
+                        comment: doc,
+                    });
+                } catch (err) {
+                    console.error(err);
+                    return res.status(StatusCodes.UNAUTHORIZED).send("Unauthorized user");
+                }
             } else {
                 return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
             }

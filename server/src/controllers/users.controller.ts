@@ -36,8 +36,7 @@ export class UsersController {
                 return res.status(StatusCodes.BAD_REQUEST).send("Length of password is less than 8 and is not the same as confirmation password");
             }
     
-            try {
-                
+            try {       
                 const user = new User();
                 user.username = input.username;
                 await user.setPassword(input.password);
@@ -68,7 +67,7 @@ export class UsersController {
         }
         if (req.body.user) {
             const input: LoginInput = req.body.user;
-            const user = await User.findByEmail(input.email);
+            const user = await User.findByEmail(input.email) || await User.findByUsername(input.username);
             if (!user) {
                 // Logger.warn("User not found");
                 return res.status(StatusCodes.NOT_FOUND).send("User not found");
@@ -131,6 +130,12 @@ export class UsersController {
         }
     }
 
+    /**
+     * TODO: check this controller
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     static async followUserController(req: Request, res: Response) {
         if (req.session.user) {
             const username = req.params.username;
@@ -152,6 +157,12 @@ export class UsersController {
         }
     }
 
+    /**
+     * TODO: check this controller
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     static async unfollowUserController(req: Request, res: Response) {
         if (req.session.user) {
             const username = req.params.username;
@@ -173,6 +184,12 @@ export class UsersController {
         }
     }
 
+    /**
+     * TODO: Check this controller
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     static async removeFollowedUserController(req: Request, res: Response) {
         if (req.session.user) {
             const username = req.params.username;
