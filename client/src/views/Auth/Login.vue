@@ -1,11 +1,16 @@
 <template>
   <auth-layout>
+    <template v-slot:default>
+      <p style="color: red">
+        {{ error_message }}
+      </p>
+    </template>
     <template v-slot:inputs>
       <v-input
-        name="username"
-        label="Username"
-        v-model="username"
-        autocomplete="username"
+        name="email"
+        label="Email"
+        v-model="email"
+        autocomplete="email"
       ></v-input>
       <v-input
         name="password"
@@ -31,36 +36,45 @@ import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores/auth'
-import type { Credentials } from '../../interfaces/auth'
+import type { LoginInput } from '../../../server/src/interfaces/inputs'
 import router from '@/router'
+import { log } from 'console';
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
+const error_message = ref('')
 
 const authStore = useAuthStore()
 
 const login = (event: Event) => {
   event.preventDefault()
-  console.log('[WIP] login')
 
-  const credentials: Credentials = {
-    username: username.value,
+  const credentials: LoginInput = {
+    email: email.value,
     password: password.value,
   }
   authStore
     .login(credentials)
-    .then(() => {
-      router.push('/')
+    .then(response => {
+      router.push('/') // TODO backend does not check if password is correct !!!
     })
-    .catch(() => {
-      // TODO: show errors in form
+    .catch(error => {
+      console.log(error);
+      // TODO better error message system
+      error_message.value = error.response.data
     })
 }
 
 const logout = (event: Event) => {
   event.preventDefault()
-  authStore.logout().then(() => {
-    router.push('/auth/login')
-  })
+  authStore.logout()
+    .then(response => {
+
+      router.push('/auth/login')
+    })
+    .catch(error => {
+      console.log(error);
+
+    })
 }
 </script>
