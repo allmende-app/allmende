@@ -8,5 +8,8 @@ router.get("/", UsersController.getOwnProfileController);
 router.get("/:username", UsersController.getProfileByUsernameController);
 router.post("/login", UsersController.loginController);
 router.delete("/logout", UsersController.logoutController);
+router.put("/follow/:username", UsersController.followUserController);
+router.delete("/unfollow/:username", UsersController.unfollowUserController);
+router.delete("/remove/:username", UsersController.removeFollowedUserController);
 
 export = router;

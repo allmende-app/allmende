@@ -38,20 +38,13 @@ export class UsersController {
     
             try {       
                 const user = new User();
-                user.username = input.username;
-                await user.setPassword(input.password);
-                user.email = input.email;
-                user.avatarUrl = randomAvatarURL();
-                user.confirmed = false;
+                await user.construct(input);
     
                 const doc = await user.save({validateBeforeSave: true, timestamps: true});
                 req.session.user = doc["_id"];
                 req.session.save();
     
-                doc.password = undefined;
-                doc.followers = undefined;
-                doc.following = undefined;
-                doc.confirmed = undefined;
+                await doc.hideSensibleData();
                 return res.status(StatusCodes.OK).json({user:doc});
             } catch (e) {
                 // Logger.error(e);
@@ -142,9 +135,10 @@ export class UsersController {
             const user = await User.findByUsername(username);
             const me = await User.findById(req.session.user);
             if (user && me) {
-                me.addUserToFollowing(user["_id"]);
-
+                await me.addUserToFollowing(user);
+                await user.addUserToFollowers(me);
                 const doc = await me.save();
+                await user.save();
                 doc.password = undefined;
                 return res.status(StatusCodes.OK).json({
                     user: doc
