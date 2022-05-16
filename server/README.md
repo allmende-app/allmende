@@ -14,7 +14,7 @@ docker-compose up -f ../docker-compose.yml -d --build
 This command will start a Redis (Session DB) and a Mongo (DB for everything) containers. Addtionally, the command will build the server image by using the Dockerfile inside the "server" folder. The Dockerfile's function is a blueprint for the building progress. After the building is completed, the container will be started with the recently builded image with the environment variables inside the compose-file. If the server code changes, use this command because it will rebuild the image and the container.
 
 ### Local development 
-If you consider to develop on the backend code and want the run the server locally without to run the server as an isolated container, then use this command.
+If you consider to develop on the backend code and want to run the server locally without to run the server as an isolated container, then use this command.
 ```bash
 docker-compose -f docker-compose.local.yml up -d
 npm run install
