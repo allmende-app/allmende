@@ -1,11 +1,22 @@
 <template>
   <auth-layout>
+    <template v-slot:default>
+      <p style="color: red">
+        {{ error_message }}
+      </p>
+    </template>
     <template v-slot:inputs>
       <v-input
         name="username"
         label="Username"
         v-model="username"
         autocomplete="username"
+      ></v-input>
+      <v-input
+        name="email"
+        label="Email"
+        v-model="email"
+        autocomplete="email"
       ></v-input>
       <v-input
         name="password"
@@ -37,15 +48,39 @@ import { ref } from 'vue'
 import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
+import { useAuthStore } from '../../stores/auth'
+import type { RegisterInput } from '../../../../server/src/interfaces/inputs'
+import axios from 'axios'
+import router from '@/router'
+import { log } from 'console'
 
 const username = ref('')
 const password = ref('')
+const email = ref('')
 const password_confirm = ref('')
+const error_message = ref('')
+
+const authStore = useAuthStore()
 
 const sendRequest = (event: Event) => {
   event.preventDefault()
-  // TODO send ajax request to server here...
-  console.log('[WIP] sending ajax request')
+  const registerData: RegisterInput = {
+    username: username.value,
+    email: email.value,
+    password: password.value,
+    confirmPassword: password_confirm.value,
+  }
+
+  authStore
+    .register(registerData)
+    .then((response) => {
+      router.push('/')
+    })
+    .catch((error) => {
+      // TODO display error here
+      console.log(error)
+      error_message.value = error.response.data
+    })
 }
 </script>
 

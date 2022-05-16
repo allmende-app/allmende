@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
 import type { User, Credentials } from '../interfaces/auth'
+import type {
+  RegisterInput,
+  LoginInput,
+} from '../../../server/src/interfaces/inputs'
+import axios from 'axios'
+import { backend } from '../utils'
 
 export const useAuthStore = defineStore({
   id: 'auth',
@@ -20,27 +26,47 @@ export const useAuthStore = defineStore({
       this.user = user
     },
 
-    login(credentials: Credentials): Promise<unknown> {
-      // TODO: send axios request to server here ... receive token and set token ...
-      this.status = 'LOADING'
-
-      console.log('login from authStore')
-
+    register(registerData: RegisterInput): Promise<unknown> {
       return new Promise((resolve, reject) => {
-        // TODO do axios request here instead of promise!!!
-
-        // TODO use axios.defaults.headers.common['Authorization'] = token
-
-        resolve('test')
+        backend.client
+          .post('/api/users/register', { user: registerData })
+          .then((response) => {
+            this.setUser(response.data.user)
+            this.token = 'changeMe' // TODO change this to the cookie send by the register response
+            resolve(response.data)
+          })
+          .catch((error) => {
+            reject(error)
+          })
       })
     },
-    logout(): promise {
-      console.log('logout user')
+
+    login(credentials: LoginInput): Promise<unknown> {
       return new Promise((resolve, reject) => {
-        this.token = ''
-        localStorage.removeItem('user-token')
-        // TODO: use: delete axios.defaults.headers.common['Authorization']
-        resolve(null)
+        backend.client
+          .post('/api/users/login', { user: credentials })
+          .then((response) => {
+            this.setUser(response.data.user)
+            this.token = 'changeME' // TODO: see register()
+            resolve(response.data)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    logout(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        backend.client
+          .delete('/api/users/logout')
+          .then((response) => {
+            this.user = null
+            this.token = '' // TODO remove auth cookie here!!!
+            resolve(response.data)
+          })
+          .catch((error) => {
+            reject(error)
+          })
       })
     },
   },
