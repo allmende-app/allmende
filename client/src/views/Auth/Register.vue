@@ -50,7 +50,7 @@ import VButton from '@/components/VButton.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores/auth'
 import type { RegisterInput } from '../../../../server/src/interfaces/inputs'
-import axios from 'axios';
+import axios from 'axios'
 import router from '@/router'
 import { log } from 'console'
 
@@ -64,20 +64,21 @@ const authStore = useAuthStore()
 
 const sendRequest = (event: Event) => {
   event.preventDefault()
-  const registerData : RegisterInput = {
+  const registerData: RegisterInput = {
     username: username.value,
     email: email.value,
     password: password.value,
-    confirmPassword: password_confirm.value
+    confirmPassword: password_confirm.value,
   }
 
-  authStore.register(registerData)
-    .then(response => {
-      router.push("/")
+  authStore
+    .register(registerData)
+    .then((response) => {
+      router.push('/')
     })
-    .catch(error  => {
+    .catch((error) => {
       // TODO display error here
-      console.log(error);
+      console.log(error)
       error_message.value = error.response.data
     })
 }

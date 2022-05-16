@@ -1,11 +1,8 @@
 <template>
   <div>
-    <v-button @click="logout" type="primary">
-      Logout
-    </v-button>
+    <v-button @click="logout" type="primary"> Logout </v-button>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import VButton from '@/components/VButton.vue'
@@ -14,7 +11,7 @@ import SvgIcon from '@/assets/icon24/bell.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
 import axios from 'axios'
-import { useAuthStore } from '../stores/auth';
+import { useAuthStore } from '../stores/auth'
 import router from '@/router'
 
 const authStore = useAuthStore()
@@ -22,11 +19,11 @@ const authStore = useAuthStore()
 const logout = () => {
   authStore
     .logout()
-    .then(response => {
-      router.push("/auth/login")
+    .then((response) => {
+      router.push('/auth/login')
     })
-    .catch(error => {
-      console.log(error); // TODO hier noch was anderes machen? wäre ja warscheinlich nen no connection error
+    .catch((error) => {
+      console.log(error) // TODO hier noch was anderes machen? wäre ja warscheinlich nen no connection error
     })
 }
 
@@ -38,5 +35,4 @@ const logout = () => {
 //   .catch(error => {
 //     console.log(error);
 //   })
-
 </script>

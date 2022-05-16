@@ -11,14 +11,13 @@ export function getRandomId() {
 /**
  * backend data
  */
-const BACKEND_URL = "http://localhost:3000/"
+const BACKEND_URL = 'http://localhost:3000/'
 
 export const backend = {
   baseURL: BACKEND_URL,
   client: _axios.create({
     baseURL: BACKEND_URL,
     timeout: 2000,
-    withCredentials: true
-  })
+    withCredentials: true,
+  }),
 }
-
