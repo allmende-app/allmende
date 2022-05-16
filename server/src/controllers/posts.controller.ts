@@ -117,6 +117,4 @@ export class PostsController {
             return res.status(StatusCodes.UNAUTHORIZED).send("Not registered or logged in");
         }
     }
-
-
 }

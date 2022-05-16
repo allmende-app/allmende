@@ -4,6 +4,7 @@ import { LoginInput, RegisterInput } from "../interfaces";
 import { User } from "../models";
 import { ObjectId } from "mongoose";
 import EmailValidator from "email-validator";
+import { compressImage } from "../utils";
 
 declare module 'express-session' {
     interface SessionData {
@@ -191,4 +192,26 @@ export class UsersController {
     }
 
     // TODO: delete profile and edit profile controller
+    static async uploadAvatar(req: Request, res: Response) {
+        if (req.session.user) {
+            const file = req.file;
+
+            const doc = await User.findById(req.session.user);
+            if (doc && file) {
+                compressImage(file);
+                doc.avatarUrl = file.filename;
+                
+                await doc.save();
+
+                doc.password = undefined;
+                doc.confirmed = undefined;
+                return res.status(StatusCodes.OK).json({
+                    user: doc,
+                });
+            }
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error");
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).send("Not registered or logged in");
+        }
+    }
 }
