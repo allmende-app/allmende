@@ -122,12 +122,6 @@ export class UsersController {
         }
     }
 
-    /**
-     * TODO: check this controller
-     * @param req 
-     * @param res 
-     * @returns 
-     */
     static async followUserController(req: Request, res: Response) {
         if (req.session.user) {
             const username = req.params.username;
@@ -150,12 +144,6 @@ export class UsersController {
         }
     }
 
-    /**
-     * TODO: check this controller
-     * @param req 
-     * @param res 
-     * @returns 
-     */
     static async unfollowUserController(req: Request, res: Response) {
         if (req.session.user) {
             const username = req.params.username;
@@ -192,10 +180,13 @@ export class UsersController {
             const user = await User.findByUsername(username);
             const me = await User.findById(req.session.user);
             if (user && me) {
-                me.removeUserFromFollowers(user["_id"]);
+                await me.removeUserFromFollowers(user);
+                await user.removeUserFromFollowing(me);
 
                 const doc = await me.save();
+                await user.save();
                 doc.password = undefined;
+                doc.confirmed = undefined;
                 return res.status(StatusCodes.OK).json({
                     user: doc
                 });
