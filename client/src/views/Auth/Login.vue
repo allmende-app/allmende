@@ -38,7 +38,7 @@ import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores/auth'
 import type { LoginInput } from '../../../server/src/interfaces/inputs'
 import router from '@/router'
-import { log } from 'console';
+import { log } from 'console'
 
 const email = ref('')
 const password = ref('')
@@ -55,11 +55,11 @@ const login = (event: Event) => {
   }
   authStore
     .login(credentials)
-    .then(response => {
+    .then((response) => {
       router.push('/') // TODO backend does not check if password is correct !!!
     })
-    .catch(error => {
-      console.log(error);
+    .catch((error) => {
+      console.log(error)
       // TODO better error message system
       error_message.value = error.response.data
     })
@@ -67,14 +67,13 @@ const login = (event: Event) => {
 
 const logout = (event: Event) => {
   event.preventDefault()
-  authStore.logout()
-    .then(response => {
-
+  authStore
+    .logout()
+    .then((response) => {
       router.push('/auth/login')
     })
-    .catch(error => {
-      console.log(error);
-
+    .catch((error) => {
+      console.log(error)
     })
 }
 </script>
