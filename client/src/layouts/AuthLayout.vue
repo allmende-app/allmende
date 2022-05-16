@@ -9,6 +9,7 @@ import LogoSvg from '@/assets/logo.svg?component'
     </h1>
     <div class="content">
       <div class="auth">
+        <slot name="default"></slot>
         <form action="/" method="post">
           <div class="input-wrapper">
             <slot name="inputs"></slot>

@@ -54,6 +54,7 @@ button
   justify-content: center
   align-items: center
   gap: 4px
+  cursor: pointer
   border-radius: allmende.$radius-button
   height: allmende.$button-height
   padding: 0 allmende.$size-small
