@@ -4,7 +4,6 @@ import { LoginInput, RegisterInput } from "../interfaces";
 import { User } from "../models";
 import { ObjectId } from "mongoose";
 import EmailValidator from "email-validator";
-import { randomAvatarURL } from "../utils";
 
 declare module 'express-session' {
     interface SessionData {
@@ -68,9 +67,7 @@ export class UsersController {
             }
             req.session.user = user["_id"];
     
-            user.password = undefined;
-            user.followers = undefined;
-            user.following = undefined;
+            await user.hideSensibleData();
             return res.status(StatusCodes.ACCEPTED).json({user: user});
         } else {
             return res.status(StatusCodes.BAD_REQUEST).send("No body json")
@@ -96,6 +93,7 @@ export class UsersController {
             const user = await User.findById(req.session.user);
             if (user) {
                 user.password = undefined;
+                user.confirmed = undefined;
                 return res.status(StatusCodes.OK).json({
                     user: user,
                 });
@@ -113,6 +111,7 @@ export class UsersController {
             const user = await User.findByUsername(username);
             user.password = undefined;
             user.email = undefined;
+            user.confirmed = undefined;
     
             return res.status(StatusCodes.OK).json({
                 user: user,
@@ -133,6 +132,7 @@ export class UsersController {
                 const doc = await me.save();
                 await user.save();
                 doc.password = undefined;
+                doc.confirmed = undefined;
                 return res.status(StatusCodes.OK).json({
                     user: doc
                 });
@@ -152,7 +152,6 @@ export class UsersController {
             if (user && me) {
                 await me.removeUserFromFollowing(user);
                 await user.removeUserFromFollowers(me);
-                
                 const doc = await me.save();
                 await user.save();
                 doc.password = undefined;
@@ -168,12 +167,6 @@ export class UsersController {
         }
     }
 
-    /**
-     * TODO: Check this controller
-     * @param req 
-     * @param res 
-     * @returns 
-     */
     static async removeFollowedUserController(req: Request, res: Response) {
         if (req.session.user) {
             const username = req.params.username;
@@ -182,7 +175,6 @@ export class UsersController {
             if (user && me) {
                 await me.removeUserFromFollowers(user);
                 await user.removeUserFromFollowing(me);
-
                 const doc = await me.save();
                 await user.save();
                 doc.password = undefined;
