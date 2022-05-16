@@ -54,10 +54,6 @@ export class UsersController {
     }
 
     static async loginController(req: Request, res: Response) {
-        if (!req.session) {
-            // Logger.warn("Unauthorized user");
-            return res.status(StatusCodes.UNAUTHORIZED).send("You are not logged in or registered");
-        }
         if (req.body.user) {
             const input: LoginInput = req.body.user;
             const user = await User.findByEmail(input.email) || await User.findByUsername(input.username);
@@ -75,6 +71,8 @@ export class UsersController {
             user.followers = undefined;
             user.following = undefined;
             return res.status(StatusCodes.ACCEPTED).json({user: user});
+        } else {
+            return res.status(StatusCodes.BAD_REQUEST).send("No body json")
         }
     }
 
