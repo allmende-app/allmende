@@ -52,7 +52,7 @@ userSchema.methods.construct = async function(input: RegisterInput) {
     this.confirmed = false;
 }
 
-userSchema.methods.hideSensible = async function() {
+userSchema.methods.hideSensibleData = async function() {
     this.password = undefined;
     this.followers = undefined;
     this.following = undefined;
