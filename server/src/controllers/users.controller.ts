@@ -162,10 +162,13 @@ export class UsersController {
             const user = await User.findByUsername(username);
             const me = await User.findById(req.session.user);
             if (user && me) {
-                me.removeUserFromFollowing(user["_id"]);
-
+                await me.removeUserFromFollowing(user);
+                await user.removeUserFromFollowers(me);
+                
                 const doc = await me.save();
+                await user.save();
                 doc.password = undefined;
+                doc.confirmed = undefined;
                 return res.status(StatusCodes.OK).json({
                     user: doc
                 });

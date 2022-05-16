@@ -81,7 +81,14 @@ userSchema.methods.addUserToFollowing = async function(user: IUserDocument) {
 
 userSchema.methods.removeUserFromFollowing = async function(user: IUserDocument) {
     const id = this._id;
-    
+    const userId = user._id.toString();
+    if (id === userId) return this.followers;
+    const _id = new mongoose.Types.ObjectId(userId);
+    if (this.following.includes(_id)) {
+        const i = this.following.indexOf(_id);
+        this.following.splice(i, 1);
+    }
+    return this.following;
 }
 
 userSchema.methods.addUserToFollowers = async function(user: IUserDocument) {
@@ -97,13 +104,15 @@ userSchema.methods.addUserToFollowers = async function(user: IUserDocument) {
 
 
 userSchema.methods.removeUserFromFollowers = async function(user: IUserDocument) {
-    if (this._id === user._id) return this.followers;
-    if (this.followers.includes(user)) {
-        const i = this.following.indexOf(user._id);
-        if (i > -1) {
-            this.following.splice(i, 1);
-        }
+    const id = this._id.toString();
+    const userId = user._id.toString();
+    if (id === userId) return this.followers;
+    const _id = new mongoose.Types.ObjectId(userId);
+    if (this.followers.includes(_id)) {
+        const i = this.followers.indexOf(_id);
+        this.followers.splice(i, 1);
     }
+    return this.followers;
 }
 
 userSchema.statics.findByEmail = async function(email: string) {
