@@ -1,5 +1,7 @@
 <template>
   <div>
+
+    <v-post></v-post>
     <v-button @click="logout" type="primary">
       Logout
     </v-button>
@@ -9,11 +11,12 @@
 
 <script setup lang="ts">
 import VButton from '@/components/VButton.vue'
+import VPost from '@/components/VPost.vue'
 import VInput from '@/components/VInput.vue'
 import SvgIcon from '@/assets/icon24/bell.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
-import axios from 'axios'
+import { backend } from '../utils';
 import { useAuthStore } from '../stores/auth';
 import router from '@/router'
 
@@ -31,7 +34,8 @@ const logout = () => {
 }
 
 // TODO das funktioniert noch nicht :(
-// axios.get("http://127.0.0.1:3000/api/posts?tag=nature", {withCredentials: true})
+// backend.client
+//   .get("http://127.0.0.1:3000/api/posts?tag=nature", {withCredentials: true})
 //   .then(response => {
 //     console.log(response);
 //   })
