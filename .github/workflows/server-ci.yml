@@ -1,10 +1,16 @@
-name: Node.js CI BACKEND
+name: Server CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths:
+      - 'server/**'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'server/**'
 
 jobs:
   build:
@@ -14,8 +20,8 @@ jobs:
         working-directory: ./server
     strategy:
       matrix:
-        node-version: [14.x, 16.x ]
-        mongodb-version: [4.2, 4.0]
+        node-version: [16.x]
+        mongodb-version: [4.2]
 
     steps:
     - name: Git checkout

@@ -7,7 +7,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: {
+        requiresAuth: false,
+      },
     },
     {
       path: '/about',
@@ -15,9 +18,36 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
-  ]
+      component: () => import('../views/AboutView.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/playground',
+      name: 'playground',
+      component: () => import('../views/Playground.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/auth/register',
+      name: 'register',
+      component: () => import('../views/Auth/Register.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/auth/login',
+      name: 'login',
+      component: () => import('../views/Auth/Login.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+  ],
 })
 
 export default router

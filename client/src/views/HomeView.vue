@@ -8,6 +8,4 @@ import TheWelcome from '@/components/TheWelcome.vue'
   </main>
 </template>
 
-<style lang="sass">
-
-</style>
+<style lang="sass"></style>

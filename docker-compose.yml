@@ -5,8 +5,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - /Users/all/logs:/var/src/allmende-server/logs
-      - /Users/all/allmende-uploads:/var/src/allmende-serer/uploads
+      - allmende:/var/src/allmende-server/logs
+      - allmende:/var/src/allmende-serer/uploads
     environment:
       MONGO_USER: admin
       MONGO_PW: password
@@ -31,5 +31,6 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - /Users/all/redis:/data
-    
+      - allmende:/data
+volumes:
+  allmende:
