@@ -20,10 +20,9 @@ import { PropType } from '@vue/runtime-core'
 const props = defineProps({
   title: {
     type: String as PropType<string>,
-    required: true
+    required: true,
   },
 })
-
 </script>
 
 <style lang="sass" scoped>
@@ -42,5 +41,4 @@ const props = defineProps({
   .center
     @include allmende.text-title-1
     align-self: center
-
 </style>

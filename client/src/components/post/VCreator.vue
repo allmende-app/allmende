@@ -1,6 +1,6 @@
 <template>
   <div class="creator">
-    <img :src="src" alt="" height="16" width="16">
+    <img :src="src" alt="" height="16" width="16" />
     <p class="name">
       {{ name }}
     </p>
@@ -8,22 +8,21 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
-import { ref } from 'vue';
+import type { PropType } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   name: {
     type: String as PropType<string>,
-    required: true
+    required: true,
   },
   userId: {
     type: Number as PropType<number>,
-    required: true
-  }
+    required: true,
+  },
 })
 
-const src = ref("/jonas.jpeg") // TODO: load from server
-
+const src = ref('/jonas.jpeg') // TODO: load from server
 </script>
 
 <style lang="sass" scoped>
@@ -36,5 +35,4 @@ const src = ref("/jonas.jpeg") // TODO: load from server
   gap: 10px
   img
     border-radius: 100%
-
 </style>
