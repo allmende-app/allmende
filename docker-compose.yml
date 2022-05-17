@@ -13,6 +13,7 @@ services:
       MONGO_HOST: mongo-db
       SECRET: allmende_super_secret
       REDIS_HOST: redis-db
+      NODE_ENV: production
     depends_on:
       - mongo-db
       - redis-db

@@ -62,7 +62,8 @@ export class UsersController {
                 // Logger.warn("User not found");
                 return res.status(StatusCodes.NOT_FOUND).send("User not found");
             }
-            if (!user.checkPassword(input.password)) {
+            const match = await user.checkPassword(input.password);
+            if (!match) {
                 // Logger.warn("Password is incorrect");
                 return res.status(StatusCodes.BAD_REQUEST).send("Password is incorrect");
             }
