@@ -5,3 +5,9 @@
 //         user?: IUser;
 //     }
 // }
+
+// declare module 'express-session' {
+//     interface SessionData {
+//       user: ObjectId;
+//     }
+// }
