@@ -15,7 +15,7 @@ const BACKEND_URL = 'http://localhost:3000/'
 
 export const backend = {
   baseURL: BACKEND_URL,
-  client: _axios.create({
+  client: _axios.create({ // TODO axios check for 401 error !
     baseURL: BACKEND_URL,
     timeout: 2000,
     withCredentials: true,
