@@ -1,5 +1,21 @@
 <template>
-  <div>
+  <div class="container">
+    <div class="post-container">
+      <v-title title="allmende">
+        <template v-slot:left>
+          <component :is="BackIcon"></component>
+        </template>
+        <template v-slot:right>
+          <component :is="CloseIcon"></component>
+        </template>
+      </v-title>
+      <v-post text="Hallo ich bin ein post">
+
+      </v-post>
+      <v-post text="Hallo ich bin ein post">
+
+      </v-post>
+    </div>
     <v-button @click="logout" type="primary"> Logout </v-button>
   </div>
 </template>
@@ -7,12 +23,15 @@
 <script setup lang="ts">
 import VButton from '@/components/VButton.vue'
 import VInput from '@/components/VInput.vue'
-import SvgIcon from '@/assets/icon24/bell.svg?component'
+import BackIcon from '@/assets/icon24/back.svg?component'
+import CloseIcon from '@/assets/icon24/close.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
 import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
 import router from '@/router'
+import VPost from '../components/post/VPost.vue'
+import VTitle from '../components/VTitle.vue'
 
 const authStore = useAuthStore()
 
@@ -23,7 +42,7 @@ const logout = () => {
       router.push('/auth/login')
     })
     .catch((error) => {
-      console.log(error) // TODO hier noch was anderes machen? wäre ja warscheinlich nen no connection error
+      console.log(error)
     })
 }
 
@@ -36,3 +55,21 @@ const logout = () => {
 //     console.log(error);
 //   })
 </script>
+
+<style lang="sass" scoped>
+.container
+  width: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: allmende.$size-medium
+
+  .post-container
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: allmende.$size-medium
+
+
+
+</style>
