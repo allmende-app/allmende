@@ -9,12 +9,8 @@
           <component :is="CloseIcon"></component>
         </template>
       </v-title>
-      <v-post text="Hallo ich bin ein post">
-
-      </v-post>
-      <v-post text="Hallo ich bin ein post">
-
-      </v-post>
+      <v-post text="Hallo ich bin ein post"> </v-post>
+      <v-post text="Hallo ich bin ein post"> </v-post>
     </div>
     <v-button @click="logout" type="primary"> Logout </v-button>
   </div>
@@ -69,7 +65,4 @@ const logout = () => {
     flex-direction: column
     align-items: center
     gap: allmende.$size-medium
-
-
-
 </style>

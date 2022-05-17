@@ -31,7 +31,7 @@ export const useAuthStore = defineStore({
         backend.client
           .post('/api/users/register', { user: registerData })
           .then((response) => {
-            console.log(response);
+            console.log(response)
 
             this.setUser(response.data.user)
             resolve(response.data)

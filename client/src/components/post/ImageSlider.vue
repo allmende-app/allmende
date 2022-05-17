@@ -5,7 +5,13 @@
     </div>
     <div class="content">
       <div class="control">
-        <span v-for="(image, index) in images" :key="index" @click="setImage(index)" class="control-button" :class="{active: (new Number(index)) == currentImage}"></span>
+        <span
+          v-for="(image, index) in images"
+          :key="index"
+          @click="setImage(index)"
+          class="control-button"
+          :class="{ active: new Number(index) == currentImage }"
+        ></span>
       </div>
       <slot></slot>
     </div>
@@ -13,20 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const images = [
-  "/birds/amsel1.jpg",
-  "/birds/amsel2.jpg",
-  "/birds/amsel3.jpg"
-]
+const images = ['/birds/amsel1.jpg', '/birds/amsel2.jpg', '/birds/amsel3.jpg']
 
 const currentImage = ref(0)
 
-const setImage = (index: number)  => {
+const setImage = (index: number) => {
   currentImage.value = index
 }
-
 </script>
 
 <style lang="sass" scoped>
@@ -80,5 +81,4 @@ const setImage = (index: number)  => {
 
         &.active
           opacity: 1
-
 </style>
