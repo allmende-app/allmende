@@ -1,0 +1,6 @@
+*.svg
+.DS_Store
+*.sass
+package.json
+package-lock.json
+public/

@@ -1,7 +1,7 @@
 import { connect, ConnectOptions } from "mongoose";
 // import { ClientClosedError, createClient } from "redis";
 import redis from "ioredis";
-import { Logger } from "../lib";
+// import { Logger } from "../lib";
 
 const MONGO_USER = process.env.NODE_ENV !== "production" ? "admin" : process.env.MONGO_USER;
 const MONGO_PW = process.env.NODE_ENV !== "production" ? "password" : process.env.MONGO_PW;
@@ -19,7 +19,10 @@ export const connectDB = async() => {
 }
 
 export const connectRedis = () => {
-    const client = redis.createClient();
-    client.on("error", Logger.error);
+    const client = new redis({
+        port: 6379,
+        host: process.env.REDIS_HOST || "localhost",
+    });
+    client.on("error", console.error);
     return client;
 }

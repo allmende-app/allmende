@@ -1,0 +1,78 @@
+//Large Screen - 993 to 1170 screen size
+@mixin screen-laptop
+  @media only screen and (max-width: 1170px)
+    @content
+
+//Medium Screen - 768 to 992 screen size
+@mixin screen-tablet
+  @media only screen and (max-width: 992px)
+    @content
+
+//Medium Screen - 575 to 767 screen size
+@mixin screen-large-phone
+  @media only screen and (max-width: 767px)
+    @content
+
+//Medium Screen - below 575 screen size
+@mixin screen-phone
+  @media only screen and (max-width: 575px)
+    @content
+
+@mixin effect-focus
+  &:focus
+    outline: 2px solid var(--border-focus)
+    outline-offset: 2px
+  // As of writing Safari doesn't support :focus-visible yet,
+  // and just ignores all rules that contain :focus-visible
+  &:focus-visible, &:focus
+    outline: none
+  &:focus-visible
+    outline: 2px solid var(--border-focus)
+    outline-offset: 2px
+
+@mixin text-title-1
+  font-size: 28px
+  line-height: 34px
+
+@mixin text-headline
+  font-size: 17px
+  line-height: 22px
+  text-: none
+  font-weight: 600
+
+@mixin text-body
+  font-size: 17px
+  line-height: 22px
+
+@mixin text-action
+  font-size: 15px
+  line-height: 20px
+  font-weight: 600
+
+@mixin text-subhead
+  font-size: 15px
+  line-height: 20px
+
+@mixin text-footnote
+  font-size: 13px
+  line-height: 18px
+
+$radius-menu: 12px
+$radius-button: 32px
+$radius-input: 4px
+$radius-checkbox: 12px
+
+$button-height: 48px
+$input-height: 56px
+
+// Spacing and sizing
+$size-xxxxsmall: 4px
+$size-xxxsmall: 8px
+$size-xxsmall: 12px
+$size-xsmall: 16px
+$size-small: 24px
+$size-medium: 32px
+$size-large: 40px
+$size-xlarge: 48px
+$size-xxlarge: 64px
+$size-huge: 80px

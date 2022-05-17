@@ -15,7 +15,7 @@ export const sessionMiddleWare = session({
     store: store,
     secret: CONFIG.secret as string,
     cookie: {
-        secure: process.env.NODE_ENV !== "production" ? false : true,
+        secure: process.env.NODE_ENV !== "production" ? false : false,
         maxAge: 1000 * 60 * 60 * 24 * 31,
     },
     saveUninitialized: true,
