@@ -31,7 +31,7 @@ Following routes are available:
 - http://localhost:PORT/api/users/login (POST)
 - http://localhost:PORT/api/users/logout (DELETE)
 - http://localhost:PORT/api/users/ (GET)
-- http://localhost:PORT/api/users/:ID (GET)
+- http://localhost:PORT/api/users/username (GET)
 #### Posts
 - http://localhost:PORT/api/posts/ (POST)
 - http://localhost:PORT/api/posts?tag=:TAG&page=:PAGE(GET)
