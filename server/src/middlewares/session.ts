@@ -8,7 +8,7 @@ export const RedisStore = connectRedisStore(session);
 export const store = new RedisStore({
     port: 6379,
     host: "127.0.0.1",
-    client: connectRedis() as any
+    client: connectRedis() as any,
 });
 
 export const sessionMiddleWare = session({
@@ -19,5 +19,5 @@ export const sessionMiddleWare = session({
         maxAge: 1000 * 60 * 60 * 24 * 31,
     },
     saveUninitialized: true,
-    resave: true
+    resave: true,
 });
