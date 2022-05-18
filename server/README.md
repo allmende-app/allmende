@@ -27,7 +27,7 @@ The other two commands will install the required dependecies for the server and 
 Locally, the application is accessible via the port "3000".
 Following routes are available:
 #### Users
-##### POST
+##### POST - Register
 - http://localhost:PORT/api/users/register
 ###### Body
 - user: Object (User)
@@ -41,7 +41,8 @@ Following routes are available:
 
 ###### Response 
 - user: Object (User without password) | 200
-##### POST
+
+##### POST - Login
 - http://localhost:PORT/api/users/login (POST)
 ###### Body
 - user: Object (User)
@@ -54,13 +55,18 @@ Following routes are available:
 
 ###### Response
 - 200
-##### DELETE
+
+##### DELETE - Logout
 - http://localhost:PORT/api/users/logout (DELETE)
-##### GET
+###### Response
+- string | 200
+
+##### GET - Get own profile
 - http://localhost:PORT/api/users/ (GET)
 ###### Response
 - user: Object (User without password) | 200
-##### GET
+
+##### GET - Get profile of user
 - http://localhost:PORT/api/users/{username} (GET)
 ###### Parameter {username}
 - type: string - username of specific user
