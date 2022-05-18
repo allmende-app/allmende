@@ -38,7 +38,7 @@ jobs:
           git_name: Linter Action
           git_email: norepy@allmende
           check_name: Client-${linter}
-          commit_message: 'Linter Fix code style issues with ${linter} for client'
+          commit_message: 'Linter - Fix code style issues with ${linter} for client'
           eslint: true
           eslint_dir: client/
           eslint_extensions: vue,js,jsx,cjs,mjs,ts,tsx,cts,mts
