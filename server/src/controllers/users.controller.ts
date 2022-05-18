@@ -111,13 +111,16 @@ export class UsersController {
         if (req.session.user) {
             const username = req.params.username;
             const user = await User.findByUsername(username);
-            user.password = undefined;
-            user.email = undefined;
-            user.confirmed = undefined;
-    
-            return res.status(StatusCodes.OK).json({
-                user: user,
-            });
+            if (user) {
+                user.password = undefined;
+                user.email = undefined;
+                user.confirmed = undefined;
+                return res.status(StatusCodes.OK).json({
+                    user: user,
+                });
+            } else {
+                return res.status(StatusCodes.NOT_FOUND).send("User not found");
+            }
         } else {
             return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
         }
