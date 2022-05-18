@@ -11,14 +11,8 @@ export class CommentsController {
                 const me = await User.findById(req.session.user);
                 const post = await Post.findById(id);
                 const sendedBody: CommentInput = req.body.comment;
-                if (!id)
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .send("No ID provided");
-                if (!post)
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .send("Post to comment not found");
+                if (!id) return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
+                if (!post) return res.status(StatusCodes.NOT_FOUND).send("Post to comment not found");
                 if (me) {
                     const { body } = sendedBody;
                     const comment = new Comment();
@@ -30,17 +24,13 @@ export class CommentsController {
                         });
                     }
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .send("No user found, already deleted?");
+                    return res.status(StatusCodes.NOT_FOUND).send("No user found, already deleted?");
                 }
             } catch (e) {
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie");
+            return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
         }
     }
 
@@ -48,17 +38,10 @@ export class CommentsController {
         if (req.session.user) {
             const id: string = req.params.id;
             const body: CommentInput = req.body.comment;
-            if (!body)
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send("Bad body request" + JSON.stringify(body));
+            if (!body) return res.status(StatusCodes.BAD_REQUEST).send("Bad body request"+JSON.stringify(body));
             if (id) {
                 try {
-                    const doc = await Comment.findCommentByIDAndEdit(
-                        id,
-                        req.session.user,
-                        body,
-                    );
+                    const doc = await Comment.findCommentByIDAndEdit(id, req.session.user, body);
                     return res.status(StatusCodes.OK).json({
                         comment: doc,
                     });
@@ -67,14 +50,10 @@ export class CommentsController {
                     return res.status(StatusCodes.UNAUTHORIZED).send(er);
                 }
             } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie");
+            return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
         }
     }
 
@@ -83,28 +62,19 @@ export class CommentsController {
             const id = req.params.id;
             if (id) {
                 try {
-                    const doc = await Comment.findCommentByIDAndDelete(
-                        id as string,
-                        req.session.user,
-                    );
+                    const doc = await Comment.findCommentByIDAndDelete(id as string, req.session.user);
                     return res.status(StatusCodes.OK).json({
                         comment: doc,
                     });
                 } catch (err) {
                     console.error(err);
-                    return res
-                        .status(StatusCodes.UNAUTHORIZED)
-                        .send("Unauthorized user");
+                    return res.status(StatusCodes.UNAUTHORIZED).send("Unauthorized user");
                 }
             } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie");
+            return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie");
         }
     }
 
@@ -118,19 +88,13 @@ export class CommentsController {
                         comments: comments,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .send("No comments found");
+                    return res.status(StatusCodes.BAD_REQUEST).send("No comments found");
                 }
             } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie provided");
+            return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie provided");
         }
     }
 
@@ -144,19 +108,13 @@ export class CommentsController {
                         comment: comment,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .send("Comment not found");
+                    return res.status(StatusCodes.NOT_FOUND).send("Comment not found");
                 }
             } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                return res.status(StatusCodes.BAD_REQUEST).send("No ID provided");
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie provided");
+            return res.status(StatusCodes.UNAUTHORIZED).send("No session cookie provided");
         }
     }
 }

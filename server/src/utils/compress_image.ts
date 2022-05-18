@@ -3,7 +3,7 @@ import fs from "fs";
 import p from "path";
 
 export function compressImage(file: Express.Multer.File) {
-    const { path, filename } = file;
+    const { path, filename, } = file;
     sharp(path)
         .jpeg({
             force: false,
@@ -22,15 +22,11 @@ export function compressImage(file: Express.Multer.File) {
                 console.error(err);
                 throw err;
             }
-            fs.writeFile(
-                p.join(process.cwd(), "/uploads", filename),
-                buffer,
-                (e) => {
-                    if (e) {
-                        console.error(e);
-                        throw e;
-                    }
-                },
-            );
+            fs.writeFile(p.join(process.cwd(), "/uploads", filename), buffer, (e) => {
+                if (e) {
+                    console.error(e);
+                    throw e;
+                }
+            });
         });
 }

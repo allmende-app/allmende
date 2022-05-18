@@ -5,7 +5,7 @@ import { middlewareCors, sessionMiddleWare } from "./middlewares";
 const app = Express();
 app.use(Express.json());
 app.use(middlewareCors());
-app.use(Express.urlencoded({ extended: true }));
+app.use(Express.urlencoded({extended: true}));
 // app.use(morganMiddleware);
 app.use(sessionMiddleWare);
 app.use(Routes);
