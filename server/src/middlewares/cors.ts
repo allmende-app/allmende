@@ -8,20 +8,18 @@ export const createWhiteList = () => {
             whiteList.push(url);
         }
     } else {
-        whiteList = [
-            "http://"
-        ];
+        whiteList = ["http://"];
     }
     return whiteList;
-}
+};
 
 export const middlewareCors = () => {
     const whiteList = createWhiteList();
     return cors({
         credentials: true,
         origin: (origin: any, callback) => {
-            // cases for frontend 
-           callback(null,true)
-        }
+            // cases for frontend
+            callback(null, true);
+        },
     });
-}
+};

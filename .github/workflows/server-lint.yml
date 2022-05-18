@@ -1,16 +1,16 @@
-name: Client Linting
+name: Server Linting
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'client/**'
+      - 'server/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'client/**'
+      - 'server/**'
 
 jobs:
   run-linters:
@@ -27,20 +27,20 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install client dependencies
-        working-directory: ./client
+      - name: Install server dependencies
+        working-directory: ./server
         run: npm ci
 
-      - name: Run linters for client
+      - name: Run linters for server
         uses: wearerequired/lint-action@v2
         with:
           auto_fix: true
           git_name: Linter Action
           git_email: norepy@allmende
-          check_name: Client-${linter}
-          commit_message: 'Linter - Fix code style issues with ${linter} for client'
+          check_name: Server-${linter}
+          commit_message: 'Linter - Fix code style issues with ${linter} for server'
           eslint: true
-          eslint_dir: client/
-          eslint_extensions: vue,js,jsx,cjs,mjs,ts,tsx,cts,mts
+          eslint_dir: server/
+          eslint_extensions: js,ts
           prettier: true
-          prettier_dir: client/
+          prettier_dir: server/
