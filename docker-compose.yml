@@ -12,8 +12,8 @@ services:
       MONGO_PW: password
       MONGO_HOST: mongo-db
       SECRET: allmende_super_secret
-      NODE_ENV: production
       REDIS_HOST: redis-db
+      NODE_ENV: production
     depends_on:
       - mongo-db
       - redis-db
@@ -25,6 +25,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - allmende:/data/db
   redis-db:
     image: redis
     restart: always

@@ -31,8 +31,9 @@ export const useAuthStore = defineStore({
         backend.client
           .post('/api/users/register', { user: registerData })
           .then((response) => {
+            console.log(response)
+
             this.setUser(response.data.user)
-            this.token = 'changeMe' // TODO change this to the cookie send by the register response
             resolve(response.data)
           })
           .catch((error) => {
@@ -47,7 +48,6 @@ export const useAuthStore = defineStore({
           .post('/api/users/login', { user: credentials })
           .then((response) => {
             this.setUser(response.data.user)
-            this.token = 'changeME' // TODO: see register()
             resolve(response.data)
           })
           .catch((error) => {
@@ -61,7 +61,6 @@ export const useAuthStore = defineStore({
           .delete('/api/users/logout')
           .then((response) => {
             this.user = null
-            this.token = '' // TODO remove auth cookie here!!!
             resolve(response.data)
           })
           .catch((error) => {

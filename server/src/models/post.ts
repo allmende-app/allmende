@@ -6,7 +6,7 @@ export interface IPost {
     sightings?: ObjectId[];
     author?: ObjectId;
     likes?: ObjectId[];
-    comments?: ObjectId[];
+    // comments?: ObjectId[];
     tags?: string[];
 }
 
@@ -14,8 +14,8 @@ export interface IPostDocument extends IPost, Document {
     addLike: (user: ObjectId) => Promise<void>;
     removeLike: (user: ObjectId) => Promise<void>;
 
-    addComment: (comment: ObjectId) => Promise<void>;
-    removeComment: (comment: ObjectId) => Promise<void>;
+    // addComment: (comment: ObjectId) => Promise<void>;
+    // removeComment: (comment: ObjectId) => Promise<void>;
 
     construct: (post: PostInput, user: ObjectId) => Promise<IPostDocument>;
     changeProperties: (post: PostInput) => Promise<void>;
@@ -31,7 +31,7 @@ export const postSchema = new Schema<IPostDocument>({
     sightings: [{type: Schema.Types.ObjectId}],
     author: { type: Schema.Types.ObjectId, required: true },
     likes: [{ type: Schema.Types.ObjectId }],
-    comments: [{type: Schema.Types.ObjectId}],
+    // comments: [{type: Schema.Types.ObjectId}],
     tags: [{ type: Schema.Types.String }],
 }, {
     validateBeforeSave: true,

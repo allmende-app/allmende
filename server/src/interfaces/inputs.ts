@@ -6,6 +6,7 @@ export interface RegisterInput {
 }
 
 export interface LoginInput {
+    username: string;
     email: string;
     password: string;
 }
@@ -13,4 +14,8 @@ export interface LoginInput {
 export interface PostInput {
     text: string;
     tags: string[];
+}
+
+export interface CommentInput {
+    body: string;
 }
