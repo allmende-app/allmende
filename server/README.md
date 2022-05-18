@@ -23,6 +23,9 @@ npm run dev
 The first command will starts two databases containers (mongo and redis) with their omitted ports and environment variables.
 The other two commands will install the required dependecies for the server and starts the server locally. The locally started server is equipped with nodemon, which means that it has a hot-reload function. Whenever you change code, the server will be restarted automatically.
 
+### Postman documentation for allmende requests
+
+- https://documenter.getpostman.com/view/9128290/Uyxkmm7v
 ## Routes
 Locally, the application is accessible via the port "3000".
 Following routes are available:

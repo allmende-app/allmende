@@ -83,7 +83,7 @@ export class UsersController {
                     // Logger.error(err);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
                 }
-                return res.status(StatusCodes.OK).send("Session destroyed");
+                return res.status(StatusCodes.OK).send("logged out");
             });
         } else {
             return res.status(StatusCodes.BAD_REQUEST).send("Not logged in");
