@@ -192,7 +192,7 @@ export class UsersController {
         }
     }
 
-    // TODO: delete profile and edit profile controller
+  
     static async uploadAvatar(req: Request, res: Response) {
         if (req.session.user) {
             const file = req.file;
@@ -215,4 +215,8 @@ export class UsersController {
             return res.status(StatusCodes.UNAUTHORIZED).send("Not registered or logged in");
         }
     }
+
+      // TODO: delete profile
+
+      // TODO: edit profile controller
 }
