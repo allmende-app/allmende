@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Post, Sighting } from "../models";
 import { PostInput } from "../interfaces";
@@ -22,22 +22,21 @@ export class PostsController {
 
     static async createPostController(req: Request, res: Response) {
         if (req.session && req.body) {
-            const files: any = req.files;
-            const parent = JSON.parse(req.body.post);
-            const body: PostInput = parent.post;
-            // const filesMeta = parent.filesMeta;
-            const userId = req.session.user;
-    
             try {
-                if (files && files.length > 0 && userId) {
-                    const sightingsPromises = this.createSightings(files);
-                    const objectIdPromises = await sightingsPromises;
-                    const objectIds = await Promise.all(objectIdPromises);
-                    const sightingsIds = objectIds.length > 0 ? objectIds : [];
+                const files: any = req.files;
+                const parent = JSON.parse(req.body.post);
+                const body: PostInput = parent.post;
+                // const filesMeta = parent.filesMeta
+                const userId = req.session.user;
+                if (userId) {
+                    // const sightingsPromises = this.createSightings(files);
+                    // const objectIdPromises = await sightingsPromises;
+                    // const objectIds = await Promise.all(objectIdPromises);
+                    // const sightingsIds = objectIds.length > 0 ? objectIds : [];
                     
                     const post = new Post();
                     await post.construct(body, userId);
-                    post.sightings = sightingsIds;
+                    // post.sightings = sightingsIds;
                     const doc = await post.save();
     
                     // Logger.info(`Post created by ${userId}, -> ${doc["_id"]}`);
@@ -46,6 +45,7 @@ export class PostsController {
                     });
                 }
             } catch (e) {
+                console.error(e)
                 // Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
             }
