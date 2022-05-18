@@ -5,12 +5,13 @@
 `sudo apt update` <br/>
 `sudo apt install python3` 
 
-2.  Then install python environment in the 'ML' folder <br />
+2.  Then create the virtual environment in the 'ML' folder <br />
     `cd allmende/ml` <br/>
-    `pip install -r requirements.txt`
+    `python3 -m venv $PWD/venv`
 
-3.  Activate the environment: <br/>
-`. venv/bin/activate`
+3.  Activate the environment and install the dependencies: <br/>
+    `. venv/bin/activate`    
+    `pip install -r requirements.txt`
 
 4. And start your IDE with launch command<br/>
 
