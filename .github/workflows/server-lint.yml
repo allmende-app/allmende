@@ -27,11 +27,11 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install client dependencies
-        working-directory: ./client
+      - name: Install server dependencies
+        working-directory: ./server
         run: npm ci
 
-      - name: Run linters for client
+      - name: Run linters for server
         uses: wearerequired/lint-action@v2
         with:
           auto_fix: true
