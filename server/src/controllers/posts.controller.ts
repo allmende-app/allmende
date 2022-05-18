@@ -28,7 +28,7 @@ export class PostsController {
                 const body: PostInput = parent.post;
                 // const filesMeta = parent.filesMeta
                 const userId = req.session.user;
-                if (files && files.length > 0 && userId) {
+                if (userId) {
                     // const sightingsPromises = this.createSightings(files);
                     // const objectIdPromises = await sightingsPromises;
                     // const objectIds = await Promise.all(objectIdPromises);
