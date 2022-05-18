@@ -21,14 +21,7 @@ export const middlewareCors = () => {
         credentials: true,
         origin: (origin: any, callback) => {
             // cases for frontend 
-            if (whiteList.includes(origin)) {
-                callback(null, true);
-            // case for POSTMAN
-            } else if (process.env.NODE_ENV !== "production") {
-                callback(null, true);
-            } else {
-                callback(new Error("not whitelisted"));
-            }
+           callback(null,true)
         }
     });
 }
