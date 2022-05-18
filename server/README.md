@@ -31,23 +31,27 @@ Following routes are available:
 - http://localhost:PORT/api/users/register
 ###### Body
 - user: Object (User)
+
 | Property | Type  | required |
 | -------  | ----  | ---      |
 | username | string| yes      |
 | email    | string| yes      |
 | password | string| yes      |
 | confirmPassword| string| yes|
+
 ###### Response 
 - user: Object (User without password) | 200
 ##### POST
 - http://localhost:PORT/api/users/login (POST)
 ###### Body
 - user: Object (User)
+
 | Property | Type  | required |
 | -------  | ----  | ---      |
 | username | string| yes      |
 | email    | string| optional |
 | password | string| yes      |
+
 ###### Response
 - 200
 ##### DELETE
