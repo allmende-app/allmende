@@ -23,13 +23,13 @@ npm run dev
 The first command will starts two databases containers (mongo and redis) with their omitted ports and environment variables.
 The other two commands will install the required dependecies for the server and starts the server locally. The locally started server is equipped with nodemon, which means that it has a hot-reload function. Whenever you change code, the server will be restarted automatically.
 
-### Routes
+## Routes
 Locally, the application is accessible via the port "3000".
 Following routes are available:
-#### Users
-##### POST - Register
+### Users
+#### POST - Register
 - http://localhost:PORT/api/users/register
-###### Body
+##### Body
 - user: Object (User)
 
 | Property | Type  | required |
@@ -39,12 +39,12 @@ Following routes are available:
 | password | string| yes      |
 | confirmPassword| string| yes|
 
-###### Response 
+##### Response 
 - user: Object (User without password) | 200
 
-##### POST - Login
+#### POST - Login
 - http://localhost:PORT/api/users/login (POST)
-###### Body
+##### Body
 - user: Object (User)
 
 | Property | Type  | required |
@@ -53,31 +53,31 @@ Following routes are available:
 | email    | string| optional |
 | password | string| yes      |
 
-###### Response
+##### Response
 - 200
 
-##### DELETE - Logout
+#### DELETE - Logout
 - http://localhost:PORT/api/users/logout (DELETE)
-###### Response
+##### Response
 - string | 200
 
-##### GET - Get own profile
+#### GET - Get own profile
 - http://localhost:PORT/api/users/ (GET)
-###### Response
+##### Response
 - user: Object (User without password) | 200
 
-##### GET - Get profile of user
+#### GET - Get profile of user
 - http://localhost:PORT/api/users/{username} (GET)
-###### Parameter {username}
+##### Parameter {username}
 - type: string - username of specific user
-###### Response
+##### Response
 - user: Object (User without password) | 200
 
-#### Posts
+### Posts
 - http://localhost:PORT/api/posts/ (POST)
 - http://localhost:PORT/api/posts?tag=:TAG&page=:PAGE(GET)
 
-#### Comments
+### Comments
 - http://localhost:PORT/api/comments/:id (POST) - create a comment for a specific post
 - http://localhost:PORT/api/comments/:id (GET) - get a list of comments by a post id
 - http://localhost:PORT/api/comments/:id (DELETE) - delete a comment by its id
