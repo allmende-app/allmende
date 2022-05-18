@@ -5,17 +5,15 @@
 `sudo apt update` <br/>
 `sudo apt install python3` 
 
-2.  Then create a new python environment in the 'ML' folder <br />
+2.  Then install python environment in the 'ML' folder <br />
     `cd allmende/ml` <br/>
-    `python3 -m venv venv`
+    `pip install -r requirements.txt`
 
 3.  Activate the environment: <br/>
 `. venv/bin/activate`
 
-4. And install flask and other packages via pip:<br/>
-`pip install flask` <br/>
-`pip install tensorflow` <br/>
-`pip install torch`
+4. And start your IDE with launch command<br/>
+
 
 **Important:** If you get error messages for the imports in the code,check that you activate your created environment. Please check or google how to do it with your prefered IDE. (Or ask Stefan)
 
@@ -29,6 +27,6 @@ Use terminal again:
 3. `flask run`
 4. The api should start on http://127.0.0.1:5000/ 
 
-Use Programs like Postman for debugging and testing
+Use Programs like Postman for debugging and testing.
 
 
