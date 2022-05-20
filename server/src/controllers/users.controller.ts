@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { LoginInput, RegisterInput } from "../interfaces";
+import { LoginInput, RegisterInput, ProfileEditInput } from "../interfaces";
 import { User } from "../models";
 import { ObjectId } from "mongoose";
 import EmailValidator from "email-validator";
@@ -12,6 +12,28 @@ declare module "express-session" {
         user: ObjectId;
     }
 }
+
+function passwordCheck(password: string, confirmPassword: string, res: Response) {
+    const strength: Result<string> = passwordStrength(password);
+
+    switch (strength.id) {
+        case 0: 
+            return res.status(StatusCodes.BAD_REQUEST)
+                .send("Password is weak. Use lowercases, uppercases, symbols and numbers short and weak");
+        case 1: 
+            return res.status(StatusCodes.BAD_REQUEST)
+                .send("Password is weak. Use lowercases, uppercases, symbols and numbers");
+        case 2:
+            break;
+        case 3:
+            break;
+    }
+    if(password !== confirmPassword){
+        return res.status(StatusCodes.BAD_REQUEST)
+                .send("Password and confirm password are not the same")
+    }
+}
+
 export class UsersController {
     static async registerController(req: Request, res: Response) {
         if (req.body.user) {
@@ -38,24 +60,9 @@ export class UsersController {
                     .status(StatusCodes.BAD_REQUEST)
                     .send("Username already exists!");
             }
-            const strength: Result<string> = passwordStrength(input.password);
-
-            switch (strength.id) {
-                case 0: 
-                    return res.status(StatusCodes.BAD_REQUEST)
-                        .send("Password is weak. Use lowercases, uppercases, symbols and numbers short and weak");
-                case 1: 
-                    return res.status(StatusCodes.BAD_REQUEST)
-                        .send("Password is weak. Use lowercases, uppercases, symbols and numbers");
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
-            if(input.password !== input.confirmPassword){
-                return res.status(StatusCodes.BAD_REQUEST)
-                        .send("Password and confirm password are not the same")
-            }
+           
+            const r = passwordCheck(input.password, input.confirmPassword, res);
+            if (r) return r;
             
             try {       
                 const user = new User();
@@ -271,7 +278,63 @@ export class UsersController {
         }
     }
 
-    // TODO: delete profile
+    static async deleteProfile(req: Request, res: Response) {
+        if (req.session.user) {
+            const user = await User.findById(req.session.user);
+            if (user) {
+                await user.remove();
+                return res.status(StatusCodes.OK).send("deleted");
+            } else {
+                return res.status(StatusCodes.NOT_FOUND).send("Not found");
+            }
+        } else {
+            return res
+                .status(StatusCodes.UNAUTHORIZED)
+                .send("Not registered or logged in");
+        }
+    }
 
-    // TODO: edit profile controller
+    static async editProfileController(req: Request, res: Response) {
+        if (req.session.user) {
+            const user = await User.findById(req.session.user);
+            const input: ProfileEditInput = req.body.user;
+            if (user) {
+                if (input.username) {
+                    const anotherUser = await User.findByUsername(input.username);
+                    if (anotherUser) {
+                        return res.status(StatusCodes.BAD_REQUEST)
+                            .send("Username already exists");
+                    }
+                    user.username = input.username;
+                    await user.save();
+                }
+                if (input.bio) {
+                    user.bio = input.bio;
+                    await user.save();
+                }
+                if (input.oldPassword) {
+                    if (input.newPassword && input.confirmNewPassword) {
+                        if (await user.checkPassword(input.oldPassword)) {
+                            const r = passwordCheck(input.newPassword, input.confirmNewPassword, res);
+                            if (r) return r;
+                            await user.save();
+                        } else {
+                            return res.status(StatusCodes.BAD_REQUEST)
+                                .send("Wrong password");
+                        }
+                    } else {
+                        return res.status(StatusCodes.BAD_REQUEST)
+                            .send("No new password");
+                    }
+                }
+                return res.status(StatusCodes.OK).send("Profile edit successful");
+            } else {
+                return res.status(StatusCodes.NOT_FOUND).send("Not found");
+            }
+        } else {
+            return res
+                .status(StatusCodes.UNAUTHORIZED)
+                .send("No session cookie");
+        }
+    }
 }
