@@ -88,18 +88,24 @@ export class UsersController {
     static async loginController(req: Request, res: Response) {
         if (req.body.user) {
             const input: LoginInput = req.body.user;
-            const user = await User.findByEmail(input.email) || await User.findByUsername(input.username);
+            const user =
+                (await User.findByEmail(input.email)) ||
+                (await User.findByUsername(input.username));
             const userEmail = await User.findByEmail(input.email);
             const userName = await User.findByUsername(input.username);
             if (!user) {
-                if(!userEmail){
-                    return res.status(StatusCodes.NOT_FOUND).send("Email not found");
+                if (!userEmail) {
+                    return res
+                        .status(StatusCodes.NOT_FOUND)
+                        .send("Email not found");
                 }
                 if (!userName) {
-                    return res.status(StatusCodes.NOT_FOUND).send("Username not found");
+                    return res
+                        .status(StatusCodes.NOT_FOUND)
+                        .send("Username not found");
                 }
             }
-       
+
             const match = await user.checkPassword(input.password);
             if (!match) {
                 // Logger.warn("Password is incorrect");
