@@ -9,6 +9,6 @@ const router = Router();
 router.use("/users", usersRoute);
 router.use("/posts", postsRoute);
 router.use("/comments", commentsRoute);
-router.use("/image", imageRoute)
+router.use("/image", imageRoute);
 
 export = router;
