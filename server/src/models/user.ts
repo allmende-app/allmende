@@ -11,6 +11,7 @@ export interface IUser {
     following?: ObjectId[];
     followers?: ObjectId[];
     confirmed?: boolean;
+    bio?: string;
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -40,6 +41,7 @@ export const userSchema = new Schema<IUserDocument>(
         following: [{ type: mongoose.Types.ObjectId, ref: "User" }],
         followers: [{ type: mongoose.Types.ObjectId, ref: "User" }],
         confirmed: { type: Boolean },
+        bio: { type: String },
     },
     {
         timestamps: true,
