@@ -31,11 +31,13 @@ export class UsersController {
                 // Logger.info(`Username already exists: ${input.username}`);
                 return res.status(StatusCodes.BAD_REQUEST).send("Username already exists!");
             }
-            if (input.password.length < 8 && input.password !== input.confirmPassword) {
+            if (input.password.length < 8 ) {
                 // Logger.warn(`Length of password is less than 8 and is not the same as confirmation password`);
-                return res.status(StatusCodes.BAD_REQUEST).send("Length of password is less than 8 and is not the same as confirmation password");
+                return res.status(StatusCodes.BAD_REQUEST).send("Length of password is less than 8");
             }
-    
+            if (input.password !== input.confirmPassword) {
+                return res.status(StatusCodes.BAD_REQUEST).send("Password is not the same as confirmation password");
+            }    
             try {       
                 const user = new User();
                 await user.construct(input);
