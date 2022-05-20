@@ -37,19 +37,14 @@ export class UsersController {
                     .status(StatusCodes.BAD_REQUEST)
                     .send("Username already exists!");
             }
-            if (
-                input.password.length < 8 &&
-                input.password !== input.confirmPassword
-            ) {
+            if (input.password.length < 8 ) {
                 // Logger.warn(`Length of password is less than 8 and is not the same as confirmation password`);
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send(
-                        "Length of password is less than 8 and is not the same as confirmation password",
-                    );
+                return res.status(StatusCodes.BAD_REQUEST).send("Length of password is less than 8");
             }
-
-            try {
+            if (input.password !== input.confirmPassword) {
+                return res.status(StatusCodes.BAD_REQUEST).send("Password is not the same as confirmation password");
+            }    
+            try {       
                 const user = new User();
                 await user.construct(input);
 
@@ -73,13 +68,18 @@ export class UsersController {
     static async loginController(req: Request, res: Response) {
         if (req.body.user) {
             const input: LoginInput = req.body.user;
-            const user =
-                (await User.findByEmail(input.email)) ||
-                (await User.findByUsername(input.username));
+            const user = await User.findByEmail(input.email) || await User.findByUsername(input.username);
+            const userEmail = await User.findByEmail(input.email);
+            const userName = await User.findByUsername(input.username);
             if (!user) {
-                // Logger.warn("User not found");
-                return res.status(StatusCodes.NOT_FOUND).send("User not found");
+                if(!userEmail){
+                    return res.status(StatusCodes.NOT_FOUND).send("Email not found");
+                }
+                if (!userName) {
+                    return res.status(StatusCodes.NOT_FOUND).send("Username not found");
+                }
             }
+       
             const match = await user.checkPassword(input.password);
             if (!match) {
                 // Logger.warn("Password is incorrect");
