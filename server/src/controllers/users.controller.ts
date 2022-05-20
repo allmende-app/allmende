@@ -5,6 +5,7 @@ import { User } from "../models";
 import { ObjectId } from "mongoose";
 import EmailValidator from "email-validator";
 import { compressImage } from "../utils";
+import { passwordStrength, Result } from 'check-password-strength'
 
 declare module "express-session" {
     interface SessionData {
@@ -37,13 +38,25 @@ export class UsersController {
                     .status(StatusCodes.BAD_REQUEST)
                     .send("Username already exists!");
             }
-            if (input.password.length < 8 ) {
-                // Logger.warn(`Length of password is less than 8 and is not the same as confirmation password`);
-                return res.status(StatusCodes.BAD_REQUEST).send("Length of password is less than 8");
+            const strength: Result<string> = passwordStrength(input.password);
+
+            switch (strength.id) {
+                case 0: 
+                    return res.status(StatusCodes.BAD_REQUEST)
+                        .send("Password is weak. Use lowercases, uppercases, symbols and numbers short and weak");
+                case 1: 
+                    return res.status(StatusCodes.BAD_REQUEST)
+                        .send("Password is weak. Use lowercases, uppercases, symbols and numbers");
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
-            if (input.password !== input.confirmPassword) {
-                return res.status(StatusCodes.BAD_REQUEST).send("Password is not the same as confirmation password");
-            }    
+            if(input.password !== input.confirmPassword){
+                return res.status(StatusCodes.BAD_REQUEST)
+                        .send("Password and confirm password are not the same")
+            }
+            
             try {       
                 const user = new User();
                 await user.construct(input);
