@@ -5,7 +5,7 @@ import { User } from "../models";
 import { ObjectId } from "mongoose";
 import EmailValidator from "email-validator";
 import { compressImage } from "../utils";
-import { passwordStrength, Result } from 'check-password-strength'
+import { passwordStrength, Result } from "check-password-strength";
 
 declare module "express-session" {
     interface SessionData {
@@ -13,24 +13,35 @@ declare module "express-session" {
     }
 }
 
-function passwordCheck(password: string, confirmPassword: string, res: Response) {
+function passwordCheck(
+    password: string,
+    confirmPassword: string,
+    res: Response,
+) {
     const strength: Result<string> = passwordStrength(password);
 
     switch (strength.id) {
-        case 0: 
-            return res.status(StatusCodes.BAD_REQUEST)
-                .send("Password is weak. Use lowercases, uppercases, symbols and numbers short and weak");
-        case 1: 
-            return res.status(StatusCodes.BAD_REQUEST)
-                .send("Password is weak. Use lowercases, uppercases, symbols and numbers");
+        case 0:
+            return res
+                .status(StatusCodes.BAD_REQUEST)
+                .send(
+                    "Password is weak. Use lowercases, uppercases, symbols and numbers short and weak",
+                );
+        case 1:
+            return res
+                .status(StatusCodes.BAD_REQUEST)
+                .send(
+                    "Password is weak. Use lowercases, uppercases, symbols and numbers",
+                );
         case 2:
             break;
         case 3:
             break;
     }
-    if(password !== confirmPassword){
-        return res.status(StatusCodes.BAD_REQUEST)
-                .send("Password and confirm password are not the same")
+    if (password !== confirmPassword) {
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .send("Password and confirm password are not the same");
     }
 }
 
@@ -60,11 +71,11 @@ export class UsersController {
                     .status(StatusCodes.BAD_REQUEST)
                     .send("Username already exists!");
             }
-           
+
             const r = passwordCheck(input.password, input.confirmPassword, res);
             if (r) return r;
-            
-            try {       
+
+            try {
                 const user = new User();
                 await user.construct(input);
 
@@ -306,9 +317,12 @@ export class UsersController {
             const input: ProfileEditInput = req.body.user;
             if (user) {
                 if (input.username) {
-                    const anotherUser = await User.findByUsername(input.username);
+                    const anotherUser = await User.findByUsername(
+                        input.username,
+                    );
                     if (anotherUser) {
-                        return res.status(StatusCodes.BAD_REQUEST)
+                        return res
+                            .status(StatusCodes.BAD_REQUEST)
                             .send("Username already exists");
                     }
                     user.username = input.username;
@@ -321,19 +335,27 @@ export class UsersController {
                 if (input.oldPassword) {
                     if (input.newPassword && input.confirmNewPassword) {
                         if (await user.checkPassword(input.oldPassword)) {
-                            const r = passwordCheck(input.newPassword, input.confirmNewPassword, res);
+                            const r = passwordCheck(
+                                input.newPassword,
+                                input.confirmNewPassword,
+                                res,
+                            );
                             if (r) return r;
                             await user.save();
                         } else {
-                            return res.status(StatusCodes.BAD_REQUEST)
+                            return res
+                                .status(StatusCodes.BAD_REQUEST)
                                 .send("Wrong password");
                         }
                     } else {
-                        return res.status(StatusCodes.BAD_REQUEST)
+                        return res
+                            .status(StatusCodes.BAD_REQUEST)
                             .send("No new password");
                     }
                 }
-                return res.status(StatusCodes.OK).send("Profile edit successful");
+                return res
+                    .status(StatusCodes.OK)
+                    .send("Profile edit successful");
             } else {
                 return res.status(StatusCodes.NOT_FOUND).send("Not found");
             }
