@@ -20,5 +20,7 @@ router.put(
     upload.single("avatar"),
     UsersController.uploadAvatar,
 );
+router.put("/", UsersController.editProfileController);
+router.delete("/", UsersController.deleteProfile);
 
 export = router;

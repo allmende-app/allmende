@@ -19,3 +19,11 @@ export interface PostInput {
 export interface CommentInput {
     body: string;
 }
+
+export interface ProfileEditInput {
+    username?: string;
+    bio?: string;
+    oldPassword?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
+}
