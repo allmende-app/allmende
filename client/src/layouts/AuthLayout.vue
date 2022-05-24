@@ -36,6 +36,7 @@ import LogoSvg from '@/assets/logo.svg?component'
   width: 100%
 
   .headline
+    @include allmende.text-navbar
     width: 100%
     padding: 15vh 0
     text-align: center
