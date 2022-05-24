@@ -64,6 +64,8 @@ button
   &.secondary
     color: var(--text-primary)
     background: var(--action-secondary)
+    &.icon
+      background: unset
     &:hover
       background: var(--action-secondary-hover)
     &:active

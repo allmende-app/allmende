@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,6 +9,15 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue'),
       meta: {
         requiresAuth: false, // TODO set to true later
+      },
+    },
+    {
+      path: '/new',
+      name: 'create-post',
+      component: () => import('../views/CreatePost.vue'),
+      meta: {
+        requiresAuth: false, // TODO set to true later
+        hideNavigation: true,
       },
     },
     {
@@ -26,6 +34,7 @@ const router = createRouter({
       component: () => import('../views/Auth/Register.vue'),
       meta: {
         requiresAuth: false,
+        hideNavigation: true,
       },
     },
     {
@@ -34,6 +43,7 @@ const router = createRouter({
       component: () => import('../views/Auth/Login.vue'),
       meta: {
         requiresAuth: false,
+        hideNavigation: true,
       },
     },
   ],
