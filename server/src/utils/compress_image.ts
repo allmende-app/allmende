@@ -7,20 +7,24 @@ export interface ImageInfo extends sharp.OutputInfo {
     filename: string;
 }
 
+/**
+ * Compresses the image, uses the multer middleware by default. Uploaded file be uploaded automatically.
+ * @param file
+ */
 export function compressImage(file: Express.Multer.File) {
     const { path: p, filename } = file;
     sharp(p)
         .jpeg({
             force: false,
-            quality: 30,
+            quality: 15,
         })
         .png({
             force: false,
-            quality: 40,
+            quality: 15,
         })
         .webp({
             force: false,
-            quality: 40,
+            quality: 20,
         })
         .toBuffer((err, buffer) => {
             if (err) {
@@ -40,6 +44,11 @@ export function compressImage(file: Express.Multer.File) {
         });
 }
 
+/**
+ * Returns a promise with the output info of the compressed image. Image will be stored on the machine.
+ * @param buffer - Buffer
+ * @param mimetype - Type of image
+ */
 export const resolveToFileInfoOutput = async (buffer: Buffer, mimetype: string) => {
     let type = "";
     const id = uuid4();
@@ -55,22 +64,21 @@ export const resolveToFileInfoOutput = async (buffer: Buffer, mimetype: string) 
         sharp(buffer)
             .jpeg({
                 force: false,
-                quality: 30,
+                quality: 15,
             })
             .png({
                 force: false,
-                quality: 40,
+                quality: 15,
             })
             .webp({
                 force: false,
-                quality: 40,
+                quality: 20,
             })
             .toFile(path.join(process.cwd(), "uploads", `${id}.${type}`), (err, info) => {
                 if (err) {
                     console.error(err)
                     reject(err);
                 }
-                console.log(info);
                 const res = {
                     ...info,
                     filename: `${id}.${type}`
@@ -80,20 +88,24 @@ export const resolveToFileInfoOutput = async (buffer: Buffer, mimetype: string) 
     })
 }
 
+/**
+ * Returns a promise with the buffer. Compressed the image.
+ * @param buffer
+ */
 export const resolveToImageBuffer = async (buffer: Buffer) => {
     return new Promise<Buffer>((resolve, reject) => {
         sharp(buffer)
             .jpeg({
                 force: false,
-                quality: 30,
+                quality: 15,
             })
             .png({
                 force: false,
-                quality: 40,
+                quality: 15,
             })
             .webp({
                 force: false,
-                quality: 40,
+                quality: 15,
             }).toBuffer((err, newBuffer) => {
                 if (err) {
                     console.error(err);

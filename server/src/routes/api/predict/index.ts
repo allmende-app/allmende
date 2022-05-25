@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { PredictControlller } from "../../../controllers/predict.controller";
+import { PredictController } from "../../../controllers/predict.controller";
 import { upload } from "../../../middlewares";
 import multer from "multer";
 
 const router = Router();
 
-router.get("/", multer().any() ,PredictControlller.getPredictions);
+router.post("/", multer().any() ,PredictController.getPredictions);
 
 export = router;

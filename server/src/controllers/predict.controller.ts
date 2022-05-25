@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import FormData from "form-data";
 import { StatusCodes } from "http-status-codes";
 import axios from "axios";
-import { resolveToImageBuffer } from "../utils";
+import {resolveToFileInfoOutput, resolveToImageBuffer} from "../utils";
+import path from "path";
+import fs from "fs";
 
-export class PredictControlller {
+export class PredictController {
     static async getPredictions(req: Request, res: Response) {
         try {
             if (req.session.user) {
@@ -21,18 +23,31 @@ export class PredictControlller {
                         const opt = {
                             method: "post",
                             data: formData,
-                            url: "http://127.0.0.1:5000/scan",
+                            url: "http://localhost:5000/scan",
                             headers: {
                                 ...formData.getHeaders(),
                             },
                         }
                         return axios(opt);
                     });
-    
+
                     const results = await Promise.all(requests);
-                    console.log(results)
+                    const predictions = results.map(r => {
+                        if (r.status !== 200) throw new Error("Prediction Error - 500");
+                        return r.data.predictions;
+                    });
+                    const returnedPredictions = images.map((img, i) => {
+                        const predictionForFile = predictions[i];
+                        const fileInfo = {
+                            originalname: img.originalname,
+                            mimetype: img.mimetype,
+                            fieldname: img.fieldname,
+                            result: predictionForFile,
+                        }
+                        return fileInfo;
+                    });
                     return res.status(StatusCodes.OK).json({
-                        predictions: [],
+                        predictions: returnedPredictions,
                     });
                 } else {
                     return res.status(StatusCodes.BAD_REQUEST).send("No images attached");
