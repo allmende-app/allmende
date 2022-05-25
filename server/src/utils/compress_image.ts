@@ -49,15 +49,15 @@ export function compressImage(file: Express.Multer.File) {
  * @param buffer - Buffer
  * @param mimetype - Type of image
  */
-export const resolveToFileInfoOutput = async (buffer: Buffer, mimetype: string) => {
+export const resolveToFileInfoOutput = async (
+    buffer: Buffer,
+    mimetype: string,
+) => {
     let type = "";
     const id = uuid4();
-    if (mimetype.toLowerCase().includes("jpeg"))
-        type = "jpeg";
-    if (mimetype.toLowerCase().includes("jpg"))
-        type = "jpg";
-    if (mimetype.toLowerCase().includes("png"))
-        type = "png";
+    if (mimetype.toLowerCase().includes("jpeg")) type = "jpeg";
+    if (mimetype.toLowerCase().includes("jpg")) type = "jpg";
+    if (mimetype.toLowerCase().includes("png")) type = "png";
 
     // eslint-disable-next-line @typescript-eslint/ban-types
     return new Promise<ImageInfo>((resolve, reject) => {
@@ -74,19 +74,22 @@ export const resolveToFileInfoOutput = async (buffer: Buffer, mimetype: string) 
                 force: false,
                 quality: 20,
             })
-            .toFile(path.join(process.cwd(), "uploads", `${id}.${type}`), (err, info) => {
-                if (err) {
-                    console.error(err)
-                    reject(err);
-                }
-                const res = {
-                    ...info,
-                    filename: `${id}.${type}`
-                }
-                resolve(res);
-            });
-    })
-}
+            .toFile(
+                path.join(process.cwd(), "uploads", `${id}.${type}`),
+                (err, info) => {
+                    if (err) {
+                        console.error(err);
+                        reject(err);
+                    }
+                    const res = {
+                        ...info,
+                        filename: `${id}.${type}`,
+                    };
+                    resolve(res);
+                },
+            );
+    });
+};
 
 /**
  * Returns a promise with the buffer. Compressed the image.
@@ -106,7 +109,8 @@ export const resolveToImageBuffer = async (buffer: Buffer) => {
             .webp({
                 force: false,
                 quality: 15,
-            }).toBuffer((err, newBuffer) => {
+            })
+            .toBuffer((err, newBuffer) => {
                 if (err) {
                     console.error(err);
                     reject(err);
@@ -114,4 +118,4 @@ export const resolveToImageBuffer = async (buffer: Buffer) => {
                 resolve(newBuffer);
             });
     });
-}
+};

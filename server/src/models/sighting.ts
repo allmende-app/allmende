@@ -42,7 +42,7 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String, required: true },
         specie: { type: Schema.Types.String, required: true },
-        alt: { type: Schema.Types.String, },
+        alt: { type: Schema.Types.String },
     },
     {
         timestamps: true,

@@ -5,6 +5,6 @@ import multer from "multer";
 
 const router = Router();
 
-router.post("/", multer().any() ,PredictController.getPredictions);
+router.post("/", multer().any(), PredictController.getPredictions);
 
 export = router;
