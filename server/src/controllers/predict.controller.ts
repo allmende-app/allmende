@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import FormData from "form-data";
 import { StatusCodes } from "http-status-codes";
 import axios from "axios";
+import { resolveToImageBuffer } from "../utils";
 
 export class PredictControlller {
     static async getPredictions(req: Request, res: Response) {
@@ -9,19 +10,21 @@ export class PredictControlller {
             if (req.session.user) {
                 const images = req.files as Express.Multer.File[];
                 if (images && images.length > 0) {
-                    const requests = images.map(img => {
+                    const requests = images.map(async img => {
                         const formData = new FormData();
-                        formData.append("file", img.buffer, {
+                        const newBuffer = await resolveToImageBuffer(img.buffer)
+
+                        formData.append("file", newBuffer, {
                             contentType: img.mimetype,
                             filename: img.originalname,
                         });
                         const opt = {
-                            method: "get",
-                            body: formData,
-                            url: "http://127.0.0.1:5000/predict",
+                            method: "post",
+                            data: formData,
+                            url: "http://127.0.0.1:5000/scan",
                             headers: {
-                                ...formData.getHeaders()
-                            }
+                                ...formData.getHeaders(),
+                            },
                         }
                         return axios(opt);
                     });
@@ -39,7 +42,7 @@ export class PredictControlller {
             }
         } catch (e) {
             console.error(e);
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Error")
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
         }
     }
 }
