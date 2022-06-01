@@ -37,8 +37,8 @@ function errorResponseHandler(error: AxiosError) {
 }
 
 backend.client.interceptors.response.use(
-  response => response,
-  errorResponseHandler
+  (response) => response,
+  errorResponseHandler,
 )
 
 export { backend }

@@ -6,15 +6,12 @@
     </div>
     <p class="getting-back">
       Take me to
-      <router-link to="/">
-        home
-      </router-link>
+      <router-link to="/"> home </router-link>
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps({
   errorCode: {
     type: Number as PropType<number>,
@@ -23,10 +20,9 @@ const props = defineProps({
   errorMessage: {
     type: String as PropType<string>,
     required: false,
-    default: "Ups there was an Error."
-  }
+    default: 'Ups there was an Error.',
+  },
 })
-
 </script>
 
 <style lang="sass" scoped>
@@ -50,4 +46,4 @@ const props = defineProps({
     bottom: 20px
     left: 50%
     transform: translateX(-50%)
-  </style>
+</style>

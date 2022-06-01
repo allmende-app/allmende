@@ -8,10 +8,10 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'error',
       component: () => import('../views/Error.vue'),
-      props: {errorCode: 404, errorMessage: "Page Not Found"},
+      props: { errorCode: 404, errorMessage: 'Page Not Found' },
       meta: {
-        requiresAuth: false
-      }
+        requiresAuth: false,
+      },
     },
     {
       path: '/',
@@ -45,7 +45,6 @@ const router = createRouter({
         requiresAuth: false,
       },
     },
-
   ],
 })
 
