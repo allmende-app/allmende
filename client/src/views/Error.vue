@@ -11,7 +11,8 @@
   </div>
 </template>
 
-<script setup lang="ts">import type { PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue'
 
 const props = defineProps({
   errorCode: {
