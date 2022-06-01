@@ -4,22 +4,26 @@ import cv2
 import numpy as np
 import json
 
+from PIL import Image
 from tokenize import String
 from tensorflow import keras
 
-def scanImage(url: String):
+def scanImage(image: Image):
+    open_cv_image = np.array(image) 
+    # Convert RGB to BGR 
+    open_cv_image = open_cv_image[:, :, ::-1].copy() 
+
     export_path = os.path.join(os.getcwd()) + "/saved_model"
     img_size = 180 #Muss je nach Model angepasst werden
 
     #Load Model and Image
     loaded_model = tf.keras.models.load_model(export_path)
     
-    image = cv2.imread(tf.keras.utils.get_file(origin=url))
-    image_resized = cv2.resize(image, (img_size, img_size))
-    image = np.expand_dims(image_resized,axis=0)
+    image_resized = cv2.resize(open_cv_image, (img_size, img_size))
+    image_prediction = np.expand_dims(image_resized,axis=0)
 
     #Image recognition
-    prediction = loaded_model.predict(image)
+    prediction = loaded_model.predict(image_prediction)
     class_names = ['daisy', 'dandelion', 'roses', 'sunflowers', 'tulips']
     score = tf.nn.softmax(prediction[0])
 
