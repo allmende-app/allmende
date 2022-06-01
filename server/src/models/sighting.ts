@@ -7,6 +7,7 @@ export interface ISighting {
     lng?: number;
     location?: string;
     specie?: string;
+    alt?: string;
 }
 
 export interface GeoBounds {
@@ -34,13 +35,14 @@ export interface ISightingModel extends Model<ISightingDocument> {
     findByBounds: (bounds: GeoBounds) => Promise<ISightingDocument[]>;
 }
 
-export const sightningSchema = new Schema<ISightingDocument>(
+export const sightingSchema = new Schema<ISightingDocument>(
     {
         imageUrl: { type: Schema.Types.String, required: true },
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String, required: true },
         specie: { type: Schema.Types.String, required: true },
+        alt: { type: Schema.Types.String },
     },
     {
         timestamps: true,
@@ -50,5 +52,5 @@ export const sightningSchema = new Schema<ISightingDocument>(
 
 export const Sighting = model<ISightingDocument, ISightingModel>(
     "Sighting",
-    sightningSchema,
+    sightingSchema,
 );

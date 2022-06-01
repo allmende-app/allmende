@@ -12,6 +12,33 @@
 <script setup lang="ts">
 import VPost from '@/components/post/VPost.vue'
 import VTitle from '@/components/VTitle.vue'
+import type { AxiosError } from 'axios'
+import { useAuthStore } from '../stores/auth'
+import router from '@/router'
+import { backend } from '../utils'
+
+const authStore = useAuthStore()
+
+const logout = () => {
+  authStore
+    .logout()
+    .then((response) => {
+      router.push('/auth/login')
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+// TODO das funktioniert noch nicht :( 401 ERROR! :(
+backend.client
+  .get('http://127.0.0.1:3000/api/posts?tag=nature&page=1')
+  .then((response) => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.log(error)
+  })
 </script>
 
 <style lang="sass" scoped>

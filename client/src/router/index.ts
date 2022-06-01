@@ -4,6 +4,15 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/:pathMatch(.*)*',
+      name: 'error',
+      component: () => import('../views/Error.vue'),
+      props: { errorCode: 404, errorMessage: 'Page Not Found' },
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
       path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue'),

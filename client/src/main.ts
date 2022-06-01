@@ -10,12 +10,6 @@ import '@/styles/global.sass'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(window as any).$axios = axios
 
-// TODO: use this with axios...
-// const token = localStorage.getItem('user-token')
-//  if (token) {
-//   axios.defaults.headers.common['Authorization'] = token
-// }
-
 const app = createApp(App)
 
 app.use(createPinia())
