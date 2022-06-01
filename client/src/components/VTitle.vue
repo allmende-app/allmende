@@ -3,9 +3,7 @@
     <div class="left">
       <slot name="left"></slot>
     </div>
-    <span class="center">
-      {{ title }}<LogoSvg />
-    </span>
+    <span class="center"> {{ title }}<LogoSvg /> </span>
     <div class="right">
       <slot name="right"></slot>
     </div>

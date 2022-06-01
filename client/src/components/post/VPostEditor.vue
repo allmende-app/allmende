@@ -12,10 +12,7 @@
         "
         label="Location"
       />
-      <v-input
-        v-model="description"
-        label="Description"
-      />
+      <v-input v-model="description" label="Description" />
     </form>
   </section>
 </template>

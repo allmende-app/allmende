@@ -1,7 +1,10 @@
 <template>
   <article class="post">
     <div class="meta">
-      <div class="author"><div class="userpic"><img src="/birds/amsel1.jpg" /></div> David</div>
+      <div class="author">
+        <div class="userpic"><img src="/birds/amsel1.jpg" /></div>
+        David
+      </div>
       <div class="date">5d</div>
       <div class="location">
         <SvgLocation />Schlosspart Charlottenburg Berlin
@@ -14,14 +17,18 @@
         </li>
       </ul>
       <div class="image-nav">
-        <button @click="prevImage" class="prev"><span><SvgArrowLeft /></span></button>
-        <button @click="nextImage" class="next"><span><SvgArrowRight /></span></button>
+        <button @click="prevImage" class="prev">
+          <span><SvgArrowLeft /></span>
+        </button>
+        <button @click="nextImage" class="next">
+          <span><SvgArrowRight /></span>
+        </button>
       </div>
       <div class="image-index">
         <div
           v-for="i in images.length"
           :key="i"
-          :class="{ active: i-1 === currentImage }"
+          :class="{ active: i - 1 === currentImage }"
         ></div>
       </div>
       <div class="info">

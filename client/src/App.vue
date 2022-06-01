@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 
-import { useRouter } from 'vue-router';
-import VNavigation from './components/VNavigation.vue';
+import { useRouter } from 'vue-router'
+import VNavigation from './components/VNavigation.vue'
 
-const router = useRouter();
-
+const router = useRouter()
 </script>
 
 <template>
-  <div class="app" :class="{withNavigation: !$route.meta.hideNavigation}">
+  <div class="app" :class="{ withNavigation: !$route.meta.hideNavigation }">
     <VNavigation v-if="!$route.meta.hideNavigation" />
     <RouterView class="main" />
   </div>

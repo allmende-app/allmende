@@ -2,29 +2,33 @@
   <div>
     <v-title title="Create post">
       <template v-slot:left>
-          <v-button
-            :icon="SvgClose"
-            tooltip="Cancel"
-          />
+        <v-button :icon="SvgClose" tooltip="Cancel" />
       </template>
       <template v-slot:right>
-          <v-button type="primary">Next</v-button>
+        <v-button type="primary">Next</v-button>
       </template>
     </v-title>
     <div class="posts">
-      <v-post-editor v-for="(file, i) in store.getFiles" :key="i" :file="file" class="post" />
+      <v-post-editor
+        v-for="(file, i) in store.getFiles"
+        :key="i"
+        :file="file"
+        class="post"
+      />
     </div>
     <div>
       <input
-          class="file-input"
-          type="file"
-          id="file-button"
-          multiple
-          @change="handleFileEvent"
-          accept="image/png, image/gif, image/jpeg"
-          ref="fileInput"
-        />
-        <v-button @click="fileInput?.click()" type="primary">Add more photos</v-button>
+        class="file-input"
+        type="file"
+        id="file-button"
+        multiple
+        @change="handleFileEvent"
+        accept="image/png, image/gif, image/jpeg"
+        ref="fileInput"
+      />
+      <v-button @click="fileInput?.click()" type="primary"
+        >Add more photos</v-button
+      >
     </div>
   </div>
 </template>
