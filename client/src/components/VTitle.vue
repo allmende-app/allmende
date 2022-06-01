@@ -13,8 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import BackIcon from '@/assets/icon24/back.svg'
-import CloseIcon from '@/assets/icon24/close.svg'
 import { PropType } from '@vue/runtime-core'
 
 const props = defineProps({

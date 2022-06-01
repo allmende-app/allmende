@@ -23,11 +23,12 @@ import BackIcon from '@/assets/icon24/back.svg?component'
 import CloseIcon from '@/assets/icon24/close.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useAuthStore } from '../stores/auth'
 import router from '@/router'
 import VPost from '../components/post/VPost.vue'
 import VTitle from '../components/VTitle.vue'
+import { backend } from '../utils'
 
 const authStore = useAuthStore()
 
@@ -42,14 +43,14 @@ const logout = () => {
     })
 }
 
-// TODO das funktioniert noch nicht :(
-// axios.get("http://127.0.0.1:3000/api/posts?tag=nature", {withCredentials: true})
-//   .then(response => {
-//     console.log(response);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   })
+// TODO das funktioniert noch nicht :( 401 ERROR! :(
+backend.client.get("http://127.0.0.1:3000/api/posts?tag=nature&page=1")
+  .then(response => {
+    console.log(response);
+  })
+  .catch((error: AxiosError) => {
+    console.log(error);
+  })
 </script>
 
 <style lang="sass" scoped>
