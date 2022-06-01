@@ -1,33 +1,20 @@
 <template>
-  <div class="container">
-    <div class="post-container">
-      <v-title title="allmende">
-        <template v-slot:left>
-          <component :is="BackIcon"></component>
-        </template>
-        <template v-slot:right>
-          <component :is="CloseIcon"></component>
-        </template>
-      </v-title>
+  <div>
+    <v-title />
+    <div class="posts">
+      <v-post text="Hallo ich bin ein post"> </v-post>
       <v-post text="Hallo ich bin ein post"> </v-post>
       <v-post text="Hallo ich bin ein post"> </v-post>
     </div>
-    <v-button @click="logout" type="primary"> Logout </v-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import VButton from '@/components/VButton.vue'
-import VInput from '@/components/VInput.vue'
-import BackIcon from '@/assets/icon24/back.svg?component'
-import CloseIcon from '@/assets/icon24/close.svg?component'
-import { ref } from 'pinia/node_modules/vue-demi'
-import { computed } from '@vue/reactivity'
-import axios, { AxiosError } from 'axios'
+import VPost from '@/components/post/VPost.vue'
+import VTitle from '@/components/VTitle.vue'
+import type { AxiosError } from 'axios'
 import { useAuthStore } from '../stores/auth'
 import router from '@/router'
-import VPost from '../components/post/VPost.vue'
-import VTitle from '../components/VTitle.vue'
 import { backend } from '../utils'
 
 const authStore = useAuthStore()
@@ -55,16 +42,15 @@ backend.client
 </script>
 
 <style lang="sass" scoped>
-.container
+.posts
   width: 100%
   display: flex
   flex-direction: column
   align-items: center
   gap: allmende.$size-medium
-
-  .post-container
-    display: flex
-    flex-direction: column
-    align-items: center
-    gap: allmende.$size-medium
+  @include allmende.screen-laptop
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
+    > .post
+      margin-inline: auto
 </style>

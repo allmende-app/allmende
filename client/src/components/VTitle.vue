@@ -3,9 +3,7 @@
     <div class="left">
       <slot name="left"></slot>
     </div>
-    <span class="center">
-      {{ title }}
-    </span>
+    <span class="center"> {{ title }}<LogoSvg /> </span>
     <div class="right">
       <slot name="right"></slot>
     </div>
@@ -13,12 +11,13 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from '@vue/runtime-core'
+import type { PropType } from 'vue'
+import LogoSvg from '@/assets/logo.svg?component'
 
-const props = defineProps({
+defineProps({
   title: {
     type: String as PropType<string>,
-    required: true,
+    default: 'allmende',
   },
 })
 </script>
@@ -26,17 +25,30 @@ const props = defineProps({
 <style lang="sass" scoped>
 
 .title
-  width: 100%
   height: allmende.$size-huge
-  display: flex
-  justify-content: space-between
-  align-items: center
-  // padding: allmende.$size-xsmall
+  display: grid
+  grid-template-columns: 1fr auto 1fr
+
+  .left, .right
+    display: flex
+  .left
+    justify-content: flex-start
+  .right
+    justify-content: flex-end
 
   .left, .center, .right
-    padding: allmende.$size-xsmall
+    padding-block: allmende.$size-xsmall
 
   .center
-    @include allmende.text-title-1
+    @include allmende.text-navbar
     align-self: center
+    position: relative
+    z-index: -1
+    > svg
+      position: absolute
+      color: var(--layer-05)
+      left: -130px
+      top: -370px
+      width: 557px
+      height: 557px
 </style>

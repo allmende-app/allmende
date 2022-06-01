@@ -1,69 +1,36 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+
+import { useRouter } from 'vue-router'
+import VNavigation from './components/VNavigation.vue'
+
+const router = useRouter()
 </script>
 
 <template>
-  <!-- <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-      <div>
-        <VButton type="primary">
-          Label
-        </VButton>
-        <VButton type="primary" :disabled="true">
-          Label
-        </VButton>
-      </div>
-      <div>
-        <VButton type="secondary">
-          Label
-        </VButton>
-        <VButton type="secondary" :disabled="true">
-          Label
-        </VButton>
-      </div>
-
-      <VInput :error="error" helper-text="This is a helper text" label="Label" name="name" v-model="value"></VInput>
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header> -->
-
-  <RouterView />
+  <div class="app" :class="{ withNavigation: !$route.meta.hideNavigation }">
+    <VNavigation v-if="!$route.meta.hideNavigation" />
+    <RouterView class="main" />
+  </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@vue/runtime-core'
-
-export default defineComponent({
-  data() {
-    return {
-      value: 'test',
-      error: true,
-    }
-  },
-  methods: {
-    axios: () => {
-      console.log('test')
-    },
-  },
-  created() {
-    // TODO catching 401 unauthorized errors
-    // axios.interceptors.response.use(undefined, function (err) {
-    //   return new Promise(function (resolve, reject) {
-    //     if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-    //     // if you ever get an unauthorized, logout the user
-    //       this.$store.dispatch(AUTH_LOGOUT)
-    //     // you can also redirect to /login if needed !
-    //     }
-    //     throw err;
-    //   });
-    // });
-  },
-})
-</script>
+<style lang="sass" scoped>
+.app
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto
+  > .main
+    flex: 1
+    margin-inline: allmende.$size-xsmall
+  &.withNavigation > .main
+    padding-bottom: allmende.$size-huge
+  @include allmende.screen-laptop
+    box-sizing: border-box
+    display: flex
+    &.withNavigation
+      padding: allmende.$size-xlarge
+      gap: allmende.$size-xlarge
+      > .main
+        padding-bottom: 0
+        margin-inline-start: allmende.$size-huge + allmende.$size-xlarge
+</style>

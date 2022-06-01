@@ -1,22 +1,10 @@
-//Large Screen - 993 to 1170 screen size
 @mixin screen-laptop
-  @media only screen and (max-width: 1170px)
+  @media only screen and (min-width: 800px)
     @content
 
-//Medium Screen - 768 to 992 screen size
-@mixin screen-tablet
-  @media only screen and (max-width: 992px)
-    @content
-
-//Medium Screen - 575 to 767 screen size
-@mixin screen-large-phone
-  @media only screen and (max-width: 767px)
-    @content
-
-//Medium Screen - below 575 screen size
-@mixin screen-phone
-  @media only screen and (max-width: 575px)
-    @content
+@mixin effect-focus-unwrapped
+  outline: 2px solid var(--border-focus)
+  outline-offset: 2px
 
 @mixin effect-focus
   &:focus
@@ -27,8 +15,7 @@
   &:focus-visible, &:focus
     outline: none
   &:focus-visible
-    outline: 2px solid var(--border-focus)
-    outline-offset: 2px
+    @include effect-focus-unwrapped
 
 @mixin text-title-1
   font-size: 28px
@@ -57,8 +44,21 @@
   font-size: 13px
   line-height: 18px
 
+@mixin text-label
+  font-size: 10px
+  font-weight: 700
+  line-height: 14px
+  text-transform: uppercase
+
+@mixin text-navbar
+  font-size: 28px
+  font-family: "Optima"
+  font-weight: normal
+  font-style: normal
+
 $radius-menu: 12px
 $radius-button: 32px
+$radius-card: 32px
 $radius-input: 4px
 $radius-checkbox: 12px
 
