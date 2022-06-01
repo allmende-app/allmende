@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router';
 import VNavigation from './components/VNavigation.vue';
 
 const router = useRouter();
-console.log(router.currentRoute);
 
 </script>
 
@@ -25,7 +24,7 @@ console.log(router.currentRoute);
     flex: 1
     margin-inline: allmende.$size-xsmall
   &.withNavigation > .main
-    margin-bottom: allmende.$size-huge
+    padding-bottom: allmende.$size-huge
   @include allmende.screen-laptop
     box-sizing: border-box
     display: flex
@@ -33,6 +32,6 @@ console.log(router.currentRoute);
       padding: allmende.$size-xlarge
       gap: allmende.$size-xlarge
       > .main
-        margin-bottom: 0
+        padding-bottom: 0
         margin-inline-start: allmende.$size-huge + allmende.$size-xlarge
 </style>
