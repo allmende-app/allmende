@@ -3,3 +3,4 @@
 .idea/
 /ml/venv
 /ml/__pycache__
+/ml/saved_model
