@@ -110,9 +110,12 @@ export class PostsController {
                     Number(page),
                     tag ? (tag as string) : undefined,
                 );
-                return res.status(StatusCodes.OK).json({
-                    posts: posts,
-                });
+                if (posts.length > 0)
+                    return res.status(StatusCodes.OK).json({
+                        posts: posts,
+                    });
+
+                return res.status(StatusCodes.NOT_FOUND).send("No posts found");
             }
         } else {
             return res
