@@ -47,10 +47,13 @@
             keeps us running, keeps us alive.</span
           >
         </div>
-        <div class="actions">
-          <button><SvgLike />12</button>
-          <button><SvgComment />8</button>
-        </div>
+        <action-buttons
+          :likes="12"
+          :liked="false"
+          @likesClicked="someFunction"
+          :comments="8"
+          @commentsClicked="someFunction"
+        ></action-buttons>
       </div>
     </div>
   </article>
@@ -63,6 +66,7 @@ import SvgComment from '@/assets/icon24/comment.svg?component'
 import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
 import { computed, ref } from 'vue'
+import ActionButtons from '../ActionButtons.vue'
 
 interface ImageData {
   id: number
@@ -219,28 +223,6 @@ const activeImages = computed(() => {
     overflow: hidden
     word-break: break-word
     -webkit-line-clamp: 3
-
-.actions
-  display: grid
-  grid-template-columns: 1fr 1fr
-  button
-    color: var(--icon-default)
-    display: flex
-    align-items: center
-    justify-content: center
-    gap: allmende.$size-xxxxsmall
-    padding: allmende.$size-xxxsmall
-    @include allmende.text-action
-    @include allmende.effect-focus
-    &:hover
-      background: var(--action-secondary-hover)
-    &:active
-      background: var(--action-secondary-active)
-    &:first-child
-      border-bottom-left-radius: allmende.$size-small
-    &:last-child
-      border-bottom-right-radius: allmende.$size-small
-
 .slider
   list-style: none
   li
