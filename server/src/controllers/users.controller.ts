@@ -7,11 +7,21 @@ import EmailValidator from "email-validator";
 import { compressImage } from "../utils";
 import { passwordStrength, Result } from "check-password-strength";
 
+
+
 declare module "express-session" {
     interface SessionData {
         user: ObjectId;
     }
 }
+
+const twofactor = require("node-2fa");
+const newSecret = twofactor.generateSecret({ name: "Allmende" });
+console.log(newSecret);
+const newToken = twofactor.generateToken("XDQXYCP5AC6FA32FQXDGJSPBIDYNKK5W");
+twofactor.verifyToken("XDQXYCP5AC6FA32FQXDGJSPBIDYNKK5W", "630618");
+
+
 
 function passwordCheck(
     password: string,
