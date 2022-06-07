@@ -12,10 +12,10 @@
         {{ text }}
       </div>
       <action-buttons
-        :likes="14"
+        :likes="likes"
         :liked="false"
         @likesClicked="toggleLike"
-        :comments="8"
+        :comments="comments.length"
         @commentsClicked="scrollToComments"
       ></action-buttons>
     </section>
