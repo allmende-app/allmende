@@ -30,6 +30,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/detail',
+      name: 'post-detail',
+      component: () => import('../views/Post/Detail.vue'),
+      meta: {
+        requiresAuth: false, // TODO set to true later
+        hideNavigation: true,
+      },
+    },
+    {
       path: '/playground',
       name: 'playground',
       component: () => import('../views/Playground.vue'),

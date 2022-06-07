@@ -1,6 +1,6 @@
 <template>
   <div class="creator">
-    <img :src="src" alt="" height="16" width="16" />
+    <profil-picture-vue source="TODO"></profil-picture-vue>
     <p class="name">
       {{ name }}
     </p>
@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { ref } from 'vue'
+import ProfilPictureVue from './ProfilPicture.vue';
 
 const props = defineProps({
   name: {
@@ -21,8 +22,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const src = ref('/jonas.jpeg') // TODO: load from server
 </script>
 
 <style lang="sass" scoped>
@@ -33,6 +32,7 @@ const src = ref('/jonas.jpeg') // TODO: load from server
   padding: 4px
   width: max-content
   gap: 10px
-  img
-    border-radius: 100%
+
+  .name
+    @include allmende.text-subhead
 </style>
