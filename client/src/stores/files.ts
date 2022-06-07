@@ -11,5 +11,10 @@ export const useFilesStore = defineStore('files', {
     addFiles(files: File[]) {
       this.files = [...this.files, ...files]
     },
+    getAndDeleteFiles() {
+      const files = this.files
+      this.files = []
+      return files
+    }
   },
 })

@@ -10,9 +10,9 @@
     </v-title>
     <div class="posts">
       <v-post-editor
-        v-for="(file, i) in store.getFiles"
+        v-for="(info, i) in sightingInfo"
         :key="i"
-        :file="file"
+        v-model="sightingInfo[i]"
         class="post"
       />
     </div>
@@ -30,6 +30,9 @@
         >Add more photos</v-button
       >
     </div>
+    <div class="text-editor">
+      <textarea placeholder="What did you see..." v-model="description"></textarea>
+    </div>
   </div>
 </template>
 
@@ -39,9 +42,31 @@ import VTitle from '@/components/VTitle.vue'
 import VPostEditor from '@/components/post/VPostEditor.vue'
 import VButton from '@/components/VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
-import { ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
+
+export interface SightingData {
+  file: File
+  title: string
+  description: string
+  datetime: number
+  lat: number
+  lng: number
+}
 
 const store = useFilesStore()
+const sightingInfo = reactive([] as SightingData[])
+const description = ref('')
+
+store.getAndDeleteFiles().forEach((file, i) => {
+  sightingInfo[i] = {
+    file,
+    title: '',
+    description: '',
+    datetime: 0,
+    lat: 0,
+    lng: 0,
+  }
+})
 
 const fileInput = ref(null as HTMLInputElement | null)
 
@@ -51,18 +76,37 @@ function handleFileEvent(event: Event) {
   if (!files2) {
     return
   }
-  store.addFiles(Array.from(files2))
+  sightingInfo.push(
+    ...Array.from(files2).map((file) => ({
+      file,
+      title: '',
+      description: '',
+      datetime: 0,
+      lat: 0,
+      lng: 0,
+    })),
+  )
 }
 </script>
 
 <style lang="sass" scoped>
 .posts
   width: 100%
-  display: flex
-  flex-direction: column
+  display: grid
+  @include allmende.post-grid
   align-items: center
   gap: allmende.$size-medium
 
 .file-input
   display: none
+
+.text-editor
+  textarea
+    @include allmende.effect-focus
+    background: var(--layer-20)
+    border-radius: allmende.$radius-card
+    padding: allmende.$size-medium
+    resize: none
+    &::placeholder
+      color: var(--text-secondary)
 </style>
