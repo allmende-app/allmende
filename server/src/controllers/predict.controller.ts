@@ -2,17 +2,21 @@ import { Request, Response } from "express";
 import FormData from "form-data";
 import { StatusCodes } from "http-status-codes";
 import axios from "axios";
-import { resolveToFileInfoOutput, resolveToImageBuffer } from "../utils";
-import path from "path";
-import fs from "fs";
+import { resolveToImageBuffer } from "../utils";
+import { checkValidKingdomType } from "../utils/check";
 
 export class PredictController {
     static async getPredictions(req: Request, res: Response) {
         try {
             if (req.session.user) {
+                const types: string[] = req.body.types;
+                if (!checkValidKingdomType(types))
+                    return res
+                        .status(StatusCodes.BAD_REQUEST)
+                        .send("Invalid kingdom types");
                 const images = req.files as Express.Multer.File[];
                 if (images && images.length > 0) {
-                    const requests = images.map(async (img) => {
+                    const requests = images.map(async (img, i) => {
                         const formData = new FormData();
                         const newBuffer = await resolveToImageBuffer(
                             img.buffer,
@@ -22,6 +26,7 @@ export class PredictController {
                             contentType: img.mimetype,
                             filename: img.originalname,
                         });
+                        formData.append("kingdom", types[i]);
                         const opt = {
                             method: "post",
                             data: formData,
