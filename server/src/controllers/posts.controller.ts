@@ -3,43 +3,56 @@ import { StatusCodes } from "http-status-codes";
 import { Post, Sighting } from "../models";
 import { PostInput } from "../interfaces";
 import { ObjectId } from "mongoose";
+import axios from "axios";
+import { compressImage } from "../utils";
+
+const createSightings = (files: Express.Multer.File[], ids: number[]) => {
+    return new Promise<Promise<ObjectId>[]>((resolve) => {
+        const sightingsJob = files.map(
+            (f: Express.Multer.File, i: number) =>
+                new Promise<ObjectId>((resolve) => {
+                    axios
+                        .get(
+                            `https://api.gbif.org/v1/species/${ids[i]}?lang=de`,
+                        )
+                        .then((r) => r.data)
+                        .then((data) => {
+                            const sighting = new Sighting();
+                            sighting.imageUrl = f["filename"];
+                            sighting.originalName = f["originalname"];
+                            sighting.specie = ids[i];
+                            sighting.alt = data.vernacularName;
+                            sighting.location = "Berlin";
+
+                            sighting.save().then((d) => resolve(d["_id"]));
+                        });
+                }),
+        );
+        resolve(sightingsJob);
+    });
+};
 
 export class PostsController {
-    private static createSightings(files: any[]) {
-        return new Promise<Promise<ObjectId>[]>((resolve) => {
-            const sightingsJob = files.map(
-                (f: any) =>
-                    new Promise<ObjectId>((resolve) => {
-                        const sighting = new Sighting();
-                        sighting.imageUrl = f["filename"];
-                        sighting.originalName = f["originalname"];
-                        sighting.specie = "Bird";
-                        sighting.location = "Berlin";
-
-                        sighting.save().then((d) => resolve(d["_id"]));
-                    }),
-            );
-            resolve(sightingsJob);
-        });
-    }
-
     static async createPostController(req: Request, res: Response) {
         if (req.session && req.body) {
             try {
                 const files: any = req.files;
-                const parent = JSON.parse(req.body.post);
-                const body: PostInput = parent.post;
-                // const filesMeta = parent.filesMeta
+                const postBody = JSON.parse(req.body.post);
+                const species: number[] = req.body.specie;
+
                 const userId = req.session.user;
                 if (userId) {
-                    // const sightingsPromises = this.createSightings(files);
-                    // const objectIdPromises = await sightingsPromises;
-                    // const objectIds = await Promise.all(objectIdPromises);
-                    // const sightingsIds = objectIds.length > 0 ? objectIds : [];
+                    files.forEach((file: Express.Multer.File) =>
+                        compressImage(file),
+                    );
+                    const sightingsPromises = createSightings(files, species);
+                    const objectIdPromises = await sightingsPromises;
+                    const objectIds = await Promise.all(objectIdPromises);
+                    const sightingsIds = objectIds.length > 0 ? objectIds : [];
 
                     const post = new Post();
-                    await post.construct(body, userId);
-                    // post.sightings = sightingsIds;
+                    await post.construct(postBody, userId);
+                    post.sightings = sightingsIds;
                     const doc = await post.save();
 
                     // Logger.info(`Post created by ${userId}, -> ${doc["_id"]}`);

@@ -1,4 +1,5 @@
 import { Schema, ObjectId, model, Model, Document } from "mongoose";
+import { KingdomType } from "../interfaces";
 
 export interface ISighting {
     imageUrl?: string;
@@ -6,7 +7,8 @@ export interface ISighting {
     lat?: number;
     lng?: number;
     location?: string;
-    specie?: string;
+    specie?: number;
+    kingdom?: KingdomType;
     alt?: string;
 }
 
@@ -41,7 +43,7 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String, required: true },
-        specie: { type: Schema.Types.String, required: true },
+        specie: { type: Schema.Types.Number, required: true },
         alt: { type: Schema.Types.String },
     },
     {
