@@ -65,6 +65,16 @@ import router from '@/router';
 import ActionButtons from '@/components/ActionButtons.vue';
 import { log } from 'console';
 
+const props = defineProps({
+  postID: {
+    type: String as PropType<string>,
+    required: true,
+  }
+})
+
+// TODO: request post data from server if not already loaded ...
+console.log(props.postID);
+
 const sightings = [
   {
     id: 1,

@@ -44,13 +44,14 @@ const router = createRouter({
       },
     },
     {
-      path: '/detail',
+      path: '/posts/:postID(\\d+)/detail',
       name: 'post-detail',
       component: () => import('../views/Post/Detail.vue'),
       meta: {
         requiresAuth: false, // TODO set to true later
         hideNavigation: true,
       },
+      props: true,
     },
     {
       path: '/playground',
