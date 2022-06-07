@@ -4,6 +4,7 @@ import postsRoute from "./posts";
 import commentsRoute from "./comments";
 import imageRoute from "./image";
 import predictionRoute from "./predict";
+import sightingsRoute from "./sightings";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use("/posts", postsRoute);
 router.use("/comments", commentsRoute);
 router.use("/image", imageRoute);
 router.use("/predict", predictionRoute);
+router.use("/sightings", sightingsRoute);
 
 export = router;

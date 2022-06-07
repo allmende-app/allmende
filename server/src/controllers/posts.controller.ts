@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Post, Sighting } from "../models";
 import { PostInput } from "../interfaces";
@@ -36,6 +36,7 @@ export class PostsController {
     static async createPostController(req: Request, res: Response) {
         if (req.session && req.body) {
             try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const files: any = req.files;
                 const postBody = JSON.parse(req.body.post);
                 const species: number[] = req.body.specie;
@@ -55,7 +56,6 @@ export class PostsController {
                     post.sightings = sightingsIds;
                     const doc = await post.save();
 
-                    // Logger.info(`Post created by ${userId}, -> ${doc["_id"]}`);
                     return res.status(StatusCodes.CREATED).json({
                         post: doc,
                     });
