@@ -2,7 +2,6 @@ import type { LoginInput, RegisterInput } from '@/interfaces/inputs'
 import { defineStore } from 'pinia'
 import { backend } from '../utils'
 
-
 export const useAuthStore = defineStore({
   id: 'auth',
   actions: {

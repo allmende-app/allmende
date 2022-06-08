@@ -15,6 +15,6 @@ export const useFilesStore = defineStore('files', {
       const files = this.files
       this.files = []
       return files
-    }
+    },
   },
 })

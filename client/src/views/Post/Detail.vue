@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-title-vue title="post">
       <template v-slot:left>
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
@@ -21,17 +20,11 @@
     </section>
 
     <section class="section">
-      <h2 class="headline">
-        Map
-      </h2>
+      <h2 class="headline">Map</h2>
       <map-vue></map-vue>
     </section>
 
-    <section
-      class="section"
-      v-for="sighting in sightings"
-      :key="sighting.id"
-    >
+    <section class="section" v-for="sighting in sightings" :key="sighting.id">
       <sighting-vue
         :location="sighting.location"
         :name="sighting.name"
@@ -41,55 +34,51 @@
     </section>
 
     <section class="section" id="comments">
-      <h2 class="headline">
-        Comments
-      </h2>
-      <comments-vue>
-
-      </comments-vue>
+      <h2 class="headline">Comments</h2>
+      <comments-vue> </comments-vue>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import MapVue from '@/components/Map.vue';
-import CommentsVue from '@/components/Comments.vue';
+import MapVue from '@/components/Map.vue'
+import CommentsVue from '@/components/Comments.vue'
 import ArrowLeftSVG from '@/assets/icon24/arrow-left.svg?component'
 import SvgLike from '@/assets/icon24/like.svg?component'
 import SvgComment from '@/assets/icon24/comment.svg?component'
-import SightingVue from '@/components/post/Sighting.vue';
-import VTitleVue from '@/components/VTitle.vue';
-import VButton from '@/components/VButton.vue';
-import router from '@/router';
-import ActionButtons from '@/components/ActionButtons.vue';
-import { log } from 'console';
+import SightingVue from '@/components/post/Sighting.vue'
+import VTitleVue from '@/components/VTitle.vue'
+import VButton from '@/components/VButton.vue'
+import router from '@/router'
+import ActionButtons from '@/components/ActionButtons.vue'
+import { log } from 'console'
 
 const props = defineProps({
   postID: {
     type: String as PropType<string>,
     required: true,
-  }
+  },
 })
 
 // TODO: request post data from server if not already loaded ...
-console.log(props.postID);
+console.log(props.postID)
 
 const sightings = [
   {
     id: 1,
-    source: "/geese.JPG",
-    location: "Schlosspark Charlottenburg Berlin",
-    name: "Domestic European geese",
-    specie: "Anser anser domesticus"
+    source: '/geese.JPG',
+    location: 'Schlosspark Charlottenburg Berlin',
+    name: 'Domestic European geese',
+    specie: 'Anser anser domesticus',
   },
   {
     id: 2,
-    source: "/common_snipe.JPG",
-    location: "Schlosspark Charlottenburg Berlin",
-    name: "Common snipe",
-    specie: "Gallinago gallinago"
-  }
+    source: '/common_snipe.JPG',
+    location: 'Schlosspark Charlottenburg Berlin',
+    name: 'Common snipe',
+    specie: 'Gallinago gallinago',
+  },
 ]
 
 const text = `Once the city used to pulse with energy. Dirty and dangerous, but
@@ -114,12 +103,11 @@ const toggleLike = () => {
 
 const scrollToComments = () => {
   // TODO: fix this
-  router.replace(router.currentRoute + "#comments")
+  router.replace(router.currentRoute + '#comments')
 }
 
 const comments = [1, 2, 3, 4]
 const likes = 12
-
 </script>
 
 <style lang="sass" scoped>
@@ -135,5 +123,4 @@ const likes = 12
   background-color: white
   border-radius: allmende.$radius-card
   margin-bottom: allmende.$size-xxxsmall
-
 </style>

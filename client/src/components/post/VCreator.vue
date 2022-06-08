@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { ref } from 'vue'
-import ProfilPictureVue from './ProfilPicture.vue';
+import ProfilPictureVue from './ProfilPicture.vue'
 
 const props = defineProps({
   name: {

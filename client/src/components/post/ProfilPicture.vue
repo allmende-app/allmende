@@ -10,7 +10,7 @@ const props = defineProps({
   source: {
     type: String as PropType<string>,
     required: false, // TODO change this to true later
-  }
+  },
 })
 const src = ref('/jonas.jpeg') // TODO: load from server
 </script>
@@ -18,5 +18,4 @@ const src = ref('/jonas.jpeg') // TODO: load from server
 <style lang="sass" scoped>
 img
   border-radius: 100%
-
 </style>
