@@ -113,8 +113,8 @@ const toggleLike = () => {
 }
 
 const scrollToComments = () => {
-  // TODO: scroll to comment does not work on mobil yet
-  router.replace("/detail#comments")
+  // TODO: fix this
+  router.replace(router.currentRoute + "#comments")
 }
 
 const comments = [1, 2, 3, 4]
