@@ -2,6 +2,20 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    // return desired position
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: 'smooth',
+      }
+    }
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
   routes: [
     {
       path: '/:pathMatch(.*)*',
@@ -17,7 +31,7 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomeView.vue'),
       meta: {
-        requiresAuth: false, // TODO set to true later
+        requiresAuth: true,
       },
     },
     {
@@ -25,9 +39,19 @@ const router = createRouter({
       name: 'create-post',
       component: () => import('../views/CreatePost.vue'),
       meta: {
+        requiresAuth: true,
+        hideNavigation: true,
+      },
+    },
+    {
+      path: '/posts/:postID(\\d+)',
+      name: 'post-detail',
+      component: () => import('../views/Post/Detail.vue'),
+      meta: {
         requiresAuth: false, // TODO set to true later
         hideNavigation: true,
       },
+      props: true,
     },
     {
       path: '/playground',
@@ -44,6 +68,7 @@ const router = createRouter({
       meta: {
         requiresAuth: false,
         hideNavigation: true,
+        fullSize: true,
       },
     },
     {
@@ -53,6 +78,7 @@ const router = createRouter({
       meta: {
         requiresAuth: false,
         hideNavigation: true,
+        fullSize: true,
       },
     },
   ],
