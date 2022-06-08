@@ -1,6 +1,6 @@
 <template>
   <div class="sighting">
-    <img :src="source" alt="">
+    <img :src="source" alt="" />
 
     <div class="details">
       <div class="location">
@@ -15,7 +15,7 @@
         {{ specie }}
       </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,7 +30,7 @@ const props = defineProps({
   location: {
     type: String as PropType<string>,
     required: false,
-    default: null
+    default: null,
   },
   name: {
     type: String as PropType<string>,
@@ -38,8 +38,8 @@ const props = defineProps({
   },
   specie: {
     type: String as PropType<string>,
-    required: true
-  }
+    required: true,
+  },
 })
 </script>
 
@@ -64,5 +64,4 @@ const props = defineProps({
 
     .location
       color: var(--text-secondary)
-
 </style>

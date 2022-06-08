@@ -1,7 +1,9 @@
 <template>
   <div class="actions">
     <button @click="$emit('likesClicked')"><SvgLike />{{ likes }}</button>
-    <button @click="$emit('commentsClicked')"><SvgComment />{{ comments }}</button>
+    <button @click="$emit('commentsClicked')">
+      <SvgComment />{{ comments }}
+    </button>
   </div>
 </template>
 
@@ -13,18 +15,17 @@ import { PropType } from '@vue/runtime-core'
 const props = defineProps({
   likes: {
     type: Number as PropType<number>,
-    required: true
+    required: true,
   },
   liked: {
     type: Boolean as PropType<boolean>,
-    required: true
+    required: true,
   },
   comments: {
     type: Number as PropType<number>,
-    required: true
-  }
+    required: true,
+  },
 })
-
 </script>
 
 <style lang="sass">
@@ -48,5 +49,4 @@ const props = defineProps({
       border-bottom-left-radius: allmende.$size-small
     &:last-child
       border-bottom-right-radius: allmende.$size-small
-
 </style>

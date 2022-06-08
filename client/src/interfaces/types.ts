@@ -1,5 +1,5 @@
 export enum KingdomType {
-    PLANTAE = "plantae",
-    FUNGI = "fungi",
-    ANIMALIA = "animalia",
+  PLANTAE = 'plantae',
+  FUNGI = 'fungi',
+  ANIMALIA = 'animalia',
 }

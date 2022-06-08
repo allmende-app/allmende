@@ -1,7 +1,7 @@
 <template>
   <auth-layout>
     <template v-slot:default>
-      {{globalError}}
+      {{ globalError }}
     </template>
     <template v-slot:inputs>
       <v-input
@@ -79,9 +79,8 @@ const login = (event: Event) => {
       const errorMessage = error.response.data
       console.log(errorMessage)
       if (errorMessage.includes('Email not found')) {
-        username.error = "???"
+        username.error = '???'
       }
     })
 }
-
 </script>
