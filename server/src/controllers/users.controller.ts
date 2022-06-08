@@ -23,34 +23,28 @@ function passwordCheck(
 
     switch (strength.id) {
         case 0:
-            return res
-                .status(StatusCodes.BAD_REQUEST)
-                .json({
-                    signUpErr: {
-                        password: ErrorMessages.PW_TOO_WEAK,
-                    }
-                });
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                signUpErr: {
+                    password: ErrorMessages.PW_TOO_WEAK,
+                },
+            });
         case 1:
-            return res
-                .status(StatusCodes.BAD_REQUEST)
-                .json({
-                    signUpErr: {
-                        password: ErrorMessages.PW_WEAK,
-                    },
-                });
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                signUpErr: {
+                    password: ErrorMessages.PW_WEAK,
+                },
+            });
         case 2:
             break;
         case 3:
             break;
     }
     if (password !== confirmPassword) {
-        return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({
-                signUpErr: {
-                    repeatPassword: ErrorMessages.INCORRECT_PASSWORD,
-                },
-            });
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            signUpErr: {
+                repeatPassword: ErrorMessages.INCORRECT_PASSWORD,
+            },
+        });
     }
 }
 
@@ -61,36 +55,30 @@ export class UsersController {
 
             if (!EmailValidator.validate(input.email)) {
                 // Logger.warn(`${input.email} is not valid`);
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        signUpErr: {
-                            email: ErrorMessages.INVALID_EMAIL,
-                        }
-                    });
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    signUpErr: {
+                        email: ErrorMessages.INVALID_EMAIL,
+                    },
+                });
             }
 
             const existingUser = await User.findByEmail(input.email);
             if (existingUser) {
                 // Logger.info(`Email address already exists: ${existingUser.email}`);
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        signUpErr: {
-                            email: ErrorMessages.EMAIL_EXIST,
-                        },
-                    });
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    signUpErr: {
+                        email: ErrorMessages.EMAIL_EXIST,
+                    },
+                });
             }
             const existingUsername = await User.findByUsername(input.username);
             if (existingUsername) {
                 // Logger.info(`Username already exists: ${input.username}`);
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        signUpErr: {
-                            username: ErrorMessages.USERNAME_EXIST,
-                        },
-                    });
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    signUpErr: {
+                        username: ErrorMessages.USERNAME_EXIST,
+                    },
+                });
             }
 
             const r = passwordCheck(input.password, input.confirmPassword, res);
@@ -128,22 +116,18 @@ export class UsersController {
                 const userEmail = await User.findByEmail(input.email);
                 const userName = await User.findByUsername(input.username);
                 if (!userEmail) {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            loginErr: {
-                                email: ErrorMessages.EMAIL_NOT_FOUND,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        loginErr: {
+                            email: ErrorMessages.EMAIL_NOT_FOUND,
+                        },
+                    });
                 }
                 if (!userName) {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            loginErr: {
-                                username: ErrorMessages.USERNAME_NOT_FOUND,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        loginErr: {
+                            username: ErrorMessages.USERNAME_NOT_FOUND,
+                        },
+                    });
                 }
 
                 const user = userEmail || userName;
@@ -151,13 +135,11 @@ export class UsersController {
                 const match = await user.checkPassword(input.password);
                 if (!match) {
                     // Logger.warn("Password is incorrect");
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            loginErr: {
-                                password: ErrorMessages.INCORRECT_PASSWORD,
-                            },
-                        });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        loginErr: {
+                            password: ErrorMessages.INCORRECT_PASSWORD,
+                        },
+                    });
                 }
                 req.session.user = user["_id"];
 
@@ -186,13 +168,11 @@ export class UsersController {
                 if (err) {
                     // Logger.error(err);
                     console.error(err);
-                    return res
-                        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-                        .json({
-                            logoutErr: {
-                                error: ErrorMessages.DESTROY_COOKIE_ERROR,
-                            },
-                        });
+                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                        logoutErr: {
+                            error: ErrorMessages.DESTROY_COOKIE_ERROR,
+                        },
+                    });
                 }
                 return res.status(StatusCodes.OK).json({
                     data: SuccessMessages.LOGOUT,
@@ -233,13 +213,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    ownProfileErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                ownProfileErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -271,13 +249,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    profileErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    }
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                profileErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -298,13 +274,11 @@ export class UsersController {
                         user: doc,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            followErr: {
-                                follow: ErrorMessages.USER_NOT_FOUND,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        followErr: {
+                            follow: ErrorMessages.USER_NOT_FOUND,
+                        },
+                    });
                 }
             } catch (e) {
                 console.error(e);
@@ -315,13 +289,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    followErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                followErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -342,12 +314,11 @@ export class UsersController {
                         user: doc,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND).json({
-                            unfollowErr: {
-                                unfollow: ErrorMessages.USER_NOT_FOUND,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        unfollowErr: {
+                            unfollow: ErrorMessages.USER_NOT_FOUND,
+                        },
+                    });
                 }
             } catch (e) {
                 console.error(e);
@@ -358,13 +329,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    unfollowErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    }
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                unfollowErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -385,31 +354,26 @@ export class UsersController {
                         user: doc,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            removeFollowerErr: {
-                                remove: ErrorMessages.USER_NOT_FOUND,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        removeFollowerErr: {
+                            remove: ErrorMessages.USER_NOT_FOUND,
+                        },
+                    });
                 }
             } catch (e) {
                 console.error(e);
-                return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-                    .json({
-                        removeFollowerErr: {
-                            error: ErrorMessages.INTERNAL_ERROR,
-                        }
-                    });
-            }
-        } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     removeFollowerErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
+                        error: ErrorMessages.INTERNAL_ERROR,
                     },
                 });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                removeFollowerErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -418,12 +382,11 @@ export class UsersController {
             try {
                 const file = req.file;
                 if (!file) {
-                    return res.status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            uploadAvatarErr: {
-                                avatar: ErrorMessages.AVATAR_MISSING_FILE,
-                            },
-                        });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        uploadAvatarErr: {
+                            avatar: ErrorMessages.AVATAR_MISSING_FILE,
+                        },
+                    });
                 }
 
                 const doc = await User.findById(req.session.user);
@@ -448,13 +411,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    uploadAvatarErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                uploadAvatarErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -486,13 +447,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    deleteProfileErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                deleteProfileErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -507,13 +466,11 @@ export class UsersController {
                             input.username,
                         );
                         if (anotherUser) {
-                            return res
-                                .status(StatusCodes.BAD_REQUEST)
-                                .json({
-                                    editProfileErr: {
-                                        username: ErrorMessages.USERNAME_EXIST,
-                                    },
-                                });
+                            return res.status(StatusCodes.BAD_REQUEST).json({
+                                editProfileErr: {
+                                    username: ErrorMessages.USERNAME_EXIST,
+                                },
+                            });
                         }
                         user.username = input.username;
                         await user.save();
@@ -524,13 +481,11 @@ export class UsersController {
                     }
                     if (input.oldPassword) {
                         if (!input.newPassword || !input.confirmNewPassword) {
-                            return res
-                                .status(StatusCodes.BAD_REQUEST)
-                                .json({
-                                    editProfileErr: {
-                                        password: ErrorMessages.NO_NEW_PASSWORD,
-                                    }
-                                });
+                            return res.status(StatusCodes.BAD_REQUEST).json({
+                                editProfileErr: {
+                                    password: ErrorMessages.NO_NEW_PASSWORD,
+                                },
+                            });
                         }
                         if (input.newPassword && input.confirmNewPassword) {
                             if (await user.checkPassword(input.oldPassword)) {
@@ -546,24 +501,22 @@ export class UsersController {
                                     .status(StatusCodes.BAD_REQUEST)
                                     .json({
                                         profileErr: {
-                                            password: ErrorMessages.MISMATCH_PASSWORD,
+                                            password:
+                                                ErrorMessages.MISMATCH_PASSWORD,
                                         },
                                     });
                             }
                         } else {
-                            return res.status(StatusCodes.BAD_REQUEST)
-                                .json({
-                                    editProfileErr: {
-                                        password: ErrorMessages.INCORRECT_PASSWORD,
-                                    },
-                                });
+                            return res.status(StatusCodes.BAD_REQUEST).json({
+                                editProfileErr: {
+                                    password: ErrorMessages.INCORRECT_PASSWORD,
+                                },
+                            });
                         }
                     }
-                    return res
-                        .status(StatusCodes.OK)
-                        .json({
-                            data: SuccessMessages.PROFILE_EDITED,
-                        });
+                    return res.status(StatusCodes.OK).json({
+                        data: SuccessMessages.PROFILE_EDITED,
+                    });
                 } else {
                     return res.status(StatusCodes.NOT_FOUND).json({
                         editProfileErr: {
@@ -580,13 +533,11 @@ export class UsersController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    editProfileErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    }
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                editProfileErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 }
