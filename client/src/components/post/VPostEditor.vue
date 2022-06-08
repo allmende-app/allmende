@@ -4,7 +4,6 @@
       <img v-if="fileData" :src="(fileData as string)" />
     </div>
     <form class="information">
-      <v-species-selector />
       <v-input
         v-model="location"
         :helper-text="
@@ -20,20 +19,46 @@
 <script setup lang="ts">
 import VInput from '@/components/VInput.vue'
 import VSpeciesSelector from '@/components/VSpeciesSelector.vue'
-import { ref } from 'vue'
+import { computed, ref, type PropType } from 'vue'
 import exifr from 'exifr'
+import type { SightingData } from '@/views/CreatePost.vue'
+
+const emit = defineEmits(['update:modelValue'])
 
 const fileData = ref(null as string | ArrayBuffer | null)
 const locationExtracted = ref(false)
 
-//form data
-const location = ref('')
-const description = ref('')
-
 const props = defineProps({
-  file: {
-    type: File,
+  modelValue: {
+    type: Object as PropType<SightingData>,
     required: true,
+  },
+})
+
+const updateValue = (data: SightingData) => {
+  emit('update:modelValue', data)
+}
+
+const description = computed({
+  get: () => {
+    return props.modelValue.description
+  },
+  set: (value) => {
+    updateValue({
+      ...props.modelValue,
+      description: value,
+    })
+  },
+})
+const location = computed({
+  get: () => {
+    return String(props.modelValue.lat)
+  },
+  set: (value) => {
+    updateValue({
+      ...props.modelValue,
+      lat: Number(value),
+    })
   },
 })
 
@@ -45,9 +70,9 @@ reader.addEventListener(
   },
   false,
 )
-reader.readAsDataURL(props.file)
+reader.readAsDataURL(props.modelValue.file)
 
-exifr.gps(props.file).then((result) => {
+exifr.gps(props.modelValue.file).then((result) => {
   if (result) {
     location.value = `${result.latitude}, ${result.longitude}`
     locationExtracted.value = true
@@ -61,7 +86,6 @@ section
   border-radius: allmende.$radius-card
   display: flex
   flex-direction: column
-  width: 400px
 
 .preview
   border-radius: allmende.$radius-card

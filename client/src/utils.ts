@@ -24,21 +24,18 @@ const backend = {
   }),
 }
 
-/**
- * catches the 401 unauthorized error and redirects to the login page
- * @param error
- * @returns
- */
-function errorResponseHandler(error: AxiosError) {
-  if (error.response?.status == 401) {
-    // router.push("/auth/login") // TODO comment this in when autentication is working properly again!
-  }
-  return error
-}
-
 backend.client.interceptors.response.use(
   (response) => response,
-  errorResponseHandler,
+  (error: AxiosError) => {
+    if (error) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          router.push('/auth/login')
+        }
+      }
+    }
+    return Promise.reject(error)
+  }
 )
 
 export { backend }

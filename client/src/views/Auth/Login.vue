@@ -1,23 +1,23 @@
 <template>
   <auth-layout>
     <template v-slot:default>
-      <p style="color: red">
-        {{ error_message }}
-      </p>
+      {{globalError}}
     </template>
     <template v-slot:inputs>
       <v-input
-        name="email"
-        label="Email"
-        v-model="email"
-        autocomplete="email"
+        name="username"
+        label="Username"
+        v-model="username.value"
+        :error="username.error"
+        autocomplete="username"
       ></v-input>
       <v-input
         name="password"
         label="Password"
         type="password"
         autocomplete="current-password"
-        v-model="password"
+        v-model="password.value"
+        :error="password.error"
       ></v-input>
     </template>
     <template v-slot:buttons>
@@ -31,18 +31,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores/auth'
-import type { LoginInput } from '../../../server/src/interfaces/inputs'
 import router from '@/router'
-import { log } from 'console'
 
-const email = ref('')
-const password = ref('')
-const error_message = ref('')
+import { RouterLink } from 'vue-router'
+import type { LoginInput } from '@/interfaces/inputs'
+
+const username = reactive({ value: '', error: '' })
+const password = reactive({ value: '', error: '' })
+const globalError = ref('')
 
 const authStore = useAuthStore()
 
@@ -50,30 +51,37 @@ const login = (event: Event) => {
   event.preventDefault()
 
   const credentials: LoginInput = {
-    email: email.value,
+    username: username.value,
     password: password.value,
   }
+  username.error = ''
+  password.error = ''
+
+  let everythingIsFine = true
+  if (!credentials.username) {
+    username.error = 'Username is required'
+    everythingIsFine = false
+  }
+  if (!credentials.password) {
+    password.error = 'Password is required'
+    everythingIsFine = false
+  }
+  if (!everythingIsFine) {
+    return
+  }
+
   authStore
     .login(credentials)
-    .then((response) => {
-      router.push('/') // TODO backend does not check if password is correct !!!
+    .then(() => {
+      router.push('/')
     })
     .catch((error) => {
-      console.log(error)
-      // TODO better error message system
-      error_message.value = error.response.data
+      const errorMessage = error.response.data
+      console.log(errorMessage)
+      if (errorMessage.includes('Email not found')) {
+        username.error = "???"
+      }
     })
 }
 
-const logout = (event: Event) => {
-  event.preventDefault()
-  authStore
-    .logout()
-    .then((response) => {
-      router.push('/auth/login')
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-}
 </script>

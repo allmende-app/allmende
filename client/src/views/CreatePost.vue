@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div v-if="step == 0">
     <v-title title="Create post">
       <template v-slot:left>
         <v-button :icon="SvgClose" tooltip="Cancel" />
       </template>
       <template v-slot:right>
-        <v-button type="primary">Next</v-button>
+        <v-button type="primary" @click="nextStep">Next</v-button>
       </template>
     </v-title>
     <div class="posts">
       <v-post-editor
-        v-for="(file, i) in store.getFiles"
+        v-for="(info, i) in sightingInfo"
         :key="i"
-        :file="file"
+        v-model="sightingInfo[i]"
         class="post"
       />
     </div>
@@ -31,6 +31,22 @@
       >
     </div>
   </div>
+  <div v-else-if="step == 1">
+    <v-title title="Create post">
+      <template v-slot:left>
+        <v-button type="primary" @click="step = 0">Back</v-button>
+      </template>
+      <template v-slot:right>
+        <v-button type="primary" @click="nextStep">Next</v-button>
+      </template>
+    </v-title>
+    <div class="text-editor">
+      <textarea
+        placeholder="What did you see..."
+        v-model="description"
+      ></textarea>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -39,9 +55,33 @@ import VTitle from '@/components/VTitle.vue'
 import VPostEditor from '@/components/post/VPostEditor.vue'
 import VButton from '@/components/VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+import { backend } from '../utils'
+
+export interface SightingData {
+  file: File
+  title: string
+  description: string
+  datetime: number
+  lat: number
+  lng: number
+}
 
 const store = useFilesStore()
+const sightingInfo = reactive([] as SightingData[])
+const step = ref(0)
+const description = ref('')
+
+store.getAndDeleteFiles().forEach((file, i) => {
+  sightingInfo[i] = {
+    file,
+    title: '',
+    description: '',
+    datetime: 0,
+    lat: 0,
+    lng: 0,
+  }
+})
 
 const fileInput = ref(null as HTMLInputElement | null)
 
@@ -51,18 +91,62 @@ function handleFileEvent(event: Event) {
   if (!files2) {
     return
   }
-  store.addFiles(Array.from(files2))
+  sightingInfo.push(
+    ...Array.from(files2).map((file) => ({
+      file,
+      title: '',
+      description: '',
+      datetime: 0,
+      lat: 0,
+      lng: 0,
+    })),
+  )
+}
+
+function nextStep() {
+  // only if there are files
+  if (sightingInfo.length === 0) {
+    return
+  }
+  if (step.value == 0) {
+    step.value++
+    return
+  }
+
+  const bodyFormData = new FormData()
+  bodyFormData.append(
+    'post',
+    JSON.stringify({
+      text: description.value,
+    }),
+  )
+
+  backend.client({
+    method: 'post',
+    url: '/api/posts',
+    data: bodyFormData,
+  })
 }
 </script>
 
 <style lang="sass" scoped>
 .posts
   width: 100%
-  display: flex
-  flex-direction: column
+  display: grid
+  @include allmende.post-grid
   align-items: center
   gap: allmende.$size-medium
 
 .file-input
   display: none
+
+.text-editor
+  textarea
+    @include allmende.effect-focus
+    background: var(--layer-20)
+    border-radius: allmende.$radius-card
+    padding: allmende.$size-medium
+    resize: none
+    &::placeholder
+      color: var(--text-secondary)
 </style>

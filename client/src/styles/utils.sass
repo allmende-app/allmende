@@ -2,6 +2,13 @@
   @media only screen and (min-width: 800px)
     @content
 
+@mixin post-grid
+  grid-template-columns: 1fr
+  @media only screen and (min-width: 600px)
+    grid-template-columns: 1fr 1fr
+  @media only screen and (min-width: 900px)
+    grid-template-columns: 1fr 1fr 1fr
+
 @mixin effect-focus-unwrapped
   outline: 2px solid var(--border-focus)
   outline-offset: 2px
