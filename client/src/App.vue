@@ -8,7 +8,13 @@ const router = useRouter()
 </script>
 
 <template>
-  <div class="app" :class="{ withNavigation: !$route.meta.hideNavigation }">
+  <div
+    class="app"
+    :class="{
+      withNavigation: !$route.meta.hideNavigation,
+      fullSize: $route.meta.fullSize,
+    }"
+  >
     <VNavigation v-if="!$route.meta.hideNavigation" />
     <RouterView class="main" />
   </div>
@@ -24,6 +30,12 @@ const router = useRouter()
     margin-inline: allmende.$size-xsmall
   &.withNavigation > .main
     padding-bottom: allmende.$size-huge
+  &.fullSize
+    width: 100%
+    max-width: none
+    margin: 0
+    > .main
+      margin: 0
   @include allmende.screen-laptop
     box-sizing: border-box
     display: flex

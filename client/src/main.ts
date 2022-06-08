@@ -15,10 +15,3 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.mount('#app')
-
-const store = useAuthStore()
-
-// check if authentication is required for the page
-router.beforeEach((to) => {
-  if (to.meta.requiresAuth && !store.isAuthenticated) return '/auth/login'
-})

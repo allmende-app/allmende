@@ -17,7 +17,7 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomeView.vue'),
       meta: {
-        requiresAuth: false, // TODO set to true later
+        requiresAuth: true,
       },
     },
     {
@@ -25,7 +25,7 @@ const router = createRouter({
       name: 'create-post',
       component: () => import('../views/CreatePost.vue'),
       meta: {
-        requiresAuth: false, // TODO set to true later
+        requiresAuth: true,
         hideNavigation: true,
       },
     },
@@ -44,6 +44,7 @@ const router = createRouter({
       meta: {
         requiresAuth: false,
         hideNavigation: true,
+        fullSize: true,
       },
     },
     {
@@ -53,6 +54,7 @@ const router = createRouter({
       meta: {
         requiresAuth: false,
         hideNavigation: true,
+        fullSize: true,
       },
     },
   ],

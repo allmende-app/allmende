@@ -55,6 +55,8 @@ import LogoSvg from '@/assets/logo.svg?component'
 
   .content
     width: 100%
+    max-width: 350px
+    margin: 0 auto
 
     .auth
       display: flex
@@ -64,10 +66,11 @@ import LogoSvg from '@/assets/logo.svg?component'
 
       padding: 20px
       form
+        width: 100%
         .input-wrapper
           display: flex
           flex-direction: column
-          align-items: center
+          align-items: stretch
 
           & > div
             margin-bottom: 20px

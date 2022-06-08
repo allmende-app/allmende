@@ -30,11 +30,10 @@ const logout = () => {
     })
 }
 
-// TODO das funktioniert noch nicht :( 401 ERROR! :(
 backend.client
-  .get('http://127.0.0.1:3000/api/posts?tag=nature&page=1')
+  .get('/api/posts')
   .then((response) => {
-    console.log(response)
+    console.log(response.data.posts)
   })
   .catch((error: AxiosError) => {
     console.log(error)
