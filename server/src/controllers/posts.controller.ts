@@ -20,7 +20,7 @@ const createSightings = (files: Express.Multer.File[], ids: number[]) => {
                             const sighting = new Sighting();
                             sighting.imageUrl = f["filename"];
                             sighting.originalName = f["originalname"];
-                            sighting.specie = ids[i];
+                            sighting.species = ids[i];
                             sighting.alt = data.vernacularName;
                             sighting.location = "Berlin";
 
@@ -39,7 +39,7 @@ export class PostsController {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const files: any = req.files;
                 const postBody = JSON.parse(req.body.post);
-                const species: number[] = req.body.specie;
+                const species: number[] = req.body.species;
 
                 const userId = req.session.user;
                 if (userId) {
