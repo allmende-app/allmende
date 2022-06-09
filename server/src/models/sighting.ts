@@ -7,7 +7,7 @@ export interface ISighting {
     lat?: number;
     lng?: number;
     location?: string;
-    specie?: number;
+    species?: number;
     kingdom?: KingdomType;
     alt?: string;
 }
@@ -29,8 +29,8 @@ export interface ISightingDocument extends ISighting, Document {
 
 export interface ISightingModel extends Model<ISightingDocument> {
     findByURL: (url: string) => Promise<ISightingDocument>;
-    findBySpecie: (
-        specie: string,
+    findBySpecies: (
+        species: string,
         limit?: number,
         page?: number,
     ) => Promise<ISightingDocument[]>;
@@ -43,7 +43,7 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String, required: true },
-        specie: { type: Schema.Types.Number, required: true },
+        species: { type: Schema.Types.Number, required: true },
         alt: { type: Schema.Types.String },
     },
     {
