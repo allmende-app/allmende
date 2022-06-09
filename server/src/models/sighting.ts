@@ -1,4 +1,4 @@
-import { Schema, ObjectId, model, Model, Document } from "mongoose";
+import { Schema, model, Model, Document } from "mongoose";
 import { KingdomType } from "../interfaces";
 
 export interface ISighting {
