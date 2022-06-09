@@ -14,11 +14,11 @@ const createSightings = (files: Express.Multer.File[], sightings: SightingInfo[]
                 new Promise<ObjectId>((resolve) => {
                     const sighting = new Sighting();
                     const curr = sightings[i];
-                    const { specie, lat, lng, description } = curr;
+                    const { species, lat, lng, description } = curr;
                     sighting.imageUrl = f["filename"];
                     sighting.originalName = f["originalname"];
                     
-                    if (specie) sighting.specie = specie;
+                    if (species) sighting.species = species;
                     if (lat) sighting.lat = lat;
                     if (lng) sighting.lng = lng;
                     if (description) sighting.alt = description;

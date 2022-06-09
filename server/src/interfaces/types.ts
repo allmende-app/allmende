@@ -7,7 +7,7 @@ export enum KingdomType {
 }
 
 export interface SightingInfo {
-    specie: ObjectId;
+    species: ObjectId;
     description: string;
     lat: number;
     lng: number;
