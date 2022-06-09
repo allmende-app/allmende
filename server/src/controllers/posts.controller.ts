@@ -17,7 +17,7 @@ const createSightings = (files: Express.Multer.File[], sightings: SightingInfo[]
                     const { species, lat, lng, description } = curr;
                     sighting.imageUrl = f["filename"];
                     sighting.originalName = f["originalname"];
-                    
+
                     if (species) sighting.species = species;
                     if (lat) sighting.lat = lat;
                     if (lng) sighting.lng = lng;
@@ -36,7 +36,7 @@ export class PostsController {
             try {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const files: any = req.files;
-                const postBody: PostInput = JSON.parse(req.body.post); 
+                const postBody: PostInput = JSON.parse(req.body.post);
                 const { sightings } = postBody;
 
                 const userId = req.session.user;
@@ -106,27 +106,37 @@ export class PostsController {
 
     static async getPostsController(req: Request, res: Response) {
         if (req.session.user) {
-            const limit = req.query.limit ? req.query.limit : 20;
-            const page = req.query.page ? req.query.page : 0;
-            const tag = req.query.tag ? req.query.tag : undefined;
+            try {
+                const limit = req.query.limit ? req.query.limit : 20;
+                const page = req.query.page ? req.query.page : 0;
+                const tag = req.query.tag ? req.query.tag : undefined;
 
-            if (tag || tag === undefined) {
-                const posts = await Post.findPosts(
-                    Number(limit),
-                    Number(page),
-                    tag ? (tag as string) : undefined,
-                );
-                if (posts.length > 0)
+                if (tag || tag === undefined) {
+                    const posts = await Post.findPosts(
+                        Number(limit),
+                        Number(page),
+                        tag ? (tag as string) : undefined,
+                    );
                     return res.status(StatusCodes.OK).json({
                         posts: posts,
                     });
-
-                return res.status(StatusCodes.NOT_FOUND).send("No posts found");
+                }
+            } catch (e) {
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    getPostsErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("Not registered or logged in");
+                .json({
+                    getPostsErr: {
+                        error: ErrorMessages.NOT_REGISTERED,
+                    }
+                });
         }
     }
 
