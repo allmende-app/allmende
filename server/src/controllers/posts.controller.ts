@@ -52,9 +52,7 @@ export class PostsController {
                     const post = new Post();
                     await post.construct(postBody, userId);
                     post.sightings = sightingsIds;
-                    const doc = await post.save();
-
-                    doc.populate('sightings');
+                    const doc = await (await post.save()).populate("sightings");
 
                     return res.status(StatusCodes.CREATED).json({
                         post: doc,

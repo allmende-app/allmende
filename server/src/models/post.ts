@@ -33,7 +33,7 @@ export interface IPostModel extends Model<IPostDocument> {
 export const postSchema = new Schema<IPostDocument>(
     {
         text: { type: Schema.Types.String },
-        sightings: [{ type: Schema.Types.ObjectId }],
+        sightings: [{ type: Schema.Types.ObjectId, ref: "Sighting" }],
         author: { type: Schema.Types.ObjectId, required: true },
         likes: [{ type: Schema.Types.ObjectId }],
         // comments: [{type: Schema.Types.ObjectId}],
