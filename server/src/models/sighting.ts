@@ -7,7 +7,7 @@ export interface ISighting {
     lat?: number;
     lng?: number;
     location?: string;
-    specie?: number;
+    specie?: ObjectId;
     kingdom?: KingdomType;
     alt?: string;
 }
@@ -43,7 +43,7 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String, required: true },
-        specie: { type: Schema.Types.Number, required: true },
+        specie: { type: Schema.Types.ObjectId  },
         alt: { type: Schema.Types.String },
     },
     {
