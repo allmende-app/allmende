@@ -83,16 +83,14 @@ postSchema.methods.construct = async function (
     post: PostInput,
     user: ObjectId,
 ) {
-    const { text, tags } = post;
+    const { text } = post;
     this.text = text;
-    this.tags = tags;
     this.author = user;
 };
 
 postSchema.methods.changeProperties = async function (post: PostInput) {
-    const { text, tags } = post;
+    const { text } = post;
     this.text = text;
-    this.tags = tags;
 };
 
 postSchema.statics.findByTag = async function (tag: string, page: number) {

@@ -1,31 +1,29 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Post, Sighting } from "../models";
-import { PostInput } from "../interfaces";
+import { PostInput, SightingInfo } from "../interfaces";
 import { ObjectId } from "mongoose";
 import axios from "axios";
 import { compressImage } from "../utils";
+import { ErrorMessages } from "../messages";
 
-const createSightings = (files: Express.Multer.File[], ids: number[]) => {
+const createSightings = (files: Express.Multer.File[], sightings: SightingInfo[]) => {
     return new Promise<Promise<ObjectId>[]>((resolve) => {
         const sightingsJob = files.map(
             (f: Express.Multer.File, i: number) =>
                 new Promise<ObjectId>((resolve) => {
-                    axios
-                        .get(
-                            `https://api.gbif.org/v1/species/${ids[i]}?lang=de`,
-                        )
-                        .then((r) => r.data)
-                        .then((data) => {
-                            const sighting = new Sighting();
-                            sighting.imageUrl = f["filename"];
-                            sighting.originalName = f["originalname"];
-                            sighting.specie = ids[i];
-                            sighting.alt = data.vernacularName;
-                            sighting.location = "Berlin";
+                    const sighting = new Sighting();
+                    const curr = sightings[i];
+                    const { specie, lat, lng, description } = curr;
+                    sighting.imageUrl = f["filename"];
+                    sighting.originalName = f["originalname"];
+                    
+                    if (specie) sighting.specie = specie;
+                    if (lat) sighting.lat = lat;
+                    if (lng) sighting.lng = lng;
+                    if (description) sighting.alt = description;
 
-                            sighting.save().then((d) => resolve(d["_id"]));
-                        });
+                    sighting.save().then((d) => resolve(d["_id"]));
                 }),
         );
         resolve(sightingsJob);
@@ -38,15 +36,15 @@ export class PostsController {
             try {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const files: any = req.files;
-                const postBody = JSON.parse(req.body.post);
-                const species: number[] = req.body.specie;
+                const postBody: PostInput = JSON.parse(req.body.post); 
+                const { sightings } = postBody;
 
                 const userId = req.session.user;
                 if (userId) {
                     files.forEach((file: Express.Multer.File) =>
                         compressImage(file),
                     );
-                    const sightingsPromises = createSightings(files, species);
+                    const sightingsPromises = createSightings(files, sightings);
                     const objectIdPromises = await sightingsPromises;
                     const objectIds = await Promise.all(objectIdPromises);
                     const sightingsIds = objectIds.length > 0 ? objectIds : [];
@@ -56,6 +54,8 @@ export class PostsController {
                     post.sightings = sightingsIds;
                     const doc = await post.save();
 
+                    doc.populate('sightings');
+
                     return res.status(StatusCodes.CREATED).json({
                         post: doc,
                     });
@@ -63,12 +63,20 @@ export class PostsController {
             } catch (e) {
                 console.error(e);
                 // Logger.error(e);
-                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    createPostErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("Not registered or logged in");
+                .json({
+                    createPostErr: {
+                        post: ErrorMessages.NOT_REGISTERED,
+                    },
+                });
         }
     }
 
