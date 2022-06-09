@@ -124,7 +124,7 @@ export class UsersController {
                         },
                     });
                 }
-                
+
                 const match = await user.checkPassword(input.password);
                 if (!match) {
                     // Logger.warn("Password is incorrect");

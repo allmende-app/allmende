@@ -7,7 +7,10 @@ import axios from "axios";
 import { compressImage } from "../utils";
 import { ErrorMessages } from "../messages";
 
-const createSightings = (files: Express.Multer.File[], sightings: SightingInfo[]) => {
+const createSightings = (
+    files: Express.Multer.File[],
+    sightings: SightingInfo[],
+) => {
     return new Promise<Promise<ObjectId>[]>((resolve) => {
         const sightingsJob = files.map(
             (f: Express.Multer.File, i: number) =>
@@ -17,7 +20,7 @@ const createSightings = (files: Express.Multer.File[], sightings: SightingInfo[]
                     const { species, lat, lng, description } = curr;
                     sighting.imageUrl = f["filename"];
                     sighting.originalName = f["originalname"];
-                    
+
                     if (species) sighting.species = species;
                     if (lat) sighting.lat = lat;
                     if (lng) sighting.lng = lng;
@@ -36,7 +39,7 @@ export class PostsController {
             try {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const files: any = req.files;
-                const postBody: PostInput = JSON.parse(req.body.post); 
+                const postBody: PostInput = JSON.parse(req.body.post);
                 const { sightings } = postBody;
 
                 const userId = req.session.user;
@@ -68,13 +71,11 @@ export class PostsController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    createPostErr: {
-                        post: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                createPostErr: {
+                    post: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
