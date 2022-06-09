@@ -33,7 +33,7 @@ export interface IPostModel extends Model<IPostDocument> {
 export const postSchema = new Schema<IPostDocument>(
     {
         text: { type: Schema.Types.String },
-        sightings: [{ type: Schema.Types.ObjectId }],
+        sightings: [{ type: Schema.Types.ObjectId, ref: "Sighting" }],
         author: { type: Schema.Types.ObjectId, required: true },
         likes: [{ type: Schema.Types.ObjectId }],
         // comments: [{type: Schema.Types.ObjectId}],
@@ -83,16 +83,14 @@ postSchema.methods.construct = async function (
     post: PostInput,
     user: ObjectId,
 ) {
-    const { text, tags } = post;
+    const { text } = post;
     this.text = text;
-    this.tags = tags;
     this.author = user;
 };
 
 postSchema.methods.changeProperties = async function (post: PostInput) {
-    const { text, tags } = post;
+    const { text } = post;
     this.text = text;
-    this.tags = tags;
 };
 
 postSchema.statics.findByTag = async function (tag: string, page: number) {

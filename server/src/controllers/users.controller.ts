@@ -115,22 +115,15 @@ export class UsersController {
             try {
                 const userEmail = await User.findByEmail(input.email);
                 const userName = await User.findByUsername(input.username);
-                if (!userEmail) {
-                    return res.status(StatusCodes.NOT_FOUND).json({
-                        loginErr: {
-                            email: ErrorMessages.EMAIL_NOT_FOUND,
-                        },
-                    });
-                }
-                if (!userName) {
-                    return res.status(StatusCodes.NOT_FOUND).json({
-                        loginErr: {
-                            username: ErrorMessages.USERNAME_NOT_FOUND,
-                        },
-                    });
-                }
 
                 const user = userEmail || userName;
+                if (!user) {
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        loginErr: {
+                            email: ErrorMessages.LOGIN_NOT_FOUND,
+                        },
+                    });
+                }
 
                 const match = await user.checkPassword(input.password);
                 if (!match) {
