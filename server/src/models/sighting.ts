@@ -1,4 +1,4 @@
-import { Schema, ObjectId, model, Model, Document } from "mongoose";
+import { Schema, model, Model, Document, ObjectId } from "mongoose";
 import { KingdomType } from "../interfaces";
 
 export interface ISighting {
@@ -7,7 +7,7 @@ export interface ISighting {
     lat?: number;
     lng?: number;
     location?: string;
-    specie?: ObjectId;
+    species?: ObjectId;
     kingdom?: KingdomType;
     alt?: string;
 }
@@ -29,8 +29,8 @@ export interface ISightingDocument extends ISighting, Document {
 
 export interface ISightingModel extends Model<ISightingDocument> {
     findByURL: (url: string) => Promise<ISightingDocument>;
-    findBySpecie: (
-        specie: string,
+    findBySpecies: (
+        species: string,
         limit?: number,
         page?: number,
     ) => Promise<ISightingDocument[]>;
@@ -43,7 +43,7 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String, required: true },
-        specie: { type: Schema.Types.ObjectId  },
+        species: { type: Schema.Types.ObjectId  },
         alt: { type: Schema.Types.String },
     },
     {
