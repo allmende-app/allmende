@@ -1,4 +1,5 @@
 export const ErrorMessages = {
+    LOGIN_NOT_FOUND: "User not found, either the email or username is misspelled or the profile is already deleted",
     NOT_REGISTERED: "You are not logged in or registered",
     INTERNAL_ERROR: "Internal server error. Try again later",
     USER_NOT_FOUND:
