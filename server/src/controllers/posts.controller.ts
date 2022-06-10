@@ -52,7 +52,7 @@ export class PostsController {
                     const post = new Post();
                     await post.construct(postBody, userId);
                     post.sightings = sightingsIds;
-                    const doc = await (await post.save()).populate("sightings");
+                    const doc = await (await (await post.save()).populate("sightings")).populate("author", ["username", "avatarUrl"]);
 
                     return res.status(StatusCodes.CREATED).json({
                         post: doc,
@@ -82,7 +82,7 @@ export class PostsController {
         if (req.session.user) {
             if (req.params.id) {
                 const id: string = req.params.id;
-                const post = await Post.findById(id);
+                const post = await Post.findById(id).populate("sightings").populate("author", ["username", "avatarUrl"]);
                 if (post) {
                     return res.status(StatusCodes.OK).json({
                         post: post,
@@ -117,8 +117,13 @@ export class PostsController {
                         Number(page),
                         tag ? (tag as string) : undefined,
                     );
+                    const promises = posts.map(post => new Promise((resolve) => {
+                        post.populate("sightings").then(p => p.populate("author", ["username", "avatarUrl"]).then(r => resolve(r)));
+                    }));
+
+                    const results = await Promise.all(promises);
                     return res.status(StatusCodes.OK).json({
-                        posts: posts,
+                        posts: results,
                     });
                 }
             } catch (e) {
