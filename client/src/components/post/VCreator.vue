@@ -1,5 +1,6 @@
 <template>
   <div class="creator">
+    <!-- TODO set correct source -->
     <profil-picture-vue source="TODO"></profil-picture-vue>
     <p class="name">
       {{ name }}
