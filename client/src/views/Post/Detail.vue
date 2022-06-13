@@ -27,21 +27,22 @@
     <section class="section" v-for="sighting in sightings" :key="sighting.id">
       <sighting-vue
         :location="sighting.location"
-        :name="sighting.name"
-        :specie="sighting.specie"
-        :source="sighting.source"
+        :kindom="sighting.kingdom"
+        :species="sighting.species"
+        :source="sighting.imageUrl"
+        :alt="sighting.alt"
       ></sighting-vue>
     </section>
 
     <section class="section" id="comments">
       <h2 class="headline">Comments</h2>
-      <comments-vue> </comments-vue>
+      <comments-vue :post-id="postID"></comments-vue>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import { PropType, Ref, ref } from 'vue'
 import MapVue from '@/components/Map.vue'
 import CommentsVue from '@/components/Comments.vue'
 import ArrowLeftSVG from '@/assets/icon24/arrow-left.svg?component'
@@ -53,7 +54,13 @@ import VButton from '@/components/VButton.vue'
 import router from '@/router'
 import ActionButtons from '@/components/ActionButtons.vue'
 import { log } from 'console'
+import { backend } from '../../utils'
+import type { AxiosError } from 'axios'
+import type { ISighting } from '../../../../server/src/models/sighting';
 
+/**
+ * Props
+ */
 const props = defineProps({
   postID: {
     type: String as PropType<string>,
@@ -61,53 +68,40 @@ const props = defineProps({
   },
 })
 
-// TODO: request post data from server if not already loaded ...
-console.log(props.postID)
+/**
+ * Data
+ */
+const text = ref("")
+const comments = ref([])
+const likes = ref(0)
+const sightings: Ref<Array<ISighting>> = ref([])
 
-const sightings = [
-  {
-    id: 1,
-    source: '/geese.JPG',
-    location: 'Schlosspark Charlottenburg Berlin',
-    name: 'Domestic European geese',
-    specie: 'Anser anser domesticus',
-  },
-  {
-    id: 2,
-    source: '/common_snipe.JPG',
-    location: 'Schlosspark Charlottenburg Berlin',
-    name: 'Common snipe',
-    specie: 'Gallinago gallinago',
-  },
-]
-
-const text = `Once the city used to pulse with energy. Dirty and dangerous, but
-            alive and wonderful. Now it's something else. The changes came
-            slowly at first. Most didn't realize, or didn't care, and accepted
-            them. They chose a comfortable life. Some didn't. And those who
-            refused to conform were pushed to the sidelines, criminalized. They
-            became our clients. We call ourselves Runners. We exist on the edge
-            between the gloss and the reality: the mirror's edge. We keep out of
-            trouble, out of sight, and the cops don't bother us. Runners see the
-            city in a different way. We see the flow. Rooftops become pathways
-            and conduits, possibilities and routes of escape. The flow is what
-            keeps us running, keeps us alive.`
-
-const back = () => {
-  router.back()
-}
-
+/**
+ * Functions
+ */
+const back = () => router.back()
 const toggleLike = () => {
   // TODO: toggle like here
 }
+const scrollToComments = () => router.replace(router.currentRoute.value.path + '#comments')
 
-const scrollToComments = () => {
-  // TODO: fix this
-  router.replace(router.currentRoute + '#comments')
-}
+/**
+ * fetching post details
+ */
+backend.client.get(`/api/posts/${props.postID}`).then(response => {
+  const post = response.data.post
+  console.log(post);
 
-const comments = [1, 2, 3, 4]
-const likes = 12
+  text.value = post.text
+  likes.value = post.likes.length
+  sightings.value = post.sightings
+  console.log(sightings.value);
+})
+.catch((error: AxiosError) => {
+  console.log(error.code);
+})
+
+
 </script>
 
 <style lang="sass" scoped>

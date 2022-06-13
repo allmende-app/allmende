@@ -1,43 +1,52 @@
 <template>
   <div class="sighting">
-    <img :src="source" alt="" />
+    <img :src="`${baseURL}api/image/${source}`" :alt="alt" />
 
     <div class="details">
       <div class="location">
         {{ location }}
       </div>
 
-      <div class="animal-name">
-        {{ name }}
+      <div class="specie">
+        {{ species }}
       </div>
 
-      <div class="specie">
-        {{ specie }}
+      <div class="animal-kindom">
+        {{ kingdom }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { ObjectId } from 'mongoose';
 import type { PropType } from 'vue'
 import { ref } from 'vue'
+import type { KingdomType } from '../../../../server/src/interfaces';
+import { backend } from '../../utils'
+const baseURL = backend.baseURL
 
 const props = defineProps({
   source: {
-    type: String as PropType<string>,
+    type: String as PropType<string | undefined>,
     required: true,
   },
+  alt: {
+    type: String as PropType<string | undefined>,
+    required: true,
+  },
+  // TODO: do we need something like a location description
   location: {
     type: String as PropType<string>,
     required: false,
     default: null,
   },
-  name: {
-    type: String as PropType<string>,
+  kindom: {
+    type: String as PropType<KingdomType | undefined>,
     required: true,
   },
-  specie: {
-    type: String as PropType<string>,
+  species: {
+    type: Object as PropType<ObjectId | undefined>,
     required: true,
   },
 })
@@ -56,10 +65,10 @@ const props = defineProps({
 
   .details
     padding: 12px allmende.$size-small 16px 24px
-    .name
+    .specie
       @include allmende.text-headline
 
-    .specie, .location
+    .animal-kindom, .location
       @include allmende.text-footnote
 
     .location

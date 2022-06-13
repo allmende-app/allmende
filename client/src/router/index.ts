@@ -44,7 +44,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/posts/:postID(\\d+)',
+      path: '/posts/:postID',
       name: 'post-detail',
       component: () => import('../views/Post/Detail.vue'),
       meta: {

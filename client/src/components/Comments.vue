@@ -1,7 +1,8 @@
 <template>
   <div class="comments">
     <div class="add">
-      <profil-picture-vue source="TODO"></profil-picture-vue>
+      <!-- TODO: set source correctly-->
+      <profil-picture-vue source=""></profil-picture-vue>
       <input
         type="text"
         name="comment"
@@ -11,67 +12,73 @@
       />
     </div>
 
-    <div class="comment" v-for="comment in comments" :key="comment.id">
+    <div class="comment" v-for="comment in comments" :key="comment._id">
       <div class="meta">
         <v-creator-vue
-          :name="comment.author"
-          :user-id="comment.authorID"
+          :name="comment.author.username"
+          :user-id="comment.author._id"
         ></v-creator-vue>
         <span class="creation-time">
-          {{ comment.creationTime }}
+          {{ comment.createdAt }}
         </span>
       </div>
 
       <div class="content">
-        {{ comment.content }}
+        {{ comment.body }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import { PropType, ref } from 'vue'
+import type { Ref } from 'vue'
 import ProfilPictureVue from './post/ProfilPicture.vue'
 import VCreatorVue from './post/VCreator.vue'
-
 import LogoSvg from '@/assets/logo.svg?component'
+import { backend } from '../utils'
+import { Comment, type ICommentDocument } from '../../../server/src/models/comment';
 
-const comments = [
-  {
-    id: 0,
-    author: 'David',
-    authorID: 3,
-    creationTime: '5min',
-    content:
-      'Once the city used to pulse with energy. Dirty and dangerous, but alive and wonderful.',
-  },
-  {
-    id: 1,
-    author: 'Jonas',
-    authorID: 6,
-    creationTime: '1h',
-    content: "Now it's something else. 😍😍😍",
-  },
-  {
-    id: 2,
-    author: 'Minh',
-    authorID: 4,
-    creationTime: '4h',
-    content:
-      "The changes came slowly at first. Most didn't realize, or didn't care, and accepted them.",
-  },
-]
+/**
+ * Props
+ */
+const props = defineProps({
+  postId: {
+    type: String as PropType<string>,
+    required: true
+  }
+})
 
+const comments: Ref<Array<ICommentDocument>> = ref([])
+
+// load comments
+backend.client.get(`/api/comments/${props.postId}`)
+  .then(response => {
+    const receivedComments = response.data.comments
+    comments.value = receivedComments
+  })
+  .catch(error => {
+    console.log(error);
+  })
+
+/**
+ * creats a new comment for the current post
+ */
 const addComment = () => {
-  console.log('submit comment here')
+  backend.client.post(`/api/comments/${props.postId}`, {
+    "comment": {
+      "body": "this is a test comment"
+    }
+  })
+  .then(response => {
+    const newComment = response.data.comment
+    comments.value.push(newComment) // TODO wait for fix of inconstance using author as an object !
+  })
+  .catch(error => {
+    // TODO: handle error message
+    console.log(error);
+  })
 }
-
-// defineProps({
-//   title: {
-//     type: String as PropType<string>,
-//     default: 'allmende',
-//   },
-// })
 </script>
 
 <style lang="sass" scoped>
