@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { Post, Sighting } from "../models";
+import { IPostDocument, ISightingDocument, Post, Sighting, User } from "../models";
 import { PostInput, SightingInfo } from "../interfaces";
 import { ObjectId } from "mongoose";
 import axios from "axios";
 import { compressImage } from "../utils";
 import { ErrorMessages } from "../messages";
+import fs from "fs";
+import path from "path";
+
+// 62a79537325a6b5d0cff3f55
+// 62a79537325a6b5d0cff3f51
+// 62a79537325a6b5d0cff3f52
 
 const createSightings = (
     files: Express.Multer.File[],
@@ -32,6 +38,20 @@ const createSightings = (
         resolve(sightingsJob);
     });
 };
+
+const getSightings = async (sightings: ObjectId[]) => {
+    const array = sightings.map(sighting => {
+        return new Promise<ISightingDocument & { _id: any } | null>((resolve) => {
+            Sighting.findById(sighting).then(res => resolve(res));
+        });
+    });
+    return array;
+}
+
+export const resolveNestedPost = async (post: IPostDocument) => {
+    const doc = await (await (await post.populate("sightings")).populate("author", ["username", "avatarUrl"])).populate("likes", ["username", "avatarUrl"]);
+    return doc;
+}
 
 export class PostsController {
     static async createPostController(req: Request, res: Response) {
@@ -202,6 +222,191 @@ export class PostsController {
         } else {
             return res.status(StatusCodes.UNAUTHORIZED).json({
                 editPostByIDErr: {
+                    post: ErrorMessages.NOT_REGISTERED,
+                },
+            });
+        }
+    }
+
+    // TODO: delete controller
+    static async deletePostByID(req: Request, res: Response) {
+        if (req.session.user) {
+            try {
+                const me = await User.findById(req.session.user);
+                if (me) {
+                    const id = req.params.id;
+                    if (id) {
+                        const post = await Post.findById(id).populate("author", ["username", "avatarUrl"]).populate("sightings");
+                        if (post) {
+                            if ((post.author as any)._id.toString() === (me._id as any).toString()) {
+                                await post.delete();
+                                res.status(StatusCodes.ACCEPTED).json({
+                                    post: post,
+                                });
+                                // deletes attached sightings and images
+                                const sightings = post.sightings;
+                                if (sightings) {
+                                    const obj = await getSightings(sightings);
+                                    const resolve = await Promise.all(obj);
+                                    resolve.forEach((sighting) => {
+                                        if (sighting) {
+                                            const file = sighting.imageUrl;
+                                            if (file) {
+                                                fs.unlink(path.join(process.cwd(), "uploads", file), (err) => {
+                                                    if (err) {
+                                                        console.error(err);
+                                                        throw err;
+                                                    }
+                                                    console.log(`File ${file} is deleted.`);
+                                                });
+                                            }
+                                            sighting.delete();
+                                            console.log(`Deleted sighting: ${sighting._id}`);
+                                        }
+                                    })
+                                }
+                            } else {
+                                return res.status(StatusCodes.NOT_ACCEPTABLE).json({
+                                    removePostByIDErr: {
+                                        error: ErrorMessages.POST_NOT_TO_USER(id),
+                                    },
+                                });
+                            }
+                        } else {
+                            return res.status(StatusCodes.NOT_FOUND).json({
+                                deletePostByIdErr: {
+                                    post: ErrorMessages.ID_POST_MISSING(id),
+                                },
+                            });
+                        }
+                    } else {
+                        return res.status(StatusCodes.BAD_REQUEST).json({
+                            deletePostByIDErr: {
+                                id: ErrorMessages.POST_NO_ID,
+                            },
+                        });
+                    }
+                } else {
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        deletePostByIDErr: {
+                            error: ErrorMessages.ME_NOT_FOUND,
+                        },
+                    });
+                }
+            } catch (e) {
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    removePostByIDErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                deletePostByIDErr: {
+                    error: ErrorMessages.INTERNAL_ERROR,
+                },
+            });
+        }
+    }
+
+    static async likePostByID(req: Request, res: Response) {
+        if (req.session.user) {
+            try {
+                const me = await User.findById(req.session.user);
+                if (me) {
+                    const id = req.params.id;
+                    if (id) {
+                        const post = await Post.findById(id);
+                        if (post) {
+                            await post.addLike(me);
+                            const resolvedPost = await resolveNestedPost(post);
+                            return res.status(StatusCodes.OK).json({
+                                post: resolvedPost,
+                            });
+                        } else {
+                            return res.status(StatusCodes.NOT_FOUND).json({
+                                likePostByIDErr: {
+                                    post: ErrorMessages.ID_POST_MISSING(id as string),
+                                }
+                            });
+                        }
+                    } else {
+                        return res.status(StatusCodes.BAD_REQUEST).json({
+                            likePostByIDErr: {
+                                id: ErrorMessages.POST_NO_ID,
+                            },
+                        });
+                    }
+                } else {
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        likePostByIDErr: {
+                            error: ErrorMessages.ME_NOT_FOUND,
+                        },
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    likePostByIDErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                likePostByIDErr: {
+                    post: ErrorMessages.NOT_REGISTERED,
+                },
+            });
+        }
+    }
+
+    static async removeLikeByPostID(req: Request, res: Response) {
+        if (req.session.user) {
+            try {
+                const me = await User.findById(req.session.user);
+                if (me) {
+                    const id = req.params.id;
+                    if (id) {
+                        const post = await Post.findById(id);
+                        if (post) {
+                            await post.removeLike(me);
+                            const resolvedPost = await resolveNestedPost(post);
+                            return res.status(StatusCodes.OK).json({
+                                post: resolvedPost,
+                            });
+                        } else {
+                            return res.status(StatusCodes.NOT_FOUND).json({
+                                likePostByIDErr: {
+                                    post: ErrorMessages.ID_POST_MISSING(id as string),
+                                }
+                            });
+                        }
+                    } else {
+                        return res.status(StatusCodes.BAD_REQUEST).json({
+                            likePostByIDErr: {
+                                id: ErrorMessages.POST_NO_ID,
+                            },
+                        });
+                    }
+                } else {
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        likePostByIDErr: {
+                            error: ErrorMessages.ME_NOT_FOUND,
+                        },
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    removeLikeByPostIDErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                removeLikeByPostIDErr: {
                     post: ErrorMessages.NOT_REGISTERED,
                 },
             });

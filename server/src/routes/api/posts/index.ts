@@ -8,5 +8,8 @@ router.post("/", upload.any(), PostsController.createPostController);
 router.get("/", PostsController.getPostsController);
 router.get("/:id", PostsController.getPostByIDController);
 // router.put("/:id", PostsController.editPostByIDController);
+router.delete("/:id", PostsController.deletePostByID);
+router.put("/like/:id", PostsController.likePostByID);
+router.delete("/removeLike/:id", PostsController.removeLikeByPostID);
 
 export = router;
