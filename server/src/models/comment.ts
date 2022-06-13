@@ -73,6 +73,7 @@ commentSchema.statics.findCommentByIDAndEdit = async function (
     comment: CommentInput,
 ) {
     const doc = await this.findById(id);
+    if (!doc) throw new Error(`Comment '${id}' not found or deleted.`);
     if (doc.author == user) {
         const { body } = comment;
         doc.body = body;
@@ -88,6 +89,7 @@ commentSchema.statics.findCommentByIDAndDelete = async function (
     user: ObjectId | string,
 ) {
     const doc = await this.findById(id);
+    if (!doc) throw new Error(`Comment '${id}' not found or deleted.`);
     if (doc.author == user) {
         await doc.delete();
         return doc;
