@@ -115,7 +115,7 @@ export class UsersController {
             try {
                 const userEmail = await User.findByEmail(input.email);
                 const userName = await User.findByUsername(input.username);
-                
+
                 const user = userEmail || userName;
                 if (!user) {
                     return res.status(StatusCodes.NOT_FOUND).json({
@@ -124,7 +124,7 @@ export class UsersController {
                         },
                     });
                 }
-                
+
                 const match = await user.checkPassword(input.password);
                 if (!match) {
                     // Logger.warn("Password is incorrect");

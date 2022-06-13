@@ -7,7 +7,10 @@ import axios from "axios";
 import { compressImage } from "../utils";
 import { ErrorMessages } from "../messages";
 
-const createSightings = (files: Express.Multer.File[], sightings: SightingInfo[]) => {
+const createSightings = (
+    files: Express.Multer.File[],
+    sightings: SightingInfo[],
+) => {
     return new Promise<Promise<ObjectId>[]>((resolve) => {
         const sightingsJob = files.map(
             (f: Express.Multer.File, i: number) =>
@@ -68,13 +71,11 @@ export class PostsController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    createPostErr: {
-                        post: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                createPostErr: {
+                    post: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
