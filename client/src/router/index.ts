@@ -56,7 +56,7 @@ const router = createRouter({
     {
       path: '/user/:userID',
       name: 'user-index',
-      component: () => import("../views/User/Index.vue"),
+      component: () => import('../views/User/Index.vue'),
       meta: {
         requiresAuth: true,
         hideNavigation: true,

@@ -6,17 +6,16 @@
       </template>
       <template v-slot:right>
         <v-button type="primary" tooltip="Follow" @click="toggleFollow">
-          {{ following ? "Follow": "Following"}}
+          {{ following ? 'Follow' : 'Following' }}
         </v-button>
       </template>
     </v-title-vue>
 
     <section class="section">
-
       <div class="information">
         <div class="profil-image-wrapper">
           <div class="profil-image">
-            <img  src="/birds/amsel1.jpg" alt="" srcset="">
+            <img src="/birds/amsel1.jpg" alt="" srcset="" />
           </div>
         </div>
 
@@ -52,13 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import router from "../../router"
-import ArrowLeftSVG from '@/assets/icon24/arrow-left.svg?component';
+import router from '../../router'
+import ArrowLeftSVG from '@/assets/icon24/arrow-left.svg?component'
 import VTitleVue from '@/components/VTitle.vue'
-import VButton from "@/components/VButton.vue"
-import VPost from "@/components/post/VPost.vue";
-import { PropType, ref } from "@vue/runtime-core";
-
+import VButton from '@/components/VButton.vue'
+import VPost from '@/components/post/VPost.vue'
+import { PropType, ref } from '@vue/runtime-core'
 
 const props = defineProps({
   userId: {
@@ -78,7 +76,6 @@ const toggleFollow = () => {
   // TODO: follow user here
   following.value = !following.value
 }
-
 </script>
 
 <style lang="sass" scoped>
@@ -137,7 +134,4 @@ const toggleFollow = () => {
         color: var(--text-secondary)
         font-size: 12px
         font-weight: 400
-
-
-
 </style>
