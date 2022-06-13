@@ -25,4 +25,11 @@ The client contains the frontend and with which users can interact with allmende
 The ML service is seperate from the server and is used by the server to identify and classify images.
 
 </li>
+
+<li>
+
+**[Nginx](/nginx)**<br>
+The Nginx folder contains the configurations for the the requests proxys.
+</li>
+
 </ul>
