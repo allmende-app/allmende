@@ -37,7 +37,10 @@ import ProfilPictureVue from './post/ProfilPicture.vue'
 import VCreatorVue from './post/VCreator.vue'
 import LogoSvg from '@/assets/logo.svg?component'
 import { backend } from '../utils'
-import { Comment, type ICommentDocument } from '../../../server/src/models/comment';
+import {
+  Comment,
+  type ICommentDocument,
+} from '../../../server/src/models/comment'
 
 /**
  * Props
@@ -45,39 +48,41 @@ import { Comment, type ICommentDocument } from '../../../server/src/models/comme
 const props = defineProps({
   postId: {
     type: String as PropType<string>,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const comments: Ref<Array<ICommentDocument>> = ref([])
 
 // load comments
-backend.client.get(`/api/comments/${props.postId}`)
-  .then(response => {
+backend.client
+  .get(`/api/comments/${props.postId}`)
+  .then((response) => {
     const receivedComments = response.data.comments
     comments.value = receivedComments
   })
-  .catch(error => {
-    console.log(error);
+  .catch((error) => {
+    console.log(error)
   })
 
 /**
  * creats a new comment for the current post
  */
 const addComment = () => {
-  backend.client.post(`/api/comments/${props.postId}`, {
-    "comment": {
-      "body": "this is a test comment"
-    }
-  })
-  .then(response => {
-    const newComment = response.data.comment
-    comments.value.push(newComment) // TODO wait for fix of inconstance using author as an object !
-  })
-  .catch(error => {
-    // TODO: handle error message
-    console.log(error);
-  })
+  backend.client
+    .post(`/api/comments/${props.postId}`, {
+      comment: {
+        body: 'this is a test comment',
+      },
+    })
+    .then((response) => {
+      const newComment = response.data.comment
+      comments.value.push(newComment) // TODO wait for fix of inconstance using author as an object !
+    })
+    .catch((error) => {
+      // TODO: handle error message
+      console.log(error)
+    })
 }
 </script>
 

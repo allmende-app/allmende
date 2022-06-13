@@ -19,10 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import type { ObjectId } from 'mongoose';
+import type { ObjectId } from 'mongoose'
 import type { PropType } from 'vue'
 import { ref } from 'vue'
-import type { KingdomType } from '../../../../server/src/interfaces';
+import type { KingdomType } from '../../../../server/src/interfaces'
 import { backend } from '../../utils'
 const baseURL = backend.baseURL
 

@@ -56,7 +56,7 @@ import ActionButtons from '@/components/ActionButtons.vue'
 import { log } from 'console'
 import { backend } from '../../utils'
 import type { AxiosError } from 'axios'
-import type { ISighting } from '../../../../server/src/models/sighting';
+import type { ISighting } from '../../../../server/src/models/sighting'
 
 /**
  * Props
@@ -71,7 +71,7 @@ const props = defineProps({
 /**
  * Data
  */
-const text = ref("")
+const text = ref('')
 const comments = ref([])
 const likes = ref(0)
 const sightings: Ref<Array<ISighting>> = ref([])
@@ -83,25 +83,26 @@ const back = () => router.back()
 const toggleLike = () => {
   // TODO: toggle like here
 }
-const scrollToComments = () => router.replace(router.currentRoute.value.path + '#comments')
+const scrollToComments = () =>
+  router.replace(router.currentRoute.value.path + '#comments')
 
 /**
  * fetching post details
  */
-backend.client.get(`/api/posts/${props.postID}`).then(response => {
-  const post = response.data.post
-  console.log(post);
+backend.client
+  .get(`/api/posts/${props.postID}`)
+  .then((response) => {
+    const post = response.data.post
+    console.log(post)
 
-  text.value = post.text
-  likes.value = post.likes.length
-  sightings.value = post.sightings
-  console.log(sightings.value);
-})
-.catch((error: AxiosError) => {
-  console.log(error.code);
-})
-
-
+    text.value = post.text
+    likes.value = post.likes.length
+    sightings.value = post.sightings
+    console.log(sightings.value)
+  })
+  .catch((error: AxiosError) => {
+    console.log(error.code)
+  })
 </script>
 
 <style lang="sass" scoped>
