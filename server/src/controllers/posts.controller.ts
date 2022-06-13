@@ -164,8 +164,13 @@ export class PostsController {
         }
     }
 
+    // TODO: wip edit
     static async editPostByIDController(req: Request, res: Response) {
         if (req.session.user) {
+            const files: any = req.files;
+            const postBody: PostInput = JSON.parse(req.body.post);
+            const { sightings } = postBody;
+
             const parent = JSON.parse(req.body.post);
             const body: PostInput = parent.post;
 
