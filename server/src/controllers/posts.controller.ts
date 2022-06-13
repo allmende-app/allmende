@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { IPostDocument, ISightingDocument, Post, Sighting, User } from "../models";
+import {
+    IPostDocument,
+    ISightingDocument,
+    Post,
+    Sighting,
+    User,
+} from "../models";
 import { PostInput, SightingInfo } from "../interfaces";
 import { ObjectId } from "mongoose";
 import axios from "axios";
@@ -40,18 +46,24 @@ const createSightings = (
 };
 
 const getSightings = async (sightings: ObjectId[]) => {
-    const array = sightings.map(sighting => {
-        return new Promise<ISightingDocument & { _id: any } | null>((resolve) => {
-            Sighting.findById(sighting).then(res => resolve(res));
-        });
+    const array = sightings.map((sighting) => {
+        return new Promise<(ISightingDocument & { _id: any }) | null>(
+            (resolve) => {
+                Sighting.findById(sighting).then((res) => resolve(res));
+            },
+        );
     });
     return array;
-}
+};
 
 export const resolveNestedPost = async (post: IPostDocument) => {
-    const doc = await (await (await post.populate("sightings")).populate("author", ["username", "avatarUrl"])).populate("likes", ["username", "avatarUrl"]);
+    const doc = await (
+        await (
+            await post.populate("sightings")
+        ).populate("author", ["username", "avatarUrl"])
+    ).populate("likes", ["username", "avatarUrl"]);
     return doc;
-}
+};
 
 export class PostsController {
     static async createPostController(req: Request, res: Response) {
@@ -236,9 +248,14 @@ export class PostsController {
                 if (me) {
                     const id = req.params.id;
                     if (id) {
-                        const post = await Post.findById(id).populate("author", ["username", "avatarUrl"]).populate("sightings");
+                        const post = await Post.findById(id)
+                            .populate("author", ["username", "avatarUrl"])
+                            .populate("sightings");
                         if (post) {
-                            if ((post.author as any)._id.toString() === (me._id as any).toString()) {
+                            if (
+                                (post.author as any)._id.toString() ===
+                                (me._id as any).toString()
+                            ) {
                                 await post.delete();
                                 res.status(StatusCodes.ACCEPTED).json({
                                     post: post,
@@ -252,25 +269,40 @@ export class PostsController {
                                         if (sighting) {
                                             const file = sighting.imageUrl;
                                             if (file) {
-                                                fs.unlink(path.join(process.cwd(), "uploads", file), (err) => {
-                                                    if (err) {
-                                                        console.error(err);
-                                                        throw err;
-                                                    }
-                                                    console.log(`File ${file} is deleted.`);
-                                                });
+                                                fs.unlink(
+                                                    path.join(
+                                                        process.cwd(),
+                                                        "uploads",
+                                                        file,
+                                                    ),
+                                                    (err) => {
+                                                        if (err) {
+                                                            console.error(err);
+                                                            throw err;
+                                                        }
+                                                        console.log(
+                                                            `File ${file} is deleted.`,
+                                                        );
+                                                    },
+                                                );
                                             }
                                             sighting.delete();
-                                            console.log(`Deleted sighting: ${sighting._id}`);
+                                            console.log(
+                                                `Deleted sighting: ${sighting._id}`,
+                                            );
                                         }
-                                    })
+                                    });
                                 }
                             } else {
-                                return res.status(StatusCodes.NOT_ACCEPTABLE).json({
-                                    removePostByIDErr: {
-                                        error: ErrorMessages.POST_NOT_TO_USER(id),
-                                    },
-                                });
+                                return res
+                                    .status(StatusCodes.NOT_ACCEPTABLE)
+                                    .json({
+                                        removePostByIDErr: {
+                                            error: ErrorMessages.POST_NOT_TO_USER(
+                                                id,
+                                            ),
+                                        },
+                                    });
                             }
                         } else {
                             return res.status(StatusCodes.NOT_FOUND).json({
@@ -326,8 +358,10 @@ export class PostsController {
                         } else {
                             return res.status(StatusCodes.NOT_FOUND).json({
                                 likePostByIDErr: {
-                                    post: ErrorMessages.ID_POST_MISSING(id as string),
-                                }
+                                    post: ErrorMessages.ID_POST_MISSING(
+                                        id as string,
+                                    ),
+                                },
                             });
                         }
                     } else {
@@ -378,8 +412,10 @@ export class PostsController {
                         } else {
                             return res.status(StatusCodes.NOT_FOUND).json({
                                 likePostByIDErr: {
-                                    post: ErrorMessages.ID_POST_MISSING(id as string),
-                                }
+                                    post: ErrorMessages.ID_POST_MISSING(
+                                        id as string,
+                                    ),
+                                },
                             });
                         }
                     } else {
