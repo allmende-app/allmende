@@ -171,51 +171,25 @@ export class CommentsController {
 
     static async getCommentsByPostIDController(req: Request, res: Response) {
         if (req.session.user) {
-            try {
-                const id = req.params.id;
-                if (id) {
-                    const limit = req.query.limit ? req.query.limit : 20;
-                    const page = req.query.page ? req.query.page : 1;
-                    if (!Number(limit)) return res.status(StatusCodes.BAD_REQUEST).json({
-                        getCommentsByPostIDErr: {
-                            limit: ErrorMessages.COMMENT_LIMIT_QUERY,
-                        },
-                    });
-                    if (!Number(page)) return res.status(StatusCodes.BAD_REQUEST).json({
-                        getCommentsByPostIDErr: {
-                            page: ErrorMessages.COMMENT_PAGE_QUERY,
-                        },
-                    })
-                    const comments = await Comment.findCommentsByPostID(id, Number(page), Number(limit));
-                    const resolvedDocuments = await resolvedNestedComments(comments);
-                    return res.status(StatusCodes.OK).json({
-                        comments: resolvedDocuments,
-                    });
-                } else {
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            getCommentsByPostIDErr: {
-                                id: ErrorMessages.POST_NO_ID,
-                            },
-                        });
-                }
-            } catch (e) {
-                console.error(e);
-                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            const id = req.params.id;
+            if (id) {
+                const comments = await Comment.findCommentsByPostID(id);
+                return res.status(StatusCodes.OK).json({
+                    comments: comments,
+                });
+            } else {
+                return res.status(StatusCodes.BAD_REQUEST).json({
                     getCommentsByPostIDErr: {
-                        error: ErrorMessages.INTERNAL_ERROR,
+                        id: ErrorMessages.POST_NO_ID,
                     },
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    getCommetnsByPostIDErr: {
-                        error: ErrorMessages.INTERNAL_ERROR,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                getCommetnsByPostIDErr: {
+                    error: ErrorMessages.INTERNAL_ERROR,
+                },
+            });
         }
     }
 
