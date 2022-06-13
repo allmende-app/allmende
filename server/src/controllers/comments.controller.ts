@@ -43,8 +43,13 @@ export const resolveNestedSavedComment = async (comment: ICommentDocument) => {
 };
 
 export const resolveNestedComment = async (comment: ICommentDocument) => {
-    const doc = await
-        (await (await (await comment.populate("post")).populate("post.author", ["username", "avatarUrl"])).populate("author", ["username", "avatarUrl"])).populate("post.sightings");
+    const doc = await (
+        await (
+            await (
+                await comment.populate("post")
+            ).populate("post.author", ["username", "avatarUrl"])
+        ).populate("author", ["username", "avatarUrl"])
+    ).populate("post.sightings");
     return doc;
 };
 
@@ -198,15 +203,28 @@ export class CommentsController {
             if (id) {
                 const limit = req.query.limit ? req.query.limit : 20;
                 const page = req.query.page ? req.query.page : 1;
-                if (!Number(limit)) return res.status(StatusCodes.BAD_REQUEST)
-                    .json({ getCommentsByPostIDErr: { limit: ErrorMessages.COMMENT_LIMIT_QUERY } });
-                if (!Number(page)) return res.status(StatusCodes.BAD_REQUEST).json({
-                    getCommentsByPostIDErr: {
-                        page: ErrorMessages.COMMENT_PAGE_QUERY,
-                    }
-                });
-                const comments = await Comment.findCommentsByPostID(id, Number(page), Number(limit));
-                const populatedComments = await resolvedNestedComments(comments);
+                if (!Number(limit))
+                    return res
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            getCommentsByPostIDErr: {
+                                limit: ErrorMessages.COMMENT_LIMIT_QUERY,
+                            },
+                        });
+                if (!Number(page))
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getCommentsByPostIDErr: {
+                            page: ErrorMessages.COMMENT_PAGE_QUERY,
+                        },
+                    });
+                const comments = await Comment.findCommentsByPostID(
+                    id,
+                    Number(page),
+                    Number(limit),
+                );
+                const populatedComments = await resolvedNestedComments(
+                    comments,
+                );
                 return res.status(StatusCodes.OK).json({
                     comments: populatedComments,
                 });
@@ -233,7 +251,9 @@ export class CommentsController {
                 if (id) {
                     const comment = await Comment.findById(id);
                     if (comment) {
-                        const resolvedComment = await resolveNestedComment(comment);
+                        const resolvedComment = await resolveNestedComment(
+                            comment,
+                        );
                         return res.status(StatusCodes.OK).json({
                             comment: resolvedComment,
                         });
