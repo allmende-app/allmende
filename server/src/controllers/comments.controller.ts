@@ -4,6 +4,11 @@ import { CommentInput } from "../interfaces";
 import { ErrorMessages } from "../messages";
 import { Comment, ICommentDocument, Post, User } from "../models";
 
+/**
+ * Populates the fields of the comments. Returns a big package of the non-visible data (author information, sightings etc).
+ * @param comments ICommmentDocument[]
+ * @returns Promise<ICommentDocument>[]
+ */
 export const resolvedNestedComments = async (comments: ICommentDocument[]) => {
     const promises = comments.map(
         (comment) =>
@@ -37,8 +42,10 @@ export const resolveNestedSavedComment = async (comment: ICommentDocument) => {
     return doc;
 };
 
-export const resolveNextedComment = async (comment: ICommentDocument) => {
-    return null;
+export const resolveNestedComment = async (comment: ICommentDocument) => {
+    const doc = await
+        (await (await (await comment.populate("post")).populate("post.author", ["username", "avatarUrl"])).populate("author", ["username", "avatarUrl"])).populate("post.sightings");
+    return doc;
 };
 
 export class CommentsController {
@@ -120,14 +127,15 @@ export class CommentsController {
                         req.session.user,
                         body,
                     );
+                    const resolvedDoc = await resolveNestedComment(doc);
                     return res.status(StatusCodes.OK).json({
-                        comment: doc,
+                        comment: resolvedDoc,
                     });
-                } catch (er) {
+                } catch (er: any) {
                     console.error(er);
-                    return res.status(StatusCodes.UNAUTHORIZED).json({
+                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                         editCommentErr: {
-                            unauthorized: er,
+                            error: er.toString(),
                         },
                     });
                 }
@@ -156,14 +164,15 @@ export class CommentsController {
                         id as string,
                         req.session.user,
                     );
+                    const resolvedDoc = await resolveNestedComment(doc);
                     return res.status(StatusCodes.OK).json({
-                        comment: doc,
+                        comment: resolvedDoc,
                     });
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
-                    return res.status(StatusCodes.UNAUTHORIZED).json({
+                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                         deleteCommentErr: {
-                            unauthorized: err,
+                            error: err.toString(),
                         },
                     });
                 }
@@ -187,9 +196,19 @@ export class CommentsController {
         if (req.session.user) {
             const id = req.params.id;
             if (id) {
-                const comments = await Comment.findCommentsByPostID(id);
+                const limit = req.query.limit ? req.query.limit : 20;
+                const page = req.query.page ? req.query.page : 1;
+                if (!Number(limit)) return res.status(StatusCodes.BAD_REQUEST)
+                    .json({ getCommentsByPostIDErr: { limit: ErrorMessages.COMMENT_LIMIT_QUERY } });
+                if (!Number(page)) return res.status(StatusCodes.BAD_REQUEST).json({
+                    getCommentsByPostIDErr: {
+                        page: ErrorMessages.COMMENT_PAGE_QUERY,
+                    }
+                });
+                const comments = await Comment.findCommentsByPostID(id, Number(page), Number(limit));
+                const populatedComments = await resolvedNestedComments(comments);
                 return res.status(StatusCodes.OK).json({
-                    comments: comments,
+                    comments: populatedComments,
                 });
             } else {
                 return res.status(StatusCodes.BAD_REQUEST).json({
@@ -214,8 +233,9 @@ export class CommentsController {
                 if (id) {
                     const comment = await Comment.findById(id);
                     if (comment) {
+                        const resolvedComment = await resolveNestedComment(comment);
                         return res.status(StatusCodes.OK).json({
-                            comment: comment,
+                            comment: resolvedComment,
                         });
                     } else {
                         return res.status(StatusCodes.NOT_FOUND).json({
