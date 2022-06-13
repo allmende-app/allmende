@@ -48,7 +48,17 @@ const router = createRouter({
       name: 'post-detail',
       component: () => import('../views/Post/Detail.vue'),
       meta: {
-        requiresAuth: false, // TODO set to true later
+        requiresAuth: true,
+        hideNavigation: true,
+      },
+      props: true,
+    },
+    {
+      path: '/user/:userID',
+      name: 'user-index',
+      component: () => import("../views/User/Index.vue"),
+      meta: {
+        requiresAuth: true,
         hideNavigation: true,
       },
       props: true,
