@@ -109,8 +109,6 @@ backend.client
 .headline
   margin-bottom: allmende.$size-xxxsmall
 
-.section
-  margin-bottom: allmende.$size-small
 
 .post-text
   @include allmende.text-body
@@ -118,4 +116,7 @@ backend.client
   background-color: white
   border-radius: allmende.$radius-card
   margin-bottom: allmende.$size-xxxsmall
-</style>
+
+.section
+  margin-bottom: allmende.$size-small
+  </style>
