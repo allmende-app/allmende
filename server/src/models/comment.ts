@@ -17,7 +17,7 @@ export interface ICommentDocument extends IComment, Document {
 }
 
 export interface ICommentModel extends Model<ICommentDocument> {
-    findCommentsByPostID: (post: string) => Promise<ICommentDocument[]>;
+    findCommentsByPostID: (post: string, page?: number, limit?: number) => Promise<ICommentDocument[]>;
     findCommentsByUserID: (post: string) => Promise<ICommentDocument[]>;
 
     findCommentByIDAndDelete: (
@@ -34,8 +34,8 @@ export interface ICommentModel extends Model<ICommentDocument> {
 export const commentSchema = new Schema<ICommentDocument>(
     {
         body: { type: mongoose.Schema.Types.String, min: 10, required: true },
-        post: { type: mongoose.Types.ObjectId, required: true },
-        author: { type: mongoose.Types.ObjectId, required: true },
+        post: { type: mongoose.Types.ObjectId, required: true, ref: "Post", },
+        author: { type: mongoose.Types.ObjectId, required: true, ref: "User", },
     },
     {
         validateBeforeSave: true,
@@ -53,8 +53,8 @@ commentSchema.methods.construct = async function (
     this.author = author;
 };
 
-commentSchema.statics.findCommentsByPostID = async function (post: string) {
-    return this.find({ post: post });
+commentSchema.statics.findCommentsByPostID = async function (post: string, page = 1, limit = 20) {
+    return this.find({ post: post }).limit(limit).skip(page > 0 ? (page - 1) * 20 : 0);
 };
 
 commentSchema.statics.findCommentByIDAndEdit = async function (

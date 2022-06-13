@@ -2,7 +2,30 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { CommentInput } from "../interfaces";
 import { ErrorMessages } from "../messages";
-import { Comment, Post, User } from "../models";
+import { Comment, ICommentDocument, Post, User } from "../models";
+
+export const resolvedNestedComments = async (comments: ICommentDocument[]) => {
+    const promises = comments.map(comment => new Promise<ICommentDocument>((resolve) => {
+        comment.populate("post").then(_comment => {
+            _comment.populate("post.sightings").then(c => {
+                c.populate("author", ["username", "avatarUrl"]).then(_ => {
+                    _.populate("post.author", ["username", "avatarUrl"]).then(end => resolve(end));
+                });
+            });
+        });
+    }));
+
+    return await Promise.all(promises);
+}
+
+export const resolveNestedSavedComment = async (comment: ICommentDocument) => {
+    const doc = await (await (await (await (await comment.save()).populate("post")).populate("author", ["username", "avatarUrl"])).populate("post.sightings")).populate("post.author", ["username", "avatarUrl"]);
+    return doc;
+}
+
+export const resolveNextedComment = async (comment: ICommentDocument) => {
+    return null;
+}
 
 export class CommentsController {
     static async createCommentController(req: Request, res: Response) {
@@ -41,7 +64,7 @@ export class CommentsController {
                     const { body } = sendedBody;
                     const comment = new Comment();
                     comment.construct(body, post["_id"], me["_id"]);
-                    const doc = await comment.save();
+                    const doc = await resolveNestedSavedComment(comment);
                     if (doc) {
                         return res.status(StatusCodes.CREATED).json({
                             comment: doc,
@@ -169,20 +192,42 @@ export class CommentsController {
 
     static async getCommentsByPostIDController(req: Request, res: Response) {
         if (req.session.user) {
-            const id = req.params.id;
-            if (id) {
-                const comments = await Comment.findCommentsByPostID(id);
-                return res.status(StatusCodes.OK).json({
-                    comments: comments,
-                });
-            } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
+            try {
+                const id = req.params.id;
+                if (id) {
+                    const limit = req.query.limit ? req.query.limit : 20;
+                    const page = req.query.page ? req.query.page : 1;
+                    if (!Number(limit)) return res.status(StatusCodes.BAD_REQUEST).json({
                         getCommentsByPostIDErr: {
-                            id: ErrorMessages.POST_NO_ID,
+                            limit: ErrorMessages.COMMENT_LIMIT_QUERY,
                         },
                     });
+                    if (!Number(page)) return res.status(StatusCodes.BAD_REQUEST).json({
+                        getCommentsByPostIDErr: {
+                            page: ErrorMessages.COMMENT_PAGE_QUERY,
+                        },
+                    })
+                    const comments = await Comment.findCommentsByPostID(id, Number(page), Number(limit));
+                    const resolvedDocuments = await resolvedNestedComments(comments);
+                    return res.status(StatusCodes.OK).json({
+                        comments: resolvedDocuments,
+                    });
+                } else {
+                    return res
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            getCommentsByPostIDErr: {
+                                id: ErrorMessages.POST_NO_ID,
+                            },
+                        });
+                }
+            } catch (e) {
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    getCommentsByPostIDErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
             }
         } else {
             return res
