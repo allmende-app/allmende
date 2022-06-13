@@ -14,29 +14,24 @@ export class CommentsController {
                 const sendedBody: CommentInput = req.body.comment;
 
                 if (!sendedBody) {
-                    return res.status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            createCommentErr: {
-                                body: ErrorMessages.COMMENT_NO_BODY,
-                            },
-                        });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        createCommentErr: {
+                            body: ErrorMessages.COMMENT_NO_BODY,
+                        },
+                    });
                 }
                 if (!id)
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            createCommentErr: {
-                                id: ErrorMessages.COMMENT_NO_POST_ID,
-                            },
-                        });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        createCommentErr: {
+                            id: ErrorMessages.COMMENT_NO_POST_ID,
+                        },
+                    });
                 if (!post)
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            createCommentErr: {
-                                post: ErrorMessages.COMMENT_NO_POST,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        createCommentErr: {
+                            post: ErrorMessages.COMMENT_NO_POST,
+                        },
+                    });
                 if (me) {
                     const { body } = sendedBody;
                     const comment = new Comment();
@@ -48,13 +43,11 @@ export class CommentsController {
                         });
                     }
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            createCommentErr: {
-                                user: ErrorMessages.ME_NOT_FOUND,
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_FOUND).json({
+                        createCommentErr: {
+                            user: ErrorMessages.ME_NOT_FOUND,
+                        },
+                    });
                 }
             } catch (e) {
                 console.error(e);
@@ -65,13 +58,11 @@ export class CommentsController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    createCommentErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    },
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                createCommentErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -80,13 +71,11 @@ export class CommentsController {
             const id: string = req.params.id;
             const body: CommentInput = req.body.comment;
             if (!body)
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        editCommentErr: {
-                            body: ErrorMessages.COMMENT_NO_BODY,
-                        },
-                    });
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    editCommentErr: {
+                        body: ErrorMessages.COMMENT_NO_BODY,
+                    },
+                });
             if (id) {
                 try {
                     const doc = await Comment.findCommentByIDAndEdit(
@@ -106,22 +95,18 @@ export class CommentsController {
                     });
                 }
             } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        editCommentErr: {
-                            id: ErrorMessages.COMMENT_NO_COMMENT_ID,
-                        },
-                    });
-            }
-        } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
+                return res.status(StatusCodes.BAD_REQUEST).json({
                     editCommentErr: {
-                        error: ErrorMessages.INTERNAL_ERROR,
+                        id: ErrorMessages.COMMENT_NO_COMMENT_ID,
                     },
                 });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                editCommentErr: {
+                    error: ErrorMessages.INTERNAL_ERROR,
+                },
+            });
         }
     }
 
@@ -139,31 +124,25 @@ export class CommentsController {
                     });
                 } catch (err) {
                     console.error(err);
-                    return res
-                        .status(StatusCodes.UNAUTHORIZED)
-                        .json({
-                            deleteCommentErr: {
-                                unauthorized: err,
-                            },
-                        });
-                }
-            } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
+                    return res.status(StatusCodes.UNAUTHORIZED).json({
                         deleteCommentErr: {
-                            id: ErrorMessages.COMMENT_NO_COMMENT_ID,
+                            unauthorized: err,
                         },
                     });
-            }
-        } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
+                }
+            } else {
+                return res.status(StatusCodes.BAD_REQUEST).json({
                     deleteCommentErr: {
-                        error: ErrorMessages.INTERNAL_ERROR,
+                        id: ErrorMessages.COMMENT_NO_COMMENT_ID,
                     },
                 });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                deleteCommentErr: {
+                    error: ErrorMessages.INTERNAL_ERROR,
+                },
+            });
         }
     }
 
@@ -176,22 +155,18 @@ export class CommentsController {
                     comments: comments,
                 });
             } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
-                        getCommentsByPostIDErr: {
-                            id: ErrorMessages.POST_NO_ID,
-                        },
-                    });
-            }
-        } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    getCommetnsByPostIDErr: {
-                        error: ErrorMessages.INTERNAL_ERROR,
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    getCommentsByPostIDErr: {
+                        id: ErrorMessages.POST_NO_ID,
                     },
                 });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                getCommetnsByPostIDErr: {
+                    error: ErrorMessages.INTERNAL_ERROR,
+                },
+            });
         }
     }
 
@@ -206,40 +181,33 @@ export class CommentsController {
                             comment: comment,
                         });
                     } else {
-                        return res
-                            .status(StatusCodes.NOT_FOUND)
-                            .json({
-                                getCommentByIDErr: {
-                                    comment: ErrorMessages.COMMENT_NOT_FOUND(id),
-                                },
-                            });
-                    }
-                } else {
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            getCOmmentByIDErr: {
-                                id: ErrorMessages.COMMENT_NO_COMMENT_ID,
+                        return res.status(StatusCodes.NOT_FOUND).json({
+                            getCommentByIDErr: {
+                                comment: ErrorMessages.COMMENT_NOT_FOUND(id),
                             },
                         });
+                    }
+                } else {
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getCOmmentByIDErr: {
+                            id: ErrorMessages.COMMENT_NO_COMMENT_ID,
+                        },
+                    });
                 }
             } catch (e) {
                 console.error(e);
-                return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-                    .json({
-                        getCommentByIDErr: {
-                            error: ErrorMessages.INTERNAL_ERROR,
-                        },
-                    });
-            }
-        } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    getCommentByIdErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    getCommentByIDErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
                     },
                 });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                getCommentByIdErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 }

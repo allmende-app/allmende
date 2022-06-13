@@ -55,7 +55,9 @@ export class PostsController {
                     const post = new Post();
                     await post.construct(postBody, userId);
                     post.sightings = sightingsIds;
-                    const doc = await (await (await post.save()).populate("sightings")).populate("author", ["username", "avatarUrl"]);
+                    const doc = await (
+                        await (await post.save()).populate("sightings")
+                    ).populate("author", ["username", "avatarUrl"]);
 
                     return res.status(StatusCodes.CREATED).json({
                         post: doc,
@@ -83,37 +85,33 @@ export class PostsController {
         if (req.session.user) {
             if (req.params.id) {
                 const id: string = req.params.id;
-                const post = await Post.findById(id).populate("sightings").populate("author", ["username", "avatarUrl"]);
+                const post = await Post.findById(id)
+                    .populate("sightings")
+                    .populate("author", ["username", "avatarUrl"]);
                 if (post) {
                     return res.status(StatusCodes.OK).json({
                         post: post,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .json({
-                            getPostByIDErr: {
-                                id: ErrorMessages.ID_POST_MISSING(id),
-                            },
-                        });
-                }
-            } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({
+                    return res.status(StatusCodes.NOT_FOUND).json({
                         getPostByIDErr: {
-                            id: ErrorMessages.POST_NO_ID,
+                            id: ErrorMessages.ID_POST_MISSING(id),
                         },
                     });
-            }
-        } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
+                }
+            } else {
+                return res.status(StatusCodes.BAD_REQUEST).json({
                     getPostByIDErr: {
-                        post: ErrorMessages.NOT_REGISTERED,
+                        id: ErrorMessages.POST_NO_ID,
                     },
                 });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                getPostByIDErr: {
+                    post: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -130,9 +128,19 @@ export class PostsController {
                         Number(page),
                         tag ? (tag as string) : undefined,
                     );
-                    const promises = posts.map(post => new Promise((resolve) => {
-                        post.populate("sightings").then(p => p.populate("author", ["username", "avatarUrl"]).then(r => resolve(r)));
-                    }));
+                    const promises = posts.map(
+                        (post) =>
+                            new Promise((resolve) => {
+                                post.populate("sightings").then((p) =>
+                                    p
+                                        .populate("author", [
+                                            "username",
+                                            "avatarUrl",
+                                        ])
+                                        .then((r) => resolve(r)),
+                                );
+                            }),
+                    );
 
                     const results = await Promise.all(promises);
                     return res.status(StatusCodes.OK).json({
@@ -148,13 +156,11 @@ export class PostsController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    getPostsErr: {
-                        error: ErrorMessages.NOT_REGISTERED,
-                    }
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                getPostsErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 
@@ -175,13 +181,11 @@ export class PostsController {
                         post: doc,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.NOT_ACCEPTABLE)
-                        .json({
-                            editPostByIDErr: {
-                                post: ErrorMessages.POST_NOT_TO_USER(postId),
-                            },
-                        });
+                    return res.status(StatusCodes.NOT_ACCEPTABLE).json({
+                        editPostByIDErr: {
+                            post: ErrorMessages.POST_NOT_TO_USER(postId),
+                        },
+                    });
                 }
             } else {
                 return res.status(StatusCodes.NOT_FOUND).json({
@@ -191,13 +195,11 @@ export class PostsController {
                 });
             }
         } else {
-            return res
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    editPostByIDErr: {
-                        post: ErrorMessages.NOT_REGISTERED,
-                    }
-                });
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                editPostByIDErr: {
+                    post: ErrorMessages.NOT_REGISTERED,
+                },
+            });
         }
     }
 }
