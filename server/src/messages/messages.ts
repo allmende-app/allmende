@@ -32,6 +32,8 @@ export const ErrorMessages = {
     COMMENT_NO_BODY: "Comment body request is missing or invalid.",
     COMMENT_NO_COMMENT_ID: "Comment ID not provided.",
     COMMENT_NOT_FOUND: (id: string) => `Comment '${id}' not found.`,
+    COMMENT_PAGE_QUERY: "Page query is not a number.",
+    COMMENT_LIMIT_QUERY: "Limit query is not a number",
 };
 
 export const SuccessMessages = {
