@@ -171,7 +171,6 @@ export class CommentsController {
 
     static async getCommentsByPostIDController(req: Request, res: Response) {
         if (req.session.user) {
-<<<<<<< HEAD
             try {
                 const id = req.params.id;
                 if (id) {
@@ -215,27 +214,8 @@ export class CommentsController {
                 .json({
                     getCommetnsByPostIDErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
-=======
-            const id = req.params.id;
-            if (id) {
-                const comments = await Comment.findCommentsByPostID(id);
-                return res.status(StatusCodes.OK).json({
-                    comments: comments,
-                });
-            } else {
-                return res.status(StatusCodes.BAD_REQUEST).json({
-                    getCommentsByPostIDErr: {
-                        id: ErrorMessages.POST_NO_ID,
->>>>>>> 5f637ae5c26c65728fe122e7c466dabc199bc07a
                     },
                 });
-            }
-        } else {
-            return res.status(StatusCodes.UNAUTHORIZED).json({
-                getCommetnsByPostIDErr: {
-                    error: ErrorMessages.INTERNAL_ERROR,
-                },
-            });
         }
     }
 
