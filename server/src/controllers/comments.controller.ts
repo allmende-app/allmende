@@ -204,13 +204,11 @@ export class CommentsController {
                 const limit = req.query.limit ? req.query.limit : 20;
                 const page = req.query.page ? req.query.page : 1;
                 if (!Number(limit))
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            getCommentsByPostIDErr: {
-                                limit: ErrorMessages.COMMENT_LIMIT_QUERY,
-                            },
-                        });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getCommentsByPostIDErr: {
+                            limit: ErrorMessages.COMMENT_LIMIT_QUERY,
+                        },
+                    });
                 if (!Number(page))
                     return res.status(StatusCodes.BAD_REQUEST).json({
                         getCommentsByPostIDErr: {

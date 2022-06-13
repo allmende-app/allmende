@@ -26,7 +26,7 @@ export const ErrorMessages = {
     ID_POST_MISSING: (id: string) => `Post '${id}' not found.`,
     POST_NO_ID: "ID of post missing.",
     POST_NOT_FOUND: "Post not found.",
-    POST_NOT_TO_USER: (id: string) => `Post ${id} does not belong to you.`,
+    POST_NOT_TO_USER: (id: string) => `Post '${id}' does not belong to you.`,
     COMMENT_NO_POST_ID: `No post id to comment provided.`,
     COMMENT_NO_POST: "Post to comment not found.",
     COMMENT_NO_BODY: "Comment body request is missing or invalid.",

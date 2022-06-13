@@ -1,5 +1,6 @@
-import { Schema, ObjectId, model, Model, Document } from "mongoose";
+import mongoose, { Schema, ObjectId, model, Model, Document } from "mongoose";
 import { PostInput } from "../interfaces";
+import { IUserDocument } from "./user";
 
 export interface IPost {
     text?: string;
@@ -11,8 +12,8 @@ export interface IPost {
 }
 
 export interface IPostDocument extends IPost, Document {
-    addLike: (user: ObjectId) => Promise<void>;
-    removeLike: (user: ObjectId) => Promise<void>;
+    addLike: (user: IUserDocument) => Promise<void>;
+    removeLike: (user: IUserDocument) => Promise<void>;
 
     // addComment: (comment: ObjectId) => Promise<void>;
     // removeComment: (comment: ObjectId) => Promise<void>;
@@ -35,7 +36,7 @@ export const postSchema = new Schema<IPostDocument>(
         text: { type: Schema.Types.String },
         sightings: [{ type: Schema.Types.ObjectId, ref: "Sighting" }],
         author: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-        likes: [{ type: Schema.Types.ObjectId }],
+        likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
         // comments: [{type: Schema.Types.ObjectId}],
         tags: [{ type: Schema.Types.String }],
     },
@@ -45,18 +46,20 @@ export const postSchema = new Schema<IPostDocument>(
     },
 );
 
-postSchema.methods.addLike = async function (user: ObjectId) {
-    const likes: ObjectId[] = this.likes;
-    if (!likes.includes(user)) {
-        likes.push(user);
+postSchema.methods.addLike = async function (user: IUserDocument) {
+    const id = new mongoose.Types.ObjectId(user._id);
+    const likes = this.likes;
+    if (!likes.includes(id)) {
+        likes.push(id);
         this.likes = likes;
     }
 };
 
-postSchema.methods.removeLike = async function (user: ObjectId) {
-    const likes: ObjectId[] = this.likes;
-    if (likes.includes(user)) {
-        const index = likes.indexOf(user);
+postSchema.methods.removeLike = async function (user: IUserDocument) {
+    const id = new mongoose.Types.ObjectId(user._id);
+    const likes = this.likes;
+    if (likes.includes(id)) {
+        const index = likes.indexOf(id);
         likes.splice(index, 1);
         this.likes = likes;
     }
