@@ -91,17 +91,29 @@ export class PostsController {
                 } else {
                     return res
                         .status(StatusCodes.NOT_FOUND)
-                        .send(`Post ${id} not found`);
+                        .json({
+                            getPostByIDErr: {
+                                id: ErrorMessages.ID_POST_MISSING(id),
+                            },
+                        });
                 }
             } else {
                 return res
                     .status(StatusCodes.BAD_REQUEST)
-                    .send("ID for post missing");
+                    .json({
+                        getPostByIDErr: {
+                            id: ErrorMessages.POST_NO_ID,
+                        },
+                    });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("Not registered or logged in");
+                .json({
+                    getPostByIDErr: {
+                        post: ErrorMessages.NOT_REGISTERED,
+                    },
+                });
         }
     }
 
@@ -165,15 +177,27 @@ export class PostsController {
                 } else {
                     return res
                         .status(StatusCodes.NOT_ACCEPTABLE)
-                        .send(`Post ${postId} does not belong to you`);
+                        .json({
+                            editPostByIDErr: {
+                                post: ErrorMessages.POST_NOT_TO_USER(postId),
+                            },
+                        });
                 }
             } else {
-                return res.status(StatusCodes.NOT_FOUND).send("Not found");
+                return res.status(StatusCodes.NOT_FOUND).json({
+                    editPostByIDErr: {
+                        post: ErrorMessages.POST_NOT_FOUND,
+                    },
+                });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("Not registered or logged in");
+                .json({
+                    editPostByIDErr: {
+                        post: ErrorMessages.NOT_REGISTERED,
+                    }
+                });
         }
     }
 }
