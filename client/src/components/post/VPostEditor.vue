@@ -5,11 +5,12 @@
     </div>
     <form class="information">
       <v-input
-        v-model="location"
-        :helper-text="
-          locationExtracted ? 'Location data has been taken from the photo' : ''
-        "
-        label="Location"
+        v-model="longitude"
+        label="Longitude"
+      />
+      <v-input
+        v-model="latitude"
+        label="Latitude"
       />
       <v-input v-model="description" label="Description" />
     </form>
@@ -50,14 +51,25 @@ const description = computed({
     })
   },
 })
-const location = computed({
+const longitude = computed({
+  get: () => {
+    return String(props.modelValue.lng)
+  },
+  set: (value) => {
+    updateValue({
+      ...props.modelValue,
+      lng: parseFloat(value),
+    })
+  },
+})
+const latitude = computed({
   get: () => {
     return String(props.modelValue.lat)
   },
   set: (value) => {
     updateValue({
       ...props.modelValue,
-      lat: Number(value),
+      lat: parseFloat(value),
     })
   },
 })
@@ -74,7 +86,8 @@ reader.readAsDataURL(props.modelValue.file)
 
 exifr.gps(props.modelValue.file).then((result) => {
   if (result) {
-    location.value = `${result.latitude}, ${result.longitude}`
+    longitude.value = String(result.longitude)
+    latitude.value = String(result.latitude)
     locationExtracted.value = true
   }
 })
