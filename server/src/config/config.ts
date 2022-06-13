@@ -14,7 +14,9 @@ export const initializeFolders = async () => {
     if (!fs.existsSync(`${process.cwd()}/uploads`)) {
         console.log("Upload folder does not exist yet, create /uploads folder");
         fs.mkdirSync(`${process.cwd()}/uploads`);
-        const downloadUrls = avatarURLs.map((url, i) => download_image(url, `${process.cwd()}/uploads/random-${i}.jpg`));
+        const downloadUrls = avatarURLs.map((url, i) =>
+            download_image(url, `${process.cwd()}/uploads/random-${i}.jpg`),
+        );
         await Promise.all(downloadUrls);
     }
 };
