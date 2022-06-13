@@ -16,13 +16,13 @@ export const avatarURLs = [
 export const download_image = (url: string, image_path: string) =>
     axios({
         url,
-        responseType: 'stream',
+        responseType: "stream",
     }).then(
-        response =>
+        (response) =>
             new Promise<void>((resolve, reject) => {
                 response.data
                     .pipe(fs.createWriteStream(image_path))
-                    .on('finish', () => resolve())
-                    .on('error', (e: Error) => reject(e));
+                    .on("finish", () => resolve())
+                    .on("error", (e: Error) => reject(e));
             }),
     );
