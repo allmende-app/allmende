@@ -34,7 +34,7 @@ export const postSchema = new Schema<IPostDocument>(
     {
         text: { type: Schema.Types.String },
         sightings: [{ type: Schema.Types.ObjectId, ref: "Sighting" }],
-        author: { type: Schema.Types.ObjectId, required: true },
+        author: { type: Schema.Types.ObjectId, required: true, ref: "User" },
         likes: [{ type: Schema.Types.ObjectId }],
         // comments: [{type: Schema.Types.ObjectId}],
         tags: [{ type: Schema.Types.String }],
