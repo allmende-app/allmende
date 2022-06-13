@@ -115,7 +115,7 @@ function nextStep() {
 
   const bodyFormData = new FormData()
 
-  sightingInfo.forEach(info => {
+  sightingInfo.forEach((info) => {
     bodyFormData.append('file', info.file)
   })
 
@@ -123,11 +123,11 @@ function nextStep() {
     'post',
     JSON.stringify({
       text: description.value,
-      sightings: sightingInfo.map(info => ({
+      sightings: sightingInfo.map((info) => ({
         description: info.description.length < 1 ? undefined : info.description,
         lat: 0,
         lng: 0,
-      }))
+      })),
     }),
   )
 
