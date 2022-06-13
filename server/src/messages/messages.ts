@@ -24,9 +24,14 @@ export const ErrorMessages = {
     PW_WEAK:
         "Your given password is weak. Use a combination at minimum of one symbol, one uppercase letter and the lenth must be greater than 8.",
     ID_POST_MISSING: (id: string) => `Post '${id}' not found.`,
-    POST_NO_ID: "ID for post missing.",
+    POST_NO_ID: "ID of post missing.",
     POST_NOT_FOUND: "Post not found.",
     POST_NOT_TO_USER: (id: string) => `Post ${id} does not belong to you.`,
+    COMMENT_NO_POST_ID: `No post id to comment provided.`,
+    COMMENT_NO_POST: "Post to comment not found.",
+    COMMENT_NO_BODY: "Comment body request is missing or invalid.",
+    COMMENT_NO_COMMENT_ID: "Comment ID not provided.",
+    COMMENT_NOT_FOUND: (id: string) => `Comment '${id}' not found.`,
 };
 
 export const SuccessMessages = {

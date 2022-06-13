@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { CommentInput } from "../interfaces";
+import { ErrorMessages } from "../messages";
 import { Comment, Post, User } from "../models";
 
 export class CommentsController {
@@ -11,14 +12,31 @@ export class CommentsController {
                 const me = await User.findById(req.session.user);
                 const post = await Post.findById(id);
                 const sendedBody: CommentInput = req.body.comment;
+
+                if (!sendedBody) {
+                    return res.status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            createCommentErr: {
+                                body: ErrorMessages.COMMENT_NO_BODY,
+                            },
+                        });
+                }
                 if (!id)
                     return res
                         .status(StatusCodes.BAD_REQUEST)
-                        .send("No ID provided");
+                        .json({
+                            createCommentErr: {
+                                id: ErrorMessages.COMMENT_NO_POST_ID,
+                            },
+                        });
                 if (!post)
                     return res
                         .status(StatusCodes.NOT_FOUND)
-                        .send("Post to comment not found");
+                        .json({
+                            createCommentErr: {
+                                post: ErrorMessages.COMMENT_NO_POST,
+                            },
+                        });
                 if (me) {
                     const { body } = sendedBody;
                     const comment = new Comment();
@@ -32,15 +50,28 @@ export class CommentsController {
                 } else {
                     return res
                         .status(StatusCodes.NOT_FOUND)
-                        .send("No user found, already deleted?");
+                        .json({
+                            createCommentErr: {
+                                user: ErrorMessages.ME_NOT_FOUND,
+                            },
+                        });
                 }
             } catch (e) {
-                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    createCommentErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie");
+                .json({
+                    createCommentErr: {
+                        error: ErrorMessages.NOT_REGISTERED,
+                    },
+                });
         }
     }
 
@@ -51,7 +82,11 @@ export class CommentsController {
             if (!body)
                 return res
                     .status(StatusCodes.BAD_REQUEST)
-                    .send("Bad body request" + JSON.stringify(body));
+                    .json({
+                        editCommentErr: {
+                            body: ErrorMessages.COMMENT_NO_BODY,
+                        },
+                    });
             if (id) {
                 try {
                     const doc = await Comment.findCommentByIDAndEdit(
@@ -64,17 +99,29 @@ export class CommentsController {
                     });
                 } catch (er) {
                     console.error(er);
-                    return res.status(StatusCodes.UNAUTHORIZED).send(er);
+                    return res.status(StatusCodes.UNAUTHORIZED).json({
+                        editCommentErr: {
+                            unauthorized: er,
+                        },
+                    });
                 }
             } else {
                 return res
                     .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                    .json({
+                        editCommentErr: {
+                            id: ErrorMessages.COMMENT_NO_COMMENT_ID,
+                        },
+                    });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie");
+                .json({
+                    editCommentErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
         }
     }
 
@@ -94,17 +141,29 @@ export class CommentsController {
                     console.error(err);
                     return res
                         .status(StatusCodes.UNAUTHORIZED)
-                        .send("Unauthorized user");
+                        .json({
+                            deleteCommentErr: {
+                                unauthorized: err,
+                            },
+                        });
                 }
             } else {
                 return res
                     .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                    .json({
+                        deleteCommentErr: {
+                            id: ErrorMessages.COMMENT_NO_COMMENT_ID,
+                        },
+                    });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie");
+                .json({
+                    deleteCommentErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
         }
     }
 
@@ -113,50 +172,74 @@ export class CommentsController {
             const id = req.params.id;
             if (id) {
                 const comments = await Comment.findCommentsByPostID(id);
-                if (comments.length > 0) {
-                    return res.status(StatusCodes.OK).json({
-                        comments: comments,
-                    });
-                } else {
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .send("No comments found");
-                }
+                return res.status(StatusCodes.OK).json({
+                    comments: comments,
+                });
             } else {
                 return res
                     .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+                    .json({
+                        getCommentsByPostIDErr: {
+                            id: ErrorMessages.POST_NO_ID,
+                        },
+                    });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie provided");
+                .json({
+                    getCommetnsByPostIDErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
         }
     }
 
     static async getCommentByIDController(req: Request, res: Response) {
         if (req.session.user) {
-            const id = req.params.id;
-            if (id) {
-                const comment = await Comment.findById(id);
-                if (comment) {
-                    return res.status(StatusCodes.OK).json({
-                        comment: comment,
-                    });
+            try {
+                const id = req.params.id;
+                if (id) {
+                    const comment = await Comment.findById(id);
+                    if (comment) {
+                        return res.status(StatusCodes.OK).json({
+                            comment: comment,
+                        });
+                    } else {
+                        return res
+                            .status(StatusCodes.NOT_FOUND)
+                            .json({
+                                getCommentByIDErr: {
+                                    comment: ErrorMessages.COMMENT_NOT_FOUND(id),
+                                },
+                            });
+                    }
                 } else {
                     return res
-                        .status(StatusCodes.NOT_FOUND)
-                        .send("Comment not found");
+                        .status(StatusCodes.BAD_REQUEST)
+                        .json({
+                            getCOmmentByIDErr: {
+                                id: ErrorMessages.COMMENT_NO_COMMENT_ID,
+                            },
+                        });
                 }
-            } else {
-                return res
-                    .status(StatusCodes.BAD_REQUEST)
-                    .send("No ID provided");
+            } catch (e) {
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .json({
+                        getCommentByIDErr: {
+                            error: ErrorMessages.INTERNAL_ERROR,
+                        },
+                    });
             }
         } else {
             return res
                 .status(StatusCodes.UNAUTHORIZED)
-                .send("No session cookie provided");
+                .json({
+                    getCommentByIdErr: {
+                        error: ErrorMessages.NOT_REGISTERED,
+                    },
+                });
         }
     }
 }
