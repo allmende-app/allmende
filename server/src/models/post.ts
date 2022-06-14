@@ -98,9 +98,9 @@ postSchema.methods.changeProperties = async function (post: PostInput) {
 
 /**
  * @deprecated
- * @param tag 
- * @param page 
- * @returns 
+ * @param tag
+ * @param page
+ * @returns
  */
 postSchema.statics.findByTag = async function (tag: string, page: number) {
     return this.find({ tags: { $regex: tag, $options: "i" } })
@@ -108,10 +108,7 @@ postSchema.statics.findByTag = async function (tag: string, page: number) {
         .skip(page > 0 ? (page - 1) * 20 : 0);
 };
 
-postSchema.statics.findPosts = async function (
-    limit = 20,
-    page = 0,
-) {
+postSchema.statics.findPosts = async function (limit = 20, page = 0) {
     return this.find({})
         .limit(limit)
         .skip(page > 0 ? (page - 1) * limit : 0)
