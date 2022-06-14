@@ -16,13 +16,18 @@ def index():
 def scan():
     try:
         file = request.files['file']
+        kingdom = request.form['kingdom']
+
+        if kingdom != 'plantae' and kingdom != "animalia" and kingdom != 'fungi':
+            return flask.Response(response="Kingdom param not supported", status=422)
+
         image = Image.open(file).convert('RGB')
     except:
         return flask.Response(response="Wrong Input", status=422)
 
     #Calling scanImage() in scanner.py
     try:
-        result = scanImage(image)
+        result = scanImage(image, kingdom)
         return result
     except:
         return flask.Response(response="Something went wrong while scanning the Image", status=500)

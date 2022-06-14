@@ -96,25 +96,23 @@ postSchema.methods.changeProperties = async function (post: PostInput) {
     this.text = text;
 };
 
+/**
+ * @deprecated
+ * @param tag
+ * @param page
+ * @returns
+ */
 postSchema.statics.findByTag = async function (tag: string, page: number) {
     return this.find({ tags: { $regex: tag, $options: "i" } })
         .limit(20)
         .skip(page > 0 ? (page - 1) * 20 : 0);
 };
 
-postSchema.statics.findPosts = async function (
-    limit = 20,
-    page = 0,
-    tag?: string,
-) {
-    if (!tag)
-        return this.find({})
-            .limit(limit)
-            .skip(page > 0 ? (page - 1) * limit : 0);
-    else
-        return this.find({ tags: { $regex: tag, $options: "i" } })
-            .limit(20)
-            .skip(page > 0 ? (page - 1) * limit : 0);
+postSchema.statics.findPosts = async function (limit = 20, page = 0) {
+    return this.find({})
+        .limit(limit)
+        .skip(page > 0 ? (page - 1) * limit : 0)
+        .sort({ createdAt: "descending" });
 };
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);

@@ -8,36 +8,37 @@ from PIL import Image
 from tokenize import String
 from tensorflow import keras
 
-def scanImage(image: Image):
+def scanImage(image: Image, kingdom: String):
     open_cv_image = np.array(image) 
     # Convert RGB to BGR 
     open_cv_image = open_cv_image[:, :, ::-1].copy() 
 
-    export_path = os.path.join(os.getcwd()) + "/saved_model"
-    img_size = 180 #Muss je nach Model angepasst werden
-
-    #Load Model and Image
-    loaded_model = tf.keras.models.load_model(export_path)
-    
+    # Prepare Image
+    img_size = 224 #Muss je nach Model angepasst werden
     image_resized = cv2.resize(open_cv_image, (img_size, img_size))
-    image_prediction = np.expand_dims(image_resized,axis=0)
+    image_prediction = np.expand_dims(image_resized, axis=0)
 
-    #Image recognition
+
+    # Load Model and Name List
+    export_path = os.path.join(os.getcwd()) + '/saved_model/' + kingdom
+    loaded_model = tf.keras.models.load_model(export_path)
+    classnames = np.load(export_path + '/classnames.npy')
+
+    # Image recognition
     prediction = loaded_model.predict(image_prediction)
-    class_names = ['daisy', 'dandelion', 'roses', 'sunflowers', 'tulips']
     score = tf.nn.softmax(prediction[0])
 
-    class1 = class_names[np.argmax(score)]
+    class1 = classnames[np.argmax(score)]
     propability1 = round(100 * np.max(score), 2)
-    class_names = np.delete(class_names, np.argmax(score))
+    classnames = np.delete(classnames, np.argmax(score))
     score = np.delete(score, np.argmax(score))
-    class2 = class_names[np.argmax(score)]
+    class2 = classnames[np.argmax(score)]
     propability2 = round(100 * np.max(score), 2)
-    class_names = np.delete(class_names, np.argmax(score))
+    classnames = np.delete(classnames, np.argmax(score))
     score = np.delete(score, np.argmax(score))
-    class3 = class_names[np.argmax(score)]
+    class3 = classnames[np.argmax(score)]
     propability3 = round(100 * np.max(score), 2)
-    
+
     #Create json
     data_set = {
         "class1": class1, 

@@ -3,7 +3,7 @@ services:
   allmende-server: 
     build: ./server
     ports:
-      - "81:3000"
+      - "3000:3000"
     volumes:
       - allmende:/var/src/allmende-server/logs
       - allmende:/var/src/allmende-serer/uploads
