@@ -23,20 +23,16 @@ app.mount('#app')
  */
 const authStore = useAuthStore()
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
-    if (authStore.user) {
-      next()
-    } else {
-      backend.client.get("/api/users/")
-        .then(response => {
-          authStore.setUser(response.data.user)
-          next()
-        })
-        .catch(error => {
-          router.push("/auth/login")
-        })
-    }
-  } else {
+  if (authStore.user) {
     next()
+  } else {
+    backend.client.get("/api/users/")
+      .then(response => {
+        authStore.setUser(response.data.user)
+        next()
+      })
+      .catch(error => {
+        router.push("/auth/login")
+      })
   }
 })

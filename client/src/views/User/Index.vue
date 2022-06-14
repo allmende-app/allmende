@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-title-vue title="">
-      <template v-slot:left>
+      <template v-slot:left v-if="!isSelf">
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
       </template>
       <template v-slot:right>
@@ -22,9 +22,6 @@
 
         <div class="names">
           <span>
-            <!-- TODO add this attribute in backend! -->
-            <span class="name">David</span>
-            <span>&nbsp;</span>
             <span class="username">{{user.username}}</span>
           </span>
         </div>
@@ -65,6 +62,7 @@ import { backend } from '../../utils'
 
 const user = ref({})
 const following = ref(false)
+const self = ref(useAuthStore().user)
 
 const props = defineProps({
   username: {
@@ -74,16 +72,17 @@ const props = defineProps({
   },
 })
 
-backend.client.get(`/api/users/${props.username}`)
-.then(response => {
-  console.log(response.data.user);
-  user.value = response.data.user
-})
-.catch(error => {
-  router.push("/error")
-  console.log(error);
-})
+const isSelf = ref(true)
 
+backend.client.get(`/api/users/${props.username}`)
+  .then(response => {
+    user.value = response.data.user
+    isSelf.value = self?.value.username === response.data.user.username
+  })
+  .catch(error => {
+    router.push("/error")
+    console.log(error);
+  })
 
 const back = () => {
   router.back()
@@ -122,16 +121,11 @@ const toggleFollow = () => {
     justify-content: center
     align-items: flex-start
 
-    .name
+    .username
       @include allmende.text-headline
       font-size: 24px
       font-weight: bold
       color: var(--text-primary)
-
-    .username
-      @include allmende.text-headline
-      color: var(--text-secondary)
-      font-weight: 400
 
   .activity
 
