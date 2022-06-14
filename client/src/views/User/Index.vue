@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-title-vue title="">
-      <template v-slot:left>
+      <template v-slot:left v-if="!isSelf">
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
       </template>
       <template v-slot:right>
@@ -15,29 +15,29 @@
       <div class="information">
         <div class="profil-image-wrapper">
           <div class="profil-image">
+            <!-- TODO: set correct profil image here -->
             <img src="/birds/amsel1.jpg" alt="" srcset="" />
           </div>
         </div>
 
         <div class="names">
           <span>
-            <span class="name">David</span>
-            <span>&nbsp;</span>
-            <span class="username">david</span>
+            <span class="username">{{user.username}}</span>
           </span>
         </div>
 
         <div class="activity">
           <div class="posts">
+            <!-- TODO no information given about the posts => mabye load in another request -->
             <span class="number">241</span>
             <span class="description">Posts</span>
           </div>
           <div class="followers">
-            <span class="number">26</span>
+            <span class="number">{{user.followers?.length}}</span>
             <span class="description">Followers</span>
           </div>
           <div class="following">
-            <span class="number">8</span>
+            <span class="number">{{user.following?.length}}</span>
             <span class="description">Following</span>
           </div>
         </div>
@@ -57,16 +57,32 @@ import VTitleVue from '@/components/VTitle.vue'
 import VButton from '@/components/VButton.vue'
 import VPost from '@/components/post/VPost.vue'
 import { PropType, ref } from '@vue/runtime-core'
+import { useAuthStore } from '../../stores/auth'
+import { backend } from '../../utils'
+
+const user = ref({})
+const following = ref(false)
+const self = ref(useAuthStore().user)
 
 const props = defineProps({
-  userId: {
+  username: {
     type: String as PropType<string>,
-    required: true,
+    required: false,
+    default: ""
   },
 })
 
-const following = ref(true)
-// TODO: fetch data that belongs to the given user
+const isSelf = ref(true)
+
+backend.client.get(`/api/users/${props.username}`)
+  .then(response => {
+    user.value = response.data.user
+    isSelf.value = self?.value.username === response.data.user.username
+  })
+  .catch(error => {
+    router.push("/error")
+    console.log(error);
+  })
 
 const back = () => {
   router.back()
@@ -105,16 +121,11 @@ const toggleFollow = () => {
     justify-content: center
     align-items: flex-start
 
-    .name
+    .username
       @include allmende.text-headline
       font-size: 24px
       font-weight: bold
       color: var(--text-primary)
-
-    .username
-      @include allmende.text-headline
-      color: var(--text-secondary)
-      font-weight: 400
 
   .activity
 

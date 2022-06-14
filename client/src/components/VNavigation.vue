@@ -3,6 +3,7 @@
     <nav>
       <div>
         <button
+          @click="router.push('/')"
           aria-label="Home"
           class="nav-button"
           :class="{ active: $route.name === 'home' }"
@@ -10,7 +11,7 @@
           <SvgHome />
         </button>
       </div>
-      <div>
+      <!-- <div>
         <button
           aria-label="Search"
           class="nav-button"
@@ -18,9 +19,10 @@
         >
           <SvgSearch />
         </button>
-      </div>
+      </div> -->
       <div>
         <button
+          @click="router.push('/user')"
           aria-label="User"
           class="nav-button"
           :class="{ active: $route.name === 'user' }"
@@ -28,7 +30,7 @@
           <SvgUser />
         </button>
       </div>
-      <div>
+      <!-- <div>
         <button
           aria-label="Notifications"
           class="nav-button"
@@ -36,7 +38,7 @@
         >
           <SvgBell />
         </button>
-      </div>
+      </div> -->
       <div class="search-wrapper">
         <input
           type="file"

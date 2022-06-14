@@ -53,10 +53,10 @@ import VTitleVue from '@/components/VTitle.vue'
 import VButton from '@/components/VButton.vue'
 import router from '@/router'
 import ActionButtons from '@/components/ActionButtons.vue'
-import { log } from 'console'
 import { backend } from '../../utils'
 import type { AxiosError } from 'axios'
 import type { ISighting } from '../../../../server/src/models/sighting'
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
 
 /**
  * Props
@@ -72,44 +72,46 @@ const props = defineProps({
  * Data
  */
 const text = ref('')
-const comments = ref([])
+const comments = ref([]) // TODO: get comments length with post detail request
 const likes = ref(0)
 const sightings: Ref<Array<ISighting>> = ref([])
+const post = ref({})
 
 /**
  * Functions
  */
 const back = () => router.back()
-const toggleLike = () => {
-  // TODO: toggle like here
+const setPost = (post: any) => {
+  text.value = post.text
+  likes.value = post.likes.length
+  sightings.value = post.sightings
 }
+
 const scrollToComments = () =>
   router.replace(router.currentRoute.value.path + '#comments')
+
+const toggleLike = () => {
+  // TODO: toggle like here
+  backend.client
+    .put(`/api/posts/like/${props.postID}`)
+    .then(response => setPost(response.data.post))
+    .catch(error => console.log(error))
+}
 
 /**
  * fetching post details
  */
 backend.client
   .get(`/api/posts/${props.postID}`)
-  .then((response) => {
-    const post = response.data.post
-    console.log(post)
+  .then(response => setPost(response.data.post))
+  .catch((error: AxiosError) => console.log(error.code))
 
-    text.value = post.text
-    likes.value = post.likes.length
-    sightings.value = post.sightings
-    console.log(sightings.value)
-  })
-  .catch((error: AxiosError) => {
-    console.log(error.code)
-  })
+
 </script>
 
 <style lang="sass" scoped>
 .headline
   margin-bottom: allmende.$size-xxxsmall
-
-
 .post-text
   @include allmende.text-body
   padding: allmende.$size-medium
