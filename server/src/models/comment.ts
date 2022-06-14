@@ -64,7 +64,8 @@ commentSchema.statics.findCommentsByPostID = async function (
 ) {
     return this.find({ post: post })
         .limit(limit)
-        .skip(page > 0 ? (page - 1) * 20 : 0);
+        .skip(page > 0 ? (page - 1) * 20 : 0)
+        .sort({ createdAt: "descending" });
 };
 
 commentSchema.statics.findCommentByIDAndEdit = async function (
