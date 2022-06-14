@@ -24,8 +24,8 @@ const props = defineProps({
   },
   author: {
     type: Object as PropType<any>,
-    required: true
-  }
+    required: true,
+  },
 })
 </script>
 

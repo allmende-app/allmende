@@ -6,7 +6,7 @@ export const useAuthStore = defineStore({
   id: 'auth',
 
   state: () => ({
-    user: null
+    user: null,
   }),
 
   actions: {
@@ -53,6 +53,6 @@ export const useAuthStore = defineStore({
 
     setUser(user: any) {
       this.user = user
-    }
+    },
   },
 })
