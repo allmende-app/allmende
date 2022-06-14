@@ -93,7 +93,6 @@ backend.client
   .get(`/api/posts/${props.postID}`)
   .then((response) => {
     const post = response.data.post
-    console.log(post)
 
     text.value = post.text
     likes.value = post.likes.length
@@ -108,8 +107,6 @@ backend.client
 <style lang="sass" scoped>
 .headline
   margin-bottom: allmende.$size-xxxsmall
-
-
 .post-text
   @include allmende.text-body
   padding: allmende.$size-medium

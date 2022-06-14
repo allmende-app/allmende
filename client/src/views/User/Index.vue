@@ -15,29 +15,32 @@
       <div class="information">
         <div class="profil-image-wrapper">
           <div class="profil-image">
+            <!-- TODO: set correct profil image here -->
             <img src="/birds/amsel1.jpg" alt="" srcset="" />
           </div>
         </div>
 
         <div class="names">
           <span>
+            <!-- TODO add this attribute in backend! -->
             <span class="name">David</span>
             <span>&nbsp;</span>
-            <span class="username">david</span>
+            <span class="username">{{user.username}}</span>
           </span>
         </div>
 
         <div class="activity">
           <div class="posts">
+            <!-- TODO no information given about the posts => mabye load in another request -->
             <span class="number">241</span>
             <span class="description">Posts</span>
           </div>
           <div class="followers">
-            <span class="number">26</span>
+            <span class="number">{{user.followers?.length}}</span>
             <span class="description">Followers</span>
           </div>
           <div class="following">
-            <span class="number">8</span>
+            <span class="number">{{user.following?.length}}</span>
             <span class="description">Following</span>
           </div>
         </div>
@@ -57,16 +60,30 @@ import VTitleVue from '@/components/VTitle.vue'
 import VButton from '@/components/VButton.vue'
 import VPost from '@/components/post/VPost.vue'
 import { PropType, ref } from '@vue/runtime-core'
+import { useAuthStore } from '../../stores/auth'
+import { backend } from '../../utils'
+
+const user = ref({})
+const following = ref(false)
 
 const props = defineProps({
-  userId: {
+  username: {
     type: String as PropType<string>,
-    required: true,
+    required: false,
+    default: ""
   },
 })
 
-const following = ref(true)
-// TODO: fetch data that belongs to the given user
+backend.client.get(`/api/users/${props.username}`)
+.then(response => {
+  console.log(response.data.user);
+  user.value = response.data.user
+})
+.catch(error => {
+  router.push("/error")
+  console.log(error);
+})
+
 
 const back = () => {
   router.back()

@@ -2,7 +2,7 @@
   <div class="comments">
     <div class="add">
       <!-- TODO: set source correctly-->
-      <profil-picture-vue source=""></profil-picture-vue>
+      <profil-picture-vue :source="user.avatarUrl"></profil-picture-vue>
       <input
         type="text"
         name="comment"
@@ -17,6 +17,8 @@
         <v-creator-vue
           :name="comment.author.username"
           :user-id="comment.author._id"
+          :author="comment.author"
+          @click="visitAuthor(comment.author.username)"
         ></v-creator-vue>
         <span class="creation-time">
           {{ comment.createdAt }}
@@ -41,6 +43,8 @@ import {
   Comment,
   type ICommentDocument,
 } from '../../../server/src/models/comment'
+import { useAuthStore } from '../stores/auth'
+import router from '../router'
 
 /**
  * Props
@@ -52,14 +56,22 @@ const props = defineProps({
   },
 })
 
+const authStore = useAuthStore()
+const user = authStore.user
+
 const comments: Ref<Array<ICommentDocument>> = ref([])
 
 // load comments
+console.log("comments");
+console.log(props.postId);
+
 backend.client
   .get(`/api/comments/${props.postId}`)
   .then((response) => {
     const receivedComments = response.data.comments
+    console.log(receivedComments);
     comments.value = receivedComments
+
   })
   .catch((error) => {
     console.log(error)
@@ -83,6 +95,10 @@ const addComment = () => {
       // TODO: handle error message
       console.log(error)
     })
+}
+
+const visitAuthor = (username: string) => {
+  router.push(`/user/${username}`)
 }
 </script>
 
