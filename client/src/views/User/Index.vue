@@ -22,7 +22,7 @@
 
         <div class="names">
           <span>
-            <span class="username">{{user.username}}</span>
+            <span class="username">{{ user.username }}</span>
           </span>
         </div>
 
@@ -33,11 +33,11 @@
             <span class="description">Posts</span>
           </div>
           <div class="followers">
-            <span class="number">{{user.followers?.length}}</span>
+            <span class="number">{{ user.followers?.length }}</span>
             <span class="description">Followers</span>
           </div>
           <div class="following">
-            <span class="number">{{user.following?.length}}</span>
+            <span class="number">{{ user.following?.length }}</span>
             <span class="description">Following</span>
           </div>
         </div>
@@ -68,20 +68,21 @@ const props = defineProps({
   username: {
     type: String as PropType<string>,
     required: false,
-    default: ""
+    default: '',
   },
 })
 
 const isSelf = ref(true)
 
-backend.client.get(`/api/users/${props.username}`)
-  .then(response => {
+backend.client
+  .get(`/api/users/${props.username}`)
+  .then((response) => {
     user.value = response.data.user
     isSelf.value = self?.value.username === response.data.user.username
   })
-  .catch(error => {
-    router.push("/error")
-    console.log(error);
+  .catch((error) => {
+    router.push('/error')
+    console.log(error)
   })
 
 const back = () => {

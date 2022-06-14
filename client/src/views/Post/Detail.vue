@@ -94,8 +94,8 @@ const toggleLike = () => {
   // TODO: toggle like here
   backend.client
     .put(`/api/posts/like/${props.postID}`)
-    .then(response => setPost(response.data.post))
-    .catch(error => console.log(error))
+    .then((response) => setPost(response.data.post))
+    .catch((error) => console.log(error))
 }
 
 /**
@@ -103,10 +103,8 @@ const toggleLike = () => {
  */
 backend.client
   .get(`/api/posts/${props.postID}`)
-  .then(response => setPost(response.data.post))
+  .then((response) => setPost(response.data.post))
   .catch((error: AxiosError) => console.log(error.code))
-
-
 </script>
 
 <style lang="sass" scoped>

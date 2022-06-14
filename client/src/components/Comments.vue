@@ -12,7 +12,11 @@
       />
     </div>
 
-    <div class="comment" v-for="comment in comments.sort(orderDesc)" :key="comment._id">
+    <div
+      class="comment"
+      v-for="comment in comments.sort(orderDesc)"
+      :key="comment._id"
+    >
       <div class="meta">
         <v-creator-vue
           :name="comment.author.username"
@@ -21,7 +25,11 @@
           @click="visitAuthor(comment.author.username)"
         ></v-creator-vue>
         <span class="creation-time">
-          {{ formatDistance(new Date(comment.createdAt), new Date(), { addSuffix: true }) }}
+          {{
+            formatDistance(new Date(comment.createdAt), new Date(), {
+              addSuffix: true,
+            })
+          }}
         </span>
       </div>
 
@@ -46,7 +54,7 @@ import {
 import { useAuthStore } from '../stores/auth'
 import router from '../router'
 import { compareDesc, formatDistance, subDays } from 'date-fns'
-import { IUser } from '../../../server/src/models/user';
+import { IUser } from '../../../server/src/models/user'
 
 /**
  * Props
@@ -62,7 +70,7 @@ const authStore = useAuthStore()
 const user: IUser = authStore.user
 
 const comments: Ref<Array<ICommentDocument>> = ref([])
-const commentMessage: Ref<string> = ref("")
+const commentMessage: Ref<string> = ref('')
 
 /**
  * orders comments desc by creation time
@@ -75,10 +83,10 @@ const orderDesc = (a: any, b: any) => {
 
 /**
  * load comments
-*/
+ */
 backend.client
   .get(`/api/comments/${props.postId}`)
-  .then((response) => comments.value = response.data.comments)
+  .then((response) => (comments.value = response.data.comments))
   .catch((error) => console.log(error))
 
 /**
@@ -92,7 +100,7 @@ const addComment = () => {
       },
     })
     .then((response) => {
-      commentMessage.value = ""
+      commentMessage.value = ''
       comments.value.push(response.data.comment)
     })
     .catch((error) => {
