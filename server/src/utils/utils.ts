@@ -13,7 +13,7 @@ export const avatarURLs = [
     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Eminem_-_Concert_for_Valor_in_Washington%2C_D.C._Nov._11%2C_2014_%282%29_%28cropped%29.jpg/640px-Eminem_-_Concert_for_Valor_in_Washington%2C_D.C._Nov._11%2C_2014_%282%29_%28cropped%29.jpg",
 ];
 
-export const download_image = (url: string, image_path: string) =>
+export const downloadImage = (url: string, image_path: string) =>
     axios({
         url,
         responseType: "stream",

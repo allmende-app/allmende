@@ -33,6 +33,8 @@ export interface ICommentModel extends Model<ICommentDocument> {
         user: ObjectId | string,
         comment: CommentInput,
     ) => Promise<ICommentDocument>;
+
+    findCommentsByPostIDAndDelete: (post: string) => Promise<void>;
 }
 
 export const commentSchema = new Schema<ICommentDocument>(
@@ -67,6 +69,23 @@ commentSchema.statics.findCommentsByPostID = async function (
         .skip(page > 0 ? (page - 1) * 20 : 0)
         .sort({ createdAt: "descending" });
 };
+
+commentSchema.statics.findCommentsByPostIDAndDelete = async function (post: string) {
+    const comments = this.find({ post: post });
+    const promises = comments.map((comment: ICommentDocument) => {
+        return new Promise<boolean>((resolve, reject) => {
+            comment.delete((err) => {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                }
+                console.log(`Delete comment '${comment._id}' of post '${post}.'`);
+                resolve(true);
+            });
+        });
+    });
+    await Promise.all(promises)
+}
 
 commentSchema.statics.findCommentByIDAndEdit = async function (
     id: string,
