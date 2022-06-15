@@ -79,7 +79,7 @@ postSchema.methods.incrementCommentsCount = async function () {
     this.commentsCount = commentsCount;
     await this.save();
     return this.commentsCount;
-}
+};
 
 postSchema.methods.decrementCommentsCount = async function () {
     let commentsCount = this.commentsCount;
@@ -88,7 +88,7 @@ postSchema.methods.decrementCommentsCount = async function () {
     this.commentsCount = commentsCount;
     await this.save();
     return this.commentsCount;
-}
+};
 
 postSchema.methods.addComment = async function (comment: ObjectId) {
     const comments: ObjectId[] = this.comments;
@@ -143,6 +143,6 @@ postSchema.statics.findPosts = async function (limit = 20, page = 0) {
 postSchema.statics.countCommentsOfPost = async function (post: string) {
     const comments = await Comment.find({ post: post });
     return comments.length;
-}
+};
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);
