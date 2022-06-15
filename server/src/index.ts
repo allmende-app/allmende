@@ -1,5 +1,10 @@
 import app from "./main";
-import { CONFIG, initializeFolderAndSampleAvatars, connectDB, connectRedis } from "./config";
+import {
+    CONFIG,
+    initializeFolderAndSampleAvatars,
+    connectDB,
+    connectRedis,
+} from "./config";
 import { avatarURLs, downloadImage } from "./utils";
 // import { Logger } from "./lib";
 

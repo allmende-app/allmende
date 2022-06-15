@@ -72,30 +72,19 @@ export const deleteSightings = async (sightings: ObjectId[]) => {
         if (sighting) {
             const file = sighting.imageUrl;
             if (file) {
-                fs.unlink(
-                    path.join(
-                        process.cwd(),
-                        "uploads",
-                        file,
-                    ),
-                    (err) => {
-                        if (err) {
-                            console.error(err);
-                            throw err;
-                        }
-                        console.log(
-                            `File ${file} is deleted.`,
-                        );
-                    },
-                );
+                fs.unlink(path.join(process.cwd(), "uploads", file), (err) => {
+                    if (err) {
+                        console.error(err);
+                        throw err;
+                    }
+                    console.log(`File ${file} is deleted.`);
+                });
             }
             sighting.delete();
-            console.log(
-                `Deleted sighting: ${sighting._id}`,
-            );
+            console.log(`Deleted sighting: ${sighting._id}`);
         }
     });
-}
+};
 
 export class PostsController {
     static async createPostController(req: Request, res: Response) {
@@ -293,7 +282,9 @@ export class PostsController {
                                     post: post,
                                 });
                                 // deletes attached sightings and images
-                                await Comment.findCommentsByPostIDAndDelete(post["_id"]);
+                                await Comment.findCommentsByPostIDAndDelete(
+                                    post["_id"],
+                                );
                                 const sightings = post.sightings;
                                 if (sightings) {
                                     await deleteSightings(sightings);
@@ -356,8 +347,10 @@ export class PostsController {
                     if (id) {
                         const post = await Post.findById(id);
                         if (post) {
-                            if (like === 'true' || like === undefined) await post.addLike(me);
-                            else if (like === 'false') await post.removeLike(me);
+                            if (like === "true" || like === undefined)
+                                await post.addLike(me);
+                            else if (like === "false")
+                                await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
                             return res.status(StatusCodes.OK).json({
                                 post: resolvedPost,
