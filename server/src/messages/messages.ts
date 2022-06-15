@@ -34,6 +34,7 @@ export const ErrorMessages = {
     COMMENT_NOT_FOUND: (id: string) => `Comment '${id}' not found.`,
     COMMENT_PAGE_QUERY: "Page query is not a number.",
     COMMENT_LIMIT_QUERY: "Limit query is not a number",
+    BAD_REQUEST_NO_USERNAME: "You forgot to submit the user's profile",
 };
 
 export const SuccessMessages = {

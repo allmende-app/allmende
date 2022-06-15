@@ -6,6 +6,7 @@ const router = Router();
 
 router.post("/", upload.any(), PostsController.createPostController);
 router.get("/", PostsController.getPostsController);
+router.get("/profile/:user", PostsController.getPostsByUsername);
 router.get("/:id", PostsController.getPostByIDController);
 // router.put("/:id", PostsController.editPostByIDController);
 router.delete("/:id", PostsController.deletePostByID);

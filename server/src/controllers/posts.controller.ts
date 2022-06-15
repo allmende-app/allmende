@@ -86,6 +86,23 @@ export const deleteSightings = async (sightings: ObjectId[]) => {
     });
 };
 
+export const resolveNestedPosted = async (posts: IPostDocument[]) => {
+    const promises = posts.map(
+        (post) =>
+            new Promise<IPostDocument>((resolve) => {
+                post.populate("sightings").then((p) =>
+                    p
+                        .populate("author", [
+                            "username",
+                            "avatarUrl",
+                        ])
+                        .then((r) => resolve(r)),
+                );
+            }),
+    );
+    return promises;
+}
+
 export class PostsController {
     static async createPostController(req: Request, res: Response) {
         if (req.session && req.body) {
@@ -178,28 +195,56 @@ export class PostsController {
                 if (tag || tag === undefined) {
                     const posts = await Post.findPosts(
                         Number(limit),
-                        Number(page),
-                        tag ? (tag as string) : undefined,
+                        Number(page)
                     );
-                    const promises = posts.map(
-                        (post) =>
-                            new Promise((resolve) => {
-                                post.populate("sightings").then((p) =>
-                                    p
-                                        .populate("author", [
-                                            "username",
-                                            "avatarUrl",
-                                        ])
-                                        .then((r) => resolve(r)),
-                                );
-                            }),
-                    );
+                    const promises = await resolveNestedPosted(posts);
 
                     const results = await Promise.all(promises);
                     return res.status(StatusCodes.OK).json({
                         posts: results,
                     });
                 }
+            } catch (e) {
+                console.error(e);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    getPostsErr: {
+                        error: ErrorMessages.INTERNAL_ERROR,
+                    },
+                });
+            }
+        } else {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                getPostsErr: {
+                    error: ErrorMessages.NOT_REGISTERED,
+                },
+            });
+        }
+    }
+
+    static async getPostsByUsername(req: Request, res: Response) {
+        if (req.session.user) {
+            try {
+                const user = req.params.user;
+                const limit = req.query.limit ? req.query.limit : 20;
+                const page = req.query.page ? req.query.page : 0;
+
+                if (!user) return res.status(StatusCodes.BAD_REQUEST).json({
+                    getPostsByUsernameErr: {
+                        params: ErrorMessages.BAD_REQUEST_NO_USERNAME,
+                    },
+                });
+
+                const posts = await Post.findPostsOfUser(
+                    user,
+                    Number(page),
+                    Number(limit),
+                );
+                const promises = await resolveNestedPosted(posts);
+
+                const results = await Promise.all(promises);
+                return res.status(StatusCodes.OK).json({
+                    posts: results,
+                });
             } catch (e) {
                 console.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
