@@ -2,56 +2,52 @@
   <article class="post">
     <div class="meta">
       <div class="author">
-        <div class="userpic"><img src="/birds/amsel1.jpg" /></div>
-        David
+        <div class="userpic"><img :src="post.author.avatarUrl" /></div>
+        {{ post.author.username }}
       </div>
       <div class="date">5d</div>
-      <div class="location">
-        <SvgLocation />Schlosspart Charlottenburg Berlin
+      <div v-if="location" class="location">
+        <SvgLocation />
+        <p>{{ location.name }}</p>
       </div>
     </div>
     <div class="image-wrapper">
       <ul class="slider">
-        <li v-for="image in activeImages" :key="image.id" :class="image.pos">
-          <img :src="image.src" :alt="image.alt" />
+        <li v-for="image in activeImages" :key="image._id" :class="image.pos">
+          <img
+            :src="`//localhost:3000/api/image/${image.imageUrl}`"
+            :alt="image.alt"
+          />
         </li>
       </ul>
       <div class="image-nav">
-        <button @click="prevImage" class="prev">
+        <button @click="prevImage" class="prev" v-if="currentImage > 0">
           <span><SvgArrowLeft /></span>
         </button>
-        <button @click="nextImage" class="next">
+        <button
+          @click="nextImage"
+          class="next"
+          v-if="currentImage < post.sightings.length - 1"
+        >
           <span><SvgArrowRight /></span>
         </button>
       </div>
-      <div class="image-index">
+      <div class="image-index" v-if="props.post.sightings.length > 1">
         <div
-          v-for="i in images.length"
+          v-for="i in props.post.sightings.length"
           :key="i"
           :class="{ active: i - 1 === currentImage }"
         ></div>
       </div>
       <div class="info">
         <div class="description">
-          <span class="clamp"
-            >Once the city used to pulse with energy. Dirty and dangerous, but
-            alive and wonderful. Now it's something else. The changes came
-            slowly at first. Most didn't realize, or didn't care, and accepted
-            them. They chose a comfortable life. Some didn't. And those who
-            refused to conform were pushed to the sidelines, criminalized. They
-            became our clients. We call ourselves Runners. We exist on the edge
-            between the gloss and the reality: the mirror's edge. We keep out of
-            trouble, out of sight, and the cops don't bother us. Runners see the
-            city in a different way. We see the flow. Rooftops become pathways
-            and conduits, possibilities and routes of escape. The flow is what
-            keeps us running, keeps us alive.</span
-          >
+          <span class="clamp">{{ post.text }}</span>
         </div>
         <action-buttons
-          :likes="12"
+          :likes="post.likes.length"
           :liked="false"
           @likesClicked="someFunction"
-          :comments="8"
+          :comments="0"
           @commentsClicked="someFunction"
         ></action-buttons>
       </div>
@@ -61,33 +57,51 @@
 
 <script setup lang="ts">
 import SvgLocation from '@/assets/icon16/location.svg?component'
-import SvgLike from '@/assets/icon24/like.svg?component'
-import SvgComment from '@/assets/icon24/comment.svg?component'
 import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
-import { computed, ref } from 'vue'
+import { computed, onMounted, reactive, ref, type PropType } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
+import type { LocationInfo, Post, Sighting } from '@/interfaces/types'
+import { backend, reverseLocationSearch } from '@/utils'
+import type { AxiosError } from 'axios'
 
-interface ImageData {
-  id: number
+interface ImageData extends Sighting {
   pos: string
-  src: string
-  alt: string
 }
 
-function getImageData(index: number, pos: string): ImageData | false {
-  return images[index]
-    ? {
-        id: index,
-        src: images[index],
-        alt: `todo${index + 1}`,
+const props = defineProps({
+  post: {
+    type: Object as PropType<Post>,
+    required: true,
+  },
+})
+
+const location = ref<LocationInfo | null>(null)
+
+onMounted(async () => {
+  // iterate over props.post.sightings until we find a location
+  for (const sighting of props.post.sightings) {
+    if (sighting.lng && sighting.lat) {
+      location.value = await reverseLocationSearch(sighting.lng, sighting.lat)
+      break
+    }
+  }
+})
+
+function getImageData(index: number, pos: string): ImageData | null {
+  return props.post.sightings[index] !== null
+    ? ({
+        ...props.post.sightings[index],
         pos,
-      }
-    : false
+      } as ImageData)
+    : null
 }
 
+function someFunction() {
+  console.log('someFunction was called!')
+}
 function nextImage() {
-  if (currentImage.value < images.length - 1) {
+  if (currentImage.value < props.post.sightings.length - 1) {
     currentImage.value++
   }
 }
@@ -96,14 +110,6 @@ function prevImage() {
     currentImage.value--
   }
 }
-
-const images = [
-  '/birds/amsel1.jpg',
-  '/birds/amsel2.jpg',
-  '/birds/amsel3.jpg',
-  '/birds/amsel1.jpg',
-  '/birds/amsel2.jpg',
-]
 
 const currentImage = ref(0)
 
@@ -124,7 +130,7 @@ const activeImages = computed(() => {
 
 .meta
   display: grid
-  grid-template-columns: 1fr auto
+  grid-template-columns: minmax(0, 1fr) auto
   grid-template: 1fr
   padding-inline: allmende.$size-xxsmall
   padding-block-end: allmende.$size-xxsmall
@@ -139,6 +145,13 @@ const activeImages = computed(() => {
     color: var(--text-secondary)
   .location
     grid-area: 2 / 1 / 3 / 4
+    > svg
+      flex-shrink: 0
+    > p
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+      min-width: 0
 
 .userpic
   width: allmende.$size-xsmall
@@ -180,13 +193,12 @@ const activeImages = computed(() => {
       opacity: 1
 
 .image-nav
-  position: absolute
-  inset: 0
-  display: flex
   justify-content: space-between
   button
+    top: 0
+    bottom: 0
+    position: absolute
     width: 128px
-    position: relative
     &:focus
       outline: none
     span
@@ -201,12 +213,16 @@ const activeImages = computed(() => {
       color: var(--text-inverted)
     &:hover span, &:focus-visible span
       opacity: 1
-    &.prev span
-      justify-content: flex-start
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)
-    &.next span
-      justify-content: flex-end
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%)
+    &.prev
+      left: 0
+      span
+        justify-content: flex-start
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)
+    &.next
+      right: 0
+      span
+        justify-content: flex-end
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%)
 
 .info
   z-index: 1

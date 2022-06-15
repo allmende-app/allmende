@@ -10,7 +10,6 @@
             :value="option.value"
             :id="`${id}-${option.value}`"
             v-model="species"
-            onfocus="this.nextSibling.scrollIntoView()"
           />
           <label :for="`${id}-${option.value}`">
             <span v-if="option.type == 'manual'" class="type manual"
