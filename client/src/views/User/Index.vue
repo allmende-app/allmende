@@ -45,7 +45,7 @@
     </section>
 
     <section class="section">
-      <v-post></v-post>
+      <!-- <v-post></v-post> -->
     </section>
   </div>
 </template>
