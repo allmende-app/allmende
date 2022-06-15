@@ -193,13 +193,12 @@ const activeImages = computed(() => {
       opacity: 1
 
 .image-nav
-  position: absolute
-  inset: 0
-  display: flex
   justify-content: space-between
   button
+    top: 0
+    bottom: 0
+    position: absolute
     width: 128px
-    position: relative
     &:focus
       outline: none
     span
@@ -214,12 +213,16 @@ const activeImages = computed(() => {
       color: var(--text-inverted)
     &:hover span, &:focus-visible span
       opacity: 1
-    &.prev span
-      justify-content: flex-start
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)
-    &.next span
-      justify-content: flex-end
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%)
+    &.prev
+      left: 0
+      span
+        justify-content: flex-start
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)
+    &.next
+      right: 0
+      span
+        justify-content: flex-end
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%)
 
 .info
   z-index: 1
