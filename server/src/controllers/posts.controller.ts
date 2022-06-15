@@ -92,16 +92,13 @@ export const resolveNestedPosted = async (posts: IPostDocument[]) => {
             new Promise<IPostDocument>((resolve) => {
                 post.populate("sightings").then((p) =>
                     p
-                        .populate("author", [
-                            "username",
-                            "avatarUrl",
-                        ])
+                        .populate("author", ["username", "avatarUrl"])
                         .then((r) => resolve(r)),
                 );
             }),
     );
     return promises;
-}
+};
 
 export class PostsController {
     static async createPostController(req: Request, res: Response) {
@@ -196,7 +193,7 @@ export class PostsController {
                 if (tag || tag === undefined) {
                     const posts = await Post.findPosts(
                         Number(limit),
-                        Number(page)
+                        Number(page),
                     );
                     const promises = await resolveNestedPosted(posts);
 
@@ -229,11 +226,12 @@ export class PostsController {
                 const limit = req.query.limit ? req.query.limit : 20;
                 const page = req.query.page ? req.query.page : 0;
 
-                if (!user) return res.status(StatusCodes.BAD_REQUEST).json({
-                    getPostsByUsernameErr: {
-                        params: ErrorMessages.BAD_REQUEST_NO_USERNAME,
-                    },
-                });
+                if (!user)
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getPostsByUsernameErr: {
+                            params: ErrorMessages.BAD_REQUEST_NO_USERNAME,
+                        },
+                    });
 
                 const posts = await Post.findPostsOfUser(
                     user,

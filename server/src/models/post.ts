@@ -26,11 +26,12 @@ export interface IPostDocument extends IPost, Document {
 
 export interface IPostModel extends Model<IPostDocument> {
     findByTag: (tag: string, page: number) => Promise<IPostDocument[]>;
-    findPosts: (
+    findPosts: (limit: number, page: number) => Promise<IPostDocument[]>;
+    findPostsOfUser: (
+        user: string,
+        page: number,
         limit: number,
-        page: number
     ) => Promise<IPostDocument[]>;
-    findPostsOfUser: (user: string, page: number, limit: number) => Promise<IPostDocument[]>;
 }
 
 export const postSchema = new Schema<IPostDocument>(
@@ -138,13 +139,20 @@ postSchema.statics.findPosts = async function (limit = 20, page = 0) {
         .sort({ createdAt: "descending" });
 };
 
-postSchema.statics.findPostsOfUser = async function (user: string, page = 1, limit = 20) {
+postSchema.statics.findPostsOfUser = async function (
+    user: string,
+    page = 1,
+    limit = 20,
+) {
     const profile = await User.findByUsername(user);
     const id = profile._id;
-    const posts = await this.find({ author: id }).limit(limit).skip(page > 0 ? (page - 1) * limit : 0).sort({
-        createdAt: "descending",
-    });
+    const posts = await this.find({ author: id })
+        .limit(limit)
+        .skip(page > 0 ? (page - 1) * limit : 0)
+        .sort({
+            createdAt: "descending",
+        });
     return posts;
-}
+};
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);
