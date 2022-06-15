@@ -70,7 +70,9 @@ commentSchema.statics.findCommentsByPostID = async function (
         .sort({ createdAt: "descending" });
 };
 
-commentSchema.statics.findCommentsByPostIDAndDelete = async function (post: string) {
+commentSchema.statics.findCommentsByPostIDAndDelete = async function (
+    post: string,
+) {
     const comments = this.find({ post: post });
     const promises = comments.map((comment: ICommentDocument) => {
         return new Promise<boolean>((resolve, reject) => {
@@ -79,13 +81,15 @@ commentSchema.statics.findCommentsByPostIDAndDelete = async function (post: stri
                     console.error(err);
                     reject(err);
                 }
-                console.log(`Delete comment '${comment._id}' of post '${post}.'`);
+                console.log(
+                    `Delete comment '${comment._id}' of post '${post}.'`,
+                );
                 resolve(true);
             });
         });
     });
-    await Promise.all(promises)
-}
+    await Promise.all(promises);
+};
 
 commentSchema.statics.findCommentByIDAndEdit = async function (
     id: string,
