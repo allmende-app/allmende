@@ -352,10 +352,12 @@ export class PostsController {
                 const me = await User.findById(req.session.user);
                 if (me) {
                     const id = req.params.id;
+                    const like = req.query.like;
                     if (id) {
                         const post = await Post.findById(id);
                         if (post) {
-                            await post.addLike(me);
+                            if (like === 'true' || like === undefined) await post.addLike(me);
+                            else if (like === 'false') await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
                             return res.status(StatusCodes.OK).json({
                                 post: resolvedPost,
