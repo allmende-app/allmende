@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import {
+    Comment,
     IPostDocument,
     ISightingDocument,
     Post,
@@ -9,7 +10,6 @@ import {
 } from "../models";
 import { PostInput, SightingInfo } from "../interfaces";
 import { ObjectId } from "mongoose";
-import axios from "axios";
 import { compressImage } from "../utils";
 import { ErrorMessages } from "../messages";
 import fs from "fs";
@@ -64,6 +64,38 @@ export const resolveNestedPost = async (post: IPostDocument) => {
     ).populate("likes", ["username", "avatarUrl"]);
     return doc;
 };
+
+export const deleteSightings = async (sightings: ObjectId[]) => {
+    const obj = await getSightings(sightings);
+    const resolve = await Promise.all(obj);
+    resolve.forEach((sighting) => {
+        if (sighting) {
+            const file = sighting.imageUrl;
+            if (file) {
+                fs.unlink(
+                    path.join(
+                        process.cwd(),
+                        "uploads",
+                        file,
+                    ),
+                    (err) => {
+                        if (err) {
+                            console.error(err);
+                            throw err;
+                        }
+                        console.log(
+                            `File ${file} is deleted.`,
+                        );
+                    },
+                );
+            }
+            sighting.delete();
+            console.log(
+                `Deleted sighting: ${sighting._id}`,
+            );
+        }
+    });
+}
 
 export class PostsController {
     static async createPostController(req: Request, res: Response) {
@@ -261,37 +293,10 @@ export class PostsController {
                                     post: post,
                                 });
                                 // deletes attached sightings and images
+                                await Comment.findCommentsByPostIDAndDelete(post["_id"]);
                                 const sightings = post.sightings;
                                 if (sightings) {
-                                    const obj = await getSightings(sightings);
-                                    const resolve = await Promise.all(obj);
-                                    resolve.forEach((sighting) => {
-                                        if (sighting) {
-                                            const file = sighting.imageUrl;
-                                            if (file) {
-                                                fs.unlink(
-                                                    path.join(
-                                                        process.cwd(),
-                                                        "uploads",
-                                                        file,
-                                                    ),
-                                                    (err) => {
-                                                        if (err) {
-                                                            console.error(err);
-                                                            throw err;
-                                                        }
-                                                        console.log(
-                                                            `File ${file} is deleted.`,
-                                                        );
-                                                    },
-                                                );
-                                            }
-                                            sighting.delete();
-                                            console.log(
-                                                `Deleted sighting: ${sighting._id}`,
-                                            );
-                                        }
-                                    });
+                                    await deleteSightings(sightings);
                                 }
                             } else {
                                 return res
@@ -347,10 +352,12 @@ export class PostsController {
                 const me = await User.findById(req.session.user);
                 if (me) {
                     const id = req.params.id;
+                    const like = req.query.like;
                     if (id) {
                         const post = await Post.findById(id);
                         if (post) {
-                            await post.addLike(me);
+                            if (like === 'true' || like === undefined) await post.addLike(me);
+                            else if (like === 'false') await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
                             return res.status(StatusCodes.OK).json({
                                 post: resolvedPost,

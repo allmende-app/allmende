@@ -53,6 +53,7 @@ postSchema.methods.addLike = async function (user: IUserDocument) {
         likes.push(id);
         this.likes = likes;
     }
+    await this.save();
 };
 
 postSchema.methods.removeLike = async function (user: IUserDocument) {
@@ -63,6 +64,7 @@ postSchema.methods.removeLike = async function (user: IUserDocument) {
         likes.splice(index, 1);
         this.likes = likes;
     }
+    await this.save();
 };
 
 postSchema.methods.addComment = async function (comment: ObjectId) {
