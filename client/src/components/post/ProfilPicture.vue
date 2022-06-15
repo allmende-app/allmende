@@ -1,10 +1,13 @@
 <template>
-  <img :src="src" alt="" height="16" width="16" />
+  <img :src="`${baseURL}image/${source}`" alt="" height="16" width="16" />
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { ref } from 'vue'
+import { backend } from '../../utils'
+
+const baseURL = backend.baseURL
 
 const props = defineProps({
   source: {
@@ -12,7 +15,6 @@ const props = defineProps({
     required: false, // TODO change this to true later
   },
 })
-const src = ref('/jonas.jpeg') // TODO: load from server
 </script>
 
 <style lang="sass" scoped>
