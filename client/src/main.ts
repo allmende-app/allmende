@@ -10,7 +10,7 @@ import { useAuthStore } from './stores/auth'
 
 // dirty workaround
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(window as any).$axios = axios
+;(window as any).$axios = axios
 
 const app = createApp(App)
 
