@@ -1,25 +1,35 @@
 <template>
   <div class="comments">
     <div class="add">
-      <!-- TODO: set source correctly-->
-      <profil-picture-vue source=""></profil-picture-vue>
+      <profil-picture-vue :source="user.avatarUrl"></profil-picture-vue>
       <input
         type="text"
         name="comment"
         id="comment"
         placeholder="Add a comment"
+        v-model="commentMessage"
         @keypress.enter="addComment"
       />
     </div>
 
-    <div class="comment" v-for="comment in comments" :key="comment._id">
+    <div
+      class="comment"
+      v-for="comment in comments.sort(orderDesc)"
+      :key="comment._id"
+    >
       <div class="meta">
         <v-creator-vue
           :name="comment.author.username"
           :user-id="comment.author._id"
+          :author="comment.author"
+          @click="visitAuthor(comment.author.username)"
         ></v-creator-vue>
         <span class="creation-time">
-          {{ comment.createdAt }}
+          {{
+            formatDistance(new Date(comment.createdAt), new Date(), {
+              addSuffix: true,
+            })
+          }}
         </span>
       </div>
 
@@ -41,6 +51,10 @@ import {
   Comment,
   type ICommentDocument,
 } from '../../../server/src/models/comment'
+import { useAuthStore } from '../stores/auth'
+import router from '../router'
+import { compareDesc, formatDistance, subDays } from 'date-fns'
+import { IUser } from '../../../server/src/models/user'
 
 /**
  * Props
@@ -52,18 +66,28 @@ const props = defineProps({
   },
 })
 
-const comments: Ref<Array<ICommentDocument>> = ref([])
+const authStore = useAuthStore()
+const user: IUser = authStore.user
 
-// load comments
+const comments: Ref<Array<ICommentDocument>> = ref([])
+const commentMessage: Ref<string> = ref('')
+
+/**
+ * orders comments desc by creation time
+ * @param a
+ * @param b
+ */
+const orderDesc = (a: any, b: any) => {
+  return compareDesc(new Date(a.createdAt), new Date(b.createdAt))
+}
+
+/**
+ * load comments
+ */
 backend.client
   .get(`/api/comments/${props.postId}`)
-  .then((response) => {
-    const receivedComments = response.data.comments
-    comments.value = receivedComments
-  })
-  .catch((error) => {
-    console.log(error)
-  })
+  .then((response) => (comments.value = response.data.comments))
+  .catch((error) => console.log(error))
 
 /**
  * creats a new comment for the current post
@@ -72,17 +96,24 @@ const addComment = () => {
   backend.client
     .post(`/api/comments/${props.postId}`, {
       comment: {
-        body: 'this is a test comment',
+        body: commentMessage.value,
       },
     })
     .then((response) => {
-      const newComment = response.data.comment
-      comments.value.push(newComment) // TODO wait for fix of inconstance using author as an object !
+      commentMessage.value = ''
+      comments.value.push(response.data.comment)
     })
     .catch((error) => {
       // TODO: handle error message
       console.log(error)
     })
+}
+
+/**
+ * visit comment creator
+ */
+const visitAuthor = (username: string) => {
+  router.push(`/user/${username}`)
 }
 </script>
 

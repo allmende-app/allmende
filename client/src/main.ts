@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import '@/styles/global.sass'
 import { FocusTrap } from 'focus-trap-vue'
+import { backend } from '@/utils'
 
 // dirty workaround
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,3 +17,23 @@ app.use(createPinia())
 app.use(router)
 app.component('FocusTrap', FocusTrap)
 app.mount('#app')
+
+/**
+ * fetching user when authenticated, else redirect to login
+ */
+const authStore = useAuthStore()
+router.beforeEach((to, from, next) => {
+  if (authStore.user) {
+    next()
+  } else {
+    backend.client
+      .get('/api/users/')
+      .then((response) => {
+        authStore.setUser(response.data.user)
+        next()
+      })
+      .catch((error) => {
+        router.push('/auth/login')
+      })
+  }
+})

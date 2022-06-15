@@ -1,7 +1,6 @@
 <template>
-  <div class="creator">
-    <!-- TODO set correct source -->
-    <profil-picture-vue source="TODO"></profil-picture-vue>
+  <div class="creator" @click="$emit('click')">
+    <profil-picture-vue :source="author.avatarUrl"></profil-picture-vue>
     <p class="name">
       {{ name }}
     </p>
@@ -11,6 +10,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { ref } from 'vue'
+import { backend } from '../../utils'
 import ProfilPictureVue from './ProfilPicture.vue'
 
 const props = defineProps({
@@ -20,6 +20,10 @@ const props = defineProps({
   },
   userId: {
     type: Number as PropType<number>,
+    required: true,
+  },
+  author: {
+    type: Object as PropType<any>,
     required: true,
   },
 })
@@ -33,6 +37,7 @@ const props = defineProps({
   padding: 4px
   width: max-content
   gap: 10px
+  cursor: pointer
 
   .name
     @include allmende.text-subhead

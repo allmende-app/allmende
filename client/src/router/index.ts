@@ -1,4 +1,6 @@
+import { backend } from '@/utils'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +21,15 @@ const router = createRouter({
   routes: [
     {
       path: '/:pathMatch(.*)*',
+      name: 'error',
+      component: () => import('../views/Error.vue'),
+      props: { errorCode: 404, errorMessage: 'Page Not Found' },
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/error',
       name: 'error',
       component: () => import('../views/Error.vue'),
       props: { errorCode: 404, errorMessage: 'Page Not Found' },
@@ -54,12 +65,12 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/user/:userID',
-      name: 'user-index',
+      path: '/user/:username*',
+      name: 'user',
       component: () => import('../views/User/Index.vue'),
       meta: {
         requiresAuth: true,
-        hideNavigation: true,
+        hideNavigation: false,
       },
       props: true,
     },
