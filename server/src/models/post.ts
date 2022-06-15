@@ -1,7 +1,6 @@
 import mongoose, { Schema, ObjectId, model, Model, Document } from "mongoose";
 import { PostInput } from "../interfaces";
-import { Comment } from "./comment";
-import { IUserDocument } from "./user";
+import { IUserDocument, User } from "./user";
 
 export interface IPost {
     text?: string;
@@ -29,10 +28,9 @@ export interface IPostModel extends Model<IPostDocument> {
     findByTag: (tag: string, page: number) => Promise<IPostDocument[]>;
     findPosts: (
         limit: number,
-        page: number,
-        tag?: string | undefined,
+        page: number
     ) => Promise<IPostDocument[]>;
-    countCommentsOfPost: (post: string) => Promise<number>;
+    findPostsOfUser: (user: string, page: number, limit: number) => Promise<IPostDocument[]>;
 }
 
 export const postSchema = new Schema<IPostDocument>(
@@ -140,9 +138,13 @@ postSchema.statics.findPosts = async function (limit = 20, page = 0) {
         .sort({ createdAt: "descending" });
 };
 
-postSchema.statics.countCommentsOfPost = async function (post: string) {
-    const comments = await Comment.find({ post: post });
-    return comments.length;
-};
+postSchema.statics.findPostsOfUser = async function (user: string, page = 1, limit = 20) {
+    const profile = await User.findByUsername(user);
+    const id = profile._id;
+    const posts = await this.find({ author: id }).limit(limit).skip(page > 0 ? (page - 1) * limit : 0).sort({
+        createdAt: "descending",
+    });
+    return posts;
+}
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);
