@@ -85,6 +85,7 @@ export class CommentsController {
                     const { body } = sendedBody;
                     const comment = new Comment();
                     comment.construct(body, post["_id"], me["_id"]);
+                    await post.incrementCommentsCount();
                     const doc = await resolveNestedSavedComment(comment);
                     if (doc) {
                         return res.status(StatusCodes.CREATED).json({
@@ -169,6 +170,8 @@ export class CommentsController {
                         id as string,
                         req.session.user,
                     );
+                    const post = await Post.findById(doc.post);
+                    if (post) post.decrementCommentsCount();
                     const resolvedDoc = await resolveNestedComment(doc);
                     return res.status(StatusCodes.OK).json({
                         comment: resolvedDoc,
