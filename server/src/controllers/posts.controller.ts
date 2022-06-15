@@ -125,6 +125,7 @@ export class PostsController {
                     const post = new Post();
                     await post.construct(postBody, userId);
                     post.sightings = sightingsIds;
+                    post.commentsCount = 0;
                     const doc = await (
                         await (await post.save()).populate("sightings")
                     ).populate("author", ["username", "avatarUrl"]);

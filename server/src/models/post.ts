@@ -7,6 +7,7 @@ export interface IPost {
     sightings?: ObjectId[];
     author?: ObjectId;
     likes?: ObjectId[];
+    commentsCount?: number;
     // comments?: ObjectId[];
     tags?: string[];
 }
@@ -14,7 +15,8 @@ export interface IPost {
 export interface IPostDocument extends IPost, Document {
     addLike: (user: IUserDocument) => Promise<void>;
     removeLike: (user: IUserDocument) => Promise<void>;
-
+    incrementCommentsCount: () => Promise<number>;
+    decrementCommentsCount: () => Promise<number>;
     // addComment: (comment: ObjectId) => Promise<void>;
     // removeComment: (comment: ObjectId) => Promise<void>;
 
@@ -38,6 +40,7 @@ export const postSchema = new Schema<IPostDocument>(
         author: { type: Schema.Types.ObjectId, required: true, ref: "User" },
         likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
         // comments: [{type: Schema.Types.ObjectId}],
+        commentsCount: { type: Schema.Types.Number },
         tags: [{ type: Schema.Types.String }],
     },
     {
@@ -66,6 +69,24 @@ postSchema.methods.removeLike = async function (user: IUserDocument) {
     }
     await this.save();
 };
+
+postSchema.methods.incrementCommentsCount = async function () {
+    let commentsCount = this.commentsCount;
+    if (!commentsCount) commentsCount = 1;
+    else commentsCount++;
+    this.commentsCount = commentsCount;
+    await this.save();
+    return this.commentsCount;
+}
+
+postSchema.methods.decrementCommentsCount = async function () {
+    let commentsCount = this.commentsCount;
+    if (!commentsCount) commentsCount = 0;
+    else commentsCount--;
+    this.commentsCount = commentsCount;
+    await this.save();
+    return this.commentsCount;
+}
 
 postSchema.methods.addComment = async function (comment: ObjectId) {
     const comments: ObjectId[] = this.comments;
