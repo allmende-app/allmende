@@ -2,9 +2,7 @@
   <div>
     <v-title />
     <div class="posts">
-      <v-post text="Hallo ich bin ein post"> </v-post>
-      <v-post text="Hallo ich bin ein post"> </v-post>
-      <v-post text="Hallo ich bin ein post"> </v-post>
+      <v-post v-for="post in posts" :key="post._id" :post="post" />
     </div>
   </div>
 </template>
@@ -16,13 +14,17 @@ import type { AxiosError } from 'axios'
 import { useAuthStore } from '../stores/auth'
 import router from '@/router'
 import { backend } from '../utils'
+import { ref } from 'vue'
+import type { Post } from '@/interfaces/types'
 
 const authStore = useAuthStore()
+
+const posts = ref([] as Post[])
 
 const logout = () => {
   authStore
     .logout()
-    .then((response) => {
+    .then(() => {
       router.push('/auth/login')
     })
     .catch((error) => {
@@ -34,6 +36,7 @@ backend.client
   .get('/api/posts')
   .then((response) => {
     console.log(response.data.posts)
+    posts.value = response.data.posts
   })
   .catch((error: AxiosError) => {
     console.log(error)

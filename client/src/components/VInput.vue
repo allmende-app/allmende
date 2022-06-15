@@ -8,6 +8,8 @@
         :id="inputId"
         :value="modelValue"
         @input="updateValue"
+        @focus="(e) => emit('focus', e)"
+        @blur="(e) => emit('blur', e)"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="helperText || error ? helperId : undefined"
       />
@@ -26,7 +28,7 @@ import type { PropType } from 'vue'
 const inputId = getRandomId()
 const helperId = getRandomId()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
 
 defineProps({
   label: {
