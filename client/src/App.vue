@@ -25,6 +25,8 @@ const router = useRouter()
   width: 100%
   max-width: 1200px
   margin: 0 auto
+  padding-inline: allmende.$size-medium
+  box-sizing: border-box
   > .main
     flex: 1
     margin-inline: allmende.$size-xsmall
@@ -39,8 +41,10 @@ const router = useRouter()
   @include allmende.screen-laptop
     box-sizing: border-box
     display: flex
+    flex-direction: column
+    > .main
+      padding-block: allmende.$size-medium
     &.withNavigation
-      padding: allmende.$size-xlarge
       gap: allmende.$size-xlarge
       > .main
         padding-bottom: 0

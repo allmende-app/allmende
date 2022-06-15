@@ -3,11 +3,12 @@
     @content
 
 @mixin post-grid
-  grid-template-columns: 1fr
+  align-items: start
+  grid-template-columns: minmax(0, 1fr)
   @media only screen and (min-width: 600px)
-    grid-template-columns: 1fr 1fr
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)
   @media only screen and (min-width: 900px)
-    grid-template-columns: 1fr 1fr 1fr
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)
 
 @mixin effect-focus-unwrapped
   outline: 2px solid var(--border-focus)

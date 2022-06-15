@@ -24,7 +24,7 @@ const posts = ref([] as Post[])
 const logout = () => {
   authStore
     .logout()
-    .then((response) => {
+    .then(() => {
       router.push('/auth/login')
     })
     .catch((error) => {

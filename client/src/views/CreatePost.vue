@@ -1,45 +1,44 @@
 <template>
-  <div v-if="step == 0">
-    <v-title title="Create post">
-      <template v-slot:left>
-        <v-button :icon="SvgClose" tooltip="Cancel" />
-      </template>
-      <template v-slot:right>
-        <v-button type="primary" @click="nextStep">Next</v-button>
-      </template>
-    </v-title>
-    <div class="posts">
-      <v-post-editor
-        v-for="(info, i) in sightingInfo"
-        :key="i"
-        v-model="sightingInfo[i]"
-        class="post"
-      />
-    </div>
-    <div>
-      <input
-        class="file-input"
-        type="file"
-        id="file-button"
-        multiple
-        @change="handleFileEvent"
-        accept="image/png, image/gif, image/jpeg"
-        ref="fileInput"
-      />
-      <v-button @click="fileInput?.click()" type="primary"
-        >Add more photos</v-button
-      >
-    </div>
+  <v-title v-if="step == 0" title="Create post">
+    <template v-slot:left>
+      <v-button :icon="SvgClose" tooltip="Cancel" />
+    </template>
+    <template v-slot:right>
+      <v-button type="primary" @click="nextStep">Next</v-button>
+    </template>
+  </v-title>
+  <v-title v-else title="Create post">
+    <template v-slot:left>
+      <v-button type="primary" @click="step = 0">Back</v-button>
+    </template>
+    <template v-slot:right>
+      <v-button type="primary" @click="nextStep">Next</v-button>
+    </template>
+  </v-title>
+  <div class="posts" :class="{ 'preview-mode': step == 1 }">
+    <v-post-editor
+      v-for="(info, i) in sightingInfo"
+      :key="i"
+      :preview-mode="step == 1"
+      v-model="sightingInfo[i]"
+      class="post"
+    />
   </div>
-  <div v-else-if="step == 1">
-    <v-title title="Create post">
-      <template v-slot:left>
-        <v-button type="primary" @click="step = 0">Back</v-button>
-      </template>
-      <template v-slot:right>
-        <v-button type="primary" @click="nextStep">Next</v-button>
-      </template>
-    </v-title>
+  <div v-if="step == 0">
+    <input
+      class="file-input"
+      type="file"
+      id="file-button"
+      multiple
+      @change="handleFileEvent"
+      accept="image/png, image/gif, image/jpeg"
+      ref="fileInput"
+    />
+    <v-button @click="fileInput?.click()" type="primary"
+      >Add more photos</v-button
+    >
+  </div>
+  <div v-if="step == 1">
     <div class="text-editor">
       <textarea
         placeholder="What did you see..."
@@ -57,14 +56,14 @@ import VButton from '@/components/VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
 import { reactive, ref } from 'vue'
 import { backend } from '../utils'
+import type { LocationInfo } from '@/interfaces/types'
 
 export interface SightingData {
   file: File
   title: string
   description: string
   datetime: number
-  lat: number
-  lng: number
+  location: LocationInfo | null
 }
 
 const store = useFilesStore()
@@ -78,8 +77,7 @@ store.getAndDeleteFiles().forEach((file, i) => {
     title: '',
     description: '',
     datetime: 0,
-    lat: 0,
-    lng: 0,
+    location: null,
   }
 })
 
@@ -97,8 +95,7 @@ function handleFileEvent(event: Event) {
       title: '',
       description: '',
       datetime: 0,
-      lat: 0,
-      lng: 0,
+      location: null,
     })),
   )
 }
@@ -125,8 +122,8 @@ function nextStep() {
       text: description.value,
       sightings: sightingInfo.map((info) => ({
         description: info.description.length < 1 ? undefined : info.description,
-        lat: 0,
-        lng: 0,
+        lat: info.location?.lat,
+        lng: info.location?.lng,
       })),
     }),
   )
@@ -144,14 +141,20 @@ function nextStep() {
   width: 100%
   display: grid
   @include allmende.post-grid
-  align-items: center
   gap: allmende.$size-medium
+  &.preview-mode
+    display: flex
 
 .file-input
   display: none
 
 .text-editor
+  width: 100%
+  margin-block-start: allmende.$size-medium
   textarea
+    height: 256px
+    width: 100%
+    box-sizing: border-box
     @include allmende.effect-focus
     background: var(--layer-20)
     border-radius: allmende.$radius-card
