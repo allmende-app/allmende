@@ -15,12 +15,11 @@ const error = computed(() => {
 })
 
 const wayPoints = [
-  {lat: 51.504, long: -0.09},
-  {lat: 51.503, long: -0.09},
-  {lat: 51.502, long: -0.09},
-  {lat: 51.501, long: -0.09},
+  { lat: 51.504, long: -0.09 },
+  { lat: 51.503, long: -0.09 },
+  { lat: 51.502, long: -0.09 },
+  { lat: 51.501, long: -0.09 },
 ]
-
 
 function click() {
   console.log('clicked')
@@ -32,8 +31,7 @@ function click() {
     <h1>Playground</h1>
 
     <section>
-      <map-vue :way-points="wayPoints">
-      </map-vue>
+      <map-vue :way-points="wayPoints"> </map-vue>
     </section>
 
     <section>
