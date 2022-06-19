@@ -4,6 +4,7 @@ import VInput from '@/components/VInput.vue'
 import SvgIcon from '@/assets/icon24/bell.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
+import MapVue from '@/components/Map.vue'
 
 const types = ['light', 'dark']
 
@@ -13,6 +14,13 @@ const error = computed(() => {
   return text.value.length > 5 ? 'Too many characters' : undefined
 })
 
+const wayPoints = [
+  { lat: 51.504, long: -0.09 },
+  { lat: 51.503, long: -0.09 },
+  { lat: 51.502, long: -0.09 },
+  { lat: 51.501, long: -0.09 },
+]
+
 function click() {
   console.log('clicked')
 }
@@ -21,6 +29,10 @@ function click() {
 <template>
   <div class="playground">
     <h1>Playground</h1>
+
+    <section>
+      <map-vue :way-points="wayPoints"> </map-vue>
+    </section>
 
     <section>
       <h2>Buttons</h2>
