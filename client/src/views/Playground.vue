@@ -16,10 +16,10 @@ const error = computed(() => {
 })
 
 const sightings: Array<ISighting> = [
-  { lat: 51.504, lng: -0.09, alt: "This is a way point description"},
-  { lat: 51.503, lng: -0.09, alt: "lorem ipsum 1"},
-  { lat: 51.502, lng: -0.09, alt: "lorem ipsum 2"},
-  { lat: 51.501, lng: -0.09, alt: "lorem ipsum 3"},
+  { lat: 51.504, lng: -0.09, alt: 'This is a way point description' },
+  { lat: 51.503, lng: -0.09, alt: 'lorem ipsum 1' },
+  { lat: 51.502, lng: -0.09, alt: 'lorem ipsum 2' },
+  { lat: 51.501, lng: -0.09, alt: 'lorem ipsum 3' },
 ]
 
 function click() {
