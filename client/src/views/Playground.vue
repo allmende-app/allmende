@@ -5,6 +5,7 @@ import SvgIcon from '@/assets/icon24/bell.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
 import MapVue from '@/components/Map.vue'
+import { ISighting } from '../../../server/src/models/sighting'
 
 const types = ['light', 'dark']
 
@@ -14,11 +15,11 @@ const error = computed(() => {
   return text.value.length > 5 ? 'Too many characters' : undefined
 })
 
-const wayPoints = [
-  { lat: 51.504, long: -0.09 },
-  { lat: 51.503, long: -0.09 },
-  { lat: 51.502, long: -0.09 },
-  { lat: 51.501, long: -0.09 },
+const sightings: Array<ISighting> = [
+  { lat: 51.504, lng: -0.09, alt: "This is a way point description"},
+  { lat: 51.503, lng: -0.09, alt: "lorem ipsum 1"},
+  { lat: 51.502, lng: -0.09, alt: "lorem ipsum 2"},
+  { lat: 51.501, lng: -0.09, alt: "lorem ipsum 3"},
 ]
 
 function click() {
@@ -31,7 +32,7 @@ function click() {
     <h1>Playground</h1>
 
     <section>
-      <map-vue :way-points="wayPoints"> </map-vue>
+      <map-vue :sightings="sightings"> </map-vue>
     </section>
 
     <section>
