@@ -25,7 +25,7 @@ export const replicateIPost = (post: IPostDocument, me: ObjectId) => {
         }
     }
     const doc: IPostObject & {
-        liked: boolean
+        liked: boolean;
     } = {
         _id: post._id,
         text: post.text,
@@ -37,9 +37,9 @@ export const replicateIPost = (post: IPostDocument, me: ObjectId) => {
         updatedAt: post.get("updatedAt"),
         // @ts-ignore
         liked: like,
-    }
+    };
     return doc;
-}
+};
 
 export interface IPost {
     text?: string;
