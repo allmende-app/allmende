@@ -32,8 +32,8 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         location = foundLocation;
     }
     const doc: IPostObject & {
-        liked: boolean,
-        location: LocationInfo | null
+        liked: boolean;
+        location: LocationInfo | null;
     } = {
         _id: post._id,
         text: post.text,
@@ -46,7 +46,7 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         // @ts-ignore
         liked: like,
         location: location,
-    }
+    };
     return doc;
 };
 
