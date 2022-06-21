@@ -43,7 +43,6 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         commentsCount: post.commentsCount,
         createdAt: post.get("createdAt"),
         updatedAt: post.get("updatedAt"),
-        // @ts-ignore
         liked: like,
         location: location,
     };
