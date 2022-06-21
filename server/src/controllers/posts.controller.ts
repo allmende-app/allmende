@@ -57,9 +57,7 @@ const getSightings = async (sightings: ObjectId[]) => {
 
 export const resolveNestedPost = async (post: IPostDocument) => {
     const doc = await (
-        await (
-            await post.populate("sightings")
-        ).populate("author", userProps)
+        await (await post.populate("sightings")).populate("author", userProps)
     ).populate("likes", userProps);
     return doc;
 };
@@ -93,7 +91,7 @@ export const resolveNestedPosts = async (posts: IPostDocument[]) => {
                     p
                         .populate("author", userProps)
                         .then((r) => r.populate("likes", userProps))
-                        .then(r => resolve(r)),
+                        .then((r) => resolve(r)),
                 );
             }),
     );
@@ -399,7 +397,10 @@ export class PostsController {
                             else if (like === "false")
                                 await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
-                            const copy = await replicateIPost(resolvedPost, req.session.user);
+                            const copy = replicateIPost(
+                                resolvedPost,
+                                req.session.user,
+                            );
                             return res.status(StatusCodes.OK).json({
                                 post: copy,
                             });
@@ -445,9 +446,9 @@ export class PostsController {
 
     /**
      * @deprecated
-     * @param req 
-     * @param res 
-     * @returns 
+     * @param req
+     * @param res
+     * @returns
      */
     static async removeLikeByPostID(req: Request, res: Response) {
         if (req.session.user) {

@@ -48,7 +48,7 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         location: location,
     }
     return doc;
-}
+};
 
 export interface IPost {
     text?: string;
