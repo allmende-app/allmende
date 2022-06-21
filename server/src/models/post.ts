@@ -1,5 +1,6 @@
 import mongoose, { Schema, ObjectId, model, Model, Document } from "mongoose";
-import { PostInput } from "../interfaces";
+import { LocationInfo, PostInput } from "../interfaces";
+import { locationSearch, reverseLocationSearch } from "../utils";
 import { ISighting } from "./sighting";
 import { IUserDocument, User } from "./user";
 
@@ -14,8 +15,9 @@ export interface IPostObject {
     updatedAt: string;
 }
 
-export const replicateIPost = (post: IPostDocument, me: ObjectId) => {
+export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
     let like = false;
+    let location: LocationInfo | null = null;
     if (post.likes) {
         for (const user of post.likes) {
             if (user._id == me) {
@@ -24,8 +26,14 @@ export const replicateIPost = (post: IPostDocument, me: ObjectId) => {
             }
         }
     }
+    if (post.sightings) {
+        const obj: any = post.sightings[0];
+        const foundLocation = await reverseLocationSearch(obj.lng, obj.lat);
+        location = foundLocation;
+    }
     const doc: IPostObject & {
         liked: boolean;
+        location: LocationInfo | null;
     } = {
         _id: post._id,
         text: post.text,
@@ -37,13 +45,14 @@ export const replicateIPost = (post: IPostDocument, me: ObjectId) => {
         updatedAt: post.get("updatedAt"),
         // @ts-ignore
         liked: like,
+        location: location,
     };
     return doc;
 };
 
 export interface IPost {
     text?: string;
-    sightings?: ObjectId[];
+    sightings?: ObjectId[] | any[];
     author?: ObjectId;
     likes?: ObjectId[] | any[];
     commentsCount?: number;

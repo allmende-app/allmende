@@ -154,7 +154,10 @@ export class PostsController {
                 const post = await Post.findById(id);
                 if (post) {
                     const resolved = await resolveNestedPost(post);
-                    const doc = replicateIPost(resolved, req.session.user);
+                    const doc = await replicateIPost(
+                        resolved,
+                        req.session.user,
+                    );
                     return res.status(StatusCodes.OK).json({
                         post: doc,
                     });
@@ -197,8 +200,8 @@ export class PostsController {
 
                     const results = await Promise.all(promises);
                     const me = req.session.user;
-                    const copies = results.map((result) =>
-                        replicateIPost(result, me),
+                    const copies = await Promise.all(
+                        results.map((result) => replicateIPost(result, me)),
                     );
                     return res.status(StatusCodes.OK).json({
                         posts: copies,
@@ -244,8 +247,8 @@ export class PostsController {
 
                 const results = await Promise.all(promises);
                 const me = req.session.user;
-                const copies = results.map((result) =>
-                    replicateIPost(result, me),
+                const copies = await Promise.all(
+                    results.map((result) => replicateIPost(result, me)),
                 );
                 return res.status(StatusCodes.OK).json({
                     posts: copies,
