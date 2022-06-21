@@ -5,6 +5,7 @@ import {
     IPostDocument,
     ISightingDocument,
     Post,
+    replicateIPost,
     Sighting,
     User,
 } from "../models";
@@ -15,9 +16,7 @@ import { ErrorMessages } from "../messages";
 import fs from "fs";
 import path from "path";
 
-// 62a79537325a6b5d0cff3f55
-// 62a79537325a6b5d0cff3f51
-// 62a79537325a6b5d0cff3f52
+export const userProps = ["username", "avatarUrl"];
 
 const createSightings = (
     files: Express.Multer.File[],
@@ -60,8 +59,8 @@ export const resolveNestedPost = async (post: IPostDocument) => {
     const doc = await (
         await (
             await post.populate("sightings")
-        ).populate("author", ["username", "avatarUrl"])
-    ).populate("likes", ["username", "avatarUrl"]);
+        ).populate("author", userProps)
+    ).populate("likes", userProps);
     return doc;
 };
 
@@ -86,14 +85,15 @@ export const deleteSightings = async (sightings: ObjectId[]) => {
     });
 };
 
-export const resolveNestedPosted = async (posts: IPostDocument[]) => {
+export const resolveNestedPosts = async (posts: IPostDocument[]) => {
     const promises = posts.map(
         (post) =>
             new Promise<IPostDocument>((resolve) => {
                 post.populate("sightings").then((p) =>
                     p
-                        .populate("author", ["username", "avatarUrl"])
-                        .then((r) => resolve(r)),
+                        .populate("author", userProps)
+                        .then((r) => r.populate("likes", userProps))
+                        .then(r => resolve(r)),
                 );
             }),
     );
@@ -125,7 +125,7 @@ export class PostsController {
                     post.commentsCount = 0;
                     const doc = await (
                         await (await post.save()).populate("sightings")
-                    ).populate("author", ["username", "avatarUrl"]);
+                    ).populate("author", userProps);
 
                     return res.status(StatusCodes.CREATED).json({
                         post: doc,
@@ -153,12 +153,12 @@ export class PostsController {
         if (req.session.user) {
             if (req.params.id) {
                 const id: string = req.params.id;
-                const post = await Post.findById(id)
-                    .populate("sightings")
-                    .populate("author", ["username", "avatarUrl"]);
+                const post = await Post.findById(id);
                 if (post) {
+                    const resolved = await resolveNestedPost(post);
+                    const doc = replicateIPost(resolved, req.session.user);
                     return res.status(StatusCodes.OK).json({
-                        post: post,
+                        post: doc,
                     });
                 } else {
                     return res.status(StatusCodes.NOT_FOUND).json({
@@ -195,11 +195,13 @@ export class PostsController {
                         Number(limit),
                         Number(page),
                     );
-                    const promises = await resolveNestedPosted(posts);
+                    const promises = await resolveNestedPosts(posts);
 
                     const results = await Promise.all(promises);
+                    const me = req.session.user;
+                    const copies = results.map(result => replicateIPost(result, me));
                     return res.status(StatusCodes.OK).json({
-                        posts: results,
+                        posts: copies,
                     });
                 }
             } catch (e) {
@@ -238,11 +240,13 @@ export class PostsController {
                     Number(page),
                     Number(limit),
                 );
-                const promises = await resolveNestedPosted(posts);
+                const promises = await resolveNestedPosts(posts);
 
                 const results = await Promise.all(promises);
+                const me = req.session.user;
+                const copies = results.map(result => replicateIPost(result, me));
                 return res.status(StatusCodes.OK).json({
-                    posts: results,
+                    posts: copies,
                 });
             } catch (e) {
                 console.error(e);
@@ -305,7 +309,6 @@ export class PostsController {
         }
     }
 
-    // TODO: delete controller
     static async deletePostByID(req: Request, res: Response) {
         if (req.session.user) {
             try {
@@ -396,8 +399,9 @@ export class PostsController {
                             else if (like === "false")
                                 await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
+                            const copy = replicateIPost(resolvedPost, req.session.user);
                             return res.status(StatusCodes.OK).json({
-                                post: resolvedPost,
+                                post: copy,
                             });
                         } else {
                             return res.status(StatusCodes.NOT_FOUND).json({
@@ -439,6 +443,12 @@ export class PostsController {
         }
     }
 
+    /**
+     * @deprecated
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     static async removeLikeByPostID(req: Request, res: Response) {
         if (req.session.user) {
             try {
