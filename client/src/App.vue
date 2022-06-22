@@ -3,7 +3,6 @@ import { RouterView } from 'vue-router'
 
 import { useRouter } from 'vue-router'
 import VNavigation from './components/VNavigation.vue'
-
 </script>
 
 <template>
