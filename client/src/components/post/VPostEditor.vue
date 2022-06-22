@@ -120,9 +120,12 @@ section
   overflow: hidden
   max-height: 512px
   align-self: start
+  width: 100%
   img
     display: block
     width: 100%
+    height: 100%
+    object-fit: cover
 
 .information
   display: flex
