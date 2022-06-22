@@ -66,7 +66,7 @@ export const speciesSchema = new Schema<ISpeciesDocument>({
         type: Schema.Types.Number,
     },
     datasetKey: {
-        type: Schema.Types.Number,
+        type: Schema.Types.String,
     },
     constituentKey: {
         type: Schema.Types.String,
@@ -128,10 +128,33 @@ export const speciesSchema = new Schema<ISpeciesDocument>({
 });
 
 speciesSchema.methods.construct = async function (data: ISpecies) {
-    this.vernacularName = data.vernacularName;
-    this.key = data.key;
-    this.imageUrl = data.imageUrl;
-    this.kingdom = data.kingdom;
+    this.key = data.key || undefined;
+    this.nubKey = data.nubKey || undefined;
+    this.nameKey = data.nameKey || undefined;
+    this.taxonID = data.taxonID || undefined;
+    this.sourceTaxonKey = data.sourceTaxonKey || undefined;
+    this.kingdom = data.kingdom || undefined;
+    this.kingdomKey = data.kingdomKey || undefined;
+    this.phylumKey = data.phylumKey || undefined;
+    this.datasetKey = data.datasetKey || undefined;
+    this.constituentKey = data.constituentKey || undefined;
+    this.parentKey = data.parentKey || undefined;
+    this.scientificName = data.scientificName || undefined;
+    this.canonicalName = data.canonicalName || undefined;
+    this.vernacularName = data.vernacularName || undefined;
+    this.authorShip = data.authorShip || undefined;
+    this.nameType = data.nameType || undefined;
+    this.rank = data.rank || undefined;
+    this.origin = data.origin || undefined;
+    this.taxonomicStatus = data.taxonomicStatus || undefined;
+    this.nomenclaturalStatus = data.nomenclaturalStatus || undefined;
+    this.remarks = data.remarks || undefined;
+    this.numDescendants = data.numDescendants || undefined;
+    this.lastCrawled = data.lastCrawled || undefined;
+    this.lastInterpreted = data.lastInterpreted || undefined;
+    this.issues = data.issues || undefined;
+    this.synonym = data.synonym || undefined;
+    this.imageUrl = data.imageUrl || undefined;
 
     return this;
 }

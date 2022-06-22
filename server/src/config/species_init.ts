@@ -81,7 +81,7 @@ export const insertSpeciesEntriesIntoDB = async (species: (ISpecies | null)[]) =
                         });
                     });
                 } else {
-                    console.log(`Species ->'${entry.key}' -- '${entry.vernacularName}' already exists`);
+                    console.log(`Species ->'${entry.key}' -- '${entry.vernacularName || entry.canonicalName || entry.scientificName}' already exists`);
                 }
             } else {
                 console.log('Entry is null');
