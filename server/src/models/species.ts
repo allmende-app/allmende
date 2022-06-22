@@ -99,7 +99,7 @@ export const speciesSchema = new Schema<ISpeciesDocument>({
         type: Schema.Types.String,
     },
     nomenclaturalStatus: {
-        type: Schema.Types.DocumentArray,
+        type: Schema.Types.Array,
     },
     remarks: {
         type: Schema.Types.String,
