@@ -69,7 +69,7 @@ const props = defineProps({
 /**
  * Emits
  */
-const emit = defineEmits(["comment-added"])
+const emit = defineEmits(['comment-added'])
 
 const authStore = useAuthStore()
 const user: IUser = authStore.user
@@ -107,7 +107,7 @@ const addComment = () => {
     .then((response) => {
       commentMessage.value = ''
       comments.value.push(response.data.comment)
-      emit("comment-added")
+      emit('comment-added')
     })
     .catch((error) => {
       // TODO: handle error message

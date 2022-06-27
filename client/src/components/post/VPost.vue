@@ -78,7 +78,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(["post-updated"])
+const emit = defineEmits(['post-updated'])
 
 const location = ref<LocationInfo | null>(null)
 
@@ -105,18 +105,19 @@ function openPostsComments() {
   router.push(`/posts/${props.post._id}#comments`)
 }
 
-
 // TODO: replace this later
 const liked = ref(false)
 const toggleLike = () => {
   // TODO: use new methodes to toggle like here
   backend.client
-    .put(`/api/posts/like/${props.post._id}?`, null, { params: {
-      like: !liked.value
-    }})
+    .put(`/api/posts/like/${props.post._id}?`, null, {
+      params: {
+        like: !liked.value,
+      },
+    })
     .then((response) => {
       // TODO: update post
-      emit("post-updated", response.data.post)
+      emit('post-updated', response.data.post)
       liked.value = !liked.value // TODO: remove this if liked is implemented
     })
     .catch((error) => console.log(error))

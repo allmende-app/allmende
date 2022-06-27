@@ -2,7 +2,12 @@
   <div>
     <v-title />
     <div class="posts">
-      <v-post v-for="post in posts" :key="post._id" :post="post" @post-updated="updatePost($event, post._id)"/>
+      <v-post
+        v-for="post in posts"
+        :key="post._id"
+        :post="post"
+        @post-updated="updatePost($event, post._id)"
+      />
     </div>
   </div>
 </template>
@@ -34,7 +39,7 @@ const logout = () => {
 }
 
 const updatePost = (updatedPost: Post, postID: string) => {
-  const post = posts.value.find(post => {
+  const post = posts.value.find((post) => {
     return post._id == postID
   })
 
@@ -53,6 +58,4 @@ backend.client
   })
 </script>
 
-<style lang="sass" scoped>
-
-</style>
+<style lang="sass" scoped></style>

@@ -46,7 +46,12 @@
 
     <section class="section">
       <div class="posts">
-        <v-post v-for="post in posts" :key="post._id" :post="post" @post-updated="updatePost($event, post._id)"/>
+        <v-post
+          v-for="post in posts"
+          :key="post._id"
+          :post="post"
+          @post-updated="updatePost($event, post._id)"
+        />
       </div>
     </section>
   </div>
@@ -76,7 +81,7 @@ const props = defineProps({
 })
 
 const updatePost = (updatedPost: Post, postID: string) => {
-  const post = posts.value.find(post => {
+  const post = posts.value.find((post) => {
     return post._id == postID
   })
 
@@ -97,19 +102,16 @@ backend.client
     console.log(error)
   })
 
-
 const realUsername = props.username ? props.username : self.value.username
 backend.client
   .get(`/api/posts/profile/${realUsername}`)
-  .then(response => {
+  .then((response) => {
     posts.value = response.data.posts
-    console.log(posts.value);
-
+    console.log(posts.value)
   })
-  .catch(error => {
+  .catch((error) => {
     // router.push("/error")
-    console.log(error);
-
+    console.log(error)
   })
 
 const back = () => {

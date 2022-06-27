@@ -21,9 +21,7 @@
 
     <section class="section">
       <h2 class="headline">Map</h2>
-      <map-vue v-if="ready" :sightings="sightings">
-
-      </map-vue>
+      <map-vue v-if="ready" :sightings="sightings"> </map-vue>
     </section>
 
     <section class="section" v-for="sighting in sightings" :key="sighting.id">
@@ -38,10 +36,7 @@
 
     <section class="section" id="comments">
       <h2 class="headline">Comments</h2>
-      <comments-vue
-        :post-id="postID"
-        @comment-added="commentsCount++"
-      >
+      <comments-vue :post-id="postID" @comment-added="commentsCount++">
       </comments-vue>
     </section>
   </div>
@@ -77,10 +72,10 @@ const props = defineProps({
 const ready = ref(false)
 
 onMounted(() => {
-  if (router.currentRoute.value.hash == "#comments") {
+  if (router.currentRoute.value.hash == '#comments') {
     setTimeout(() => {
       scrollToComments()
-    }, 200);
+    }, 200)
   }
 })
 
@@ -105,13 +100,16 @@ const setPost = (post: any) => {
   // liked.value = post.liked TODO: use this when implemented
   ready.value = true
 }
-const scrollToComments = () => router.replace(router.currentRoute.value.path + '#comments')
+const scrollToComments = () =>
+  router.replace(router.currentRoute.value.path + '#comments')
 const toggleLike = () => {
   // TODO: use new methodes to toggle like here
   backend.client
-    .put(`/api/posts/like/${props.postID}?`, null, { params: {
-      like: !liked.value
-    }})
+    .put(`/api/posts/like/${props.postID}?`, null, {
+      params: {
+        like: !liked.value,
+      },
+    })
     .then((response) => {
       setPost(response.data.post)
       // TODO: remove this if liked toggle is implemented correctly
@@ -127,7 +125,6 @@ backend.client
   .get(`/api/posts/${props.postID}`)
   .then((response) => setPost(response.data.post))
   .catch((error: AxiosError) => console.log(error.code))
-
 </script>
 
 <style lang="sass" scoped>
