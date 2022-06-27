@@ -66,6 +66,7 @@ import VPost from '@/components/post/VPost.vue'
 import { PropType, ref } from '@vue/runtime-core'
 import { useAuthStore } from '../../stores/auth'
 import { backend } from '../../utils'
+import type { Post } from '@/interfaces/types'
 
 const user = ref({})
 const posts = ref([])
