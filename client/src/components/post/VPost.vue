@@ -59,13 +59,12 @@
 import SvgLocation from '@/assets/icon16/location.svg?component'
 import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
-import { computed, ref, type PropType } from 'vue'
+import { computed, ref, type PropType, onMounted } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
 import type { LocationInfo, Post, Sighting } from '@/interfaces/types'
 import { backend, reverseLocationSearch } from '@/utils'
 import type { AxiosError } from 'axios'
 import router from '../../router'
-import type { Post, Sighting } from '@/interfaces/types'
 
 interface ImageData extends Sighting {
   pos: string
