@@ -27,7 +27,7 @@
         </div>
 
         <div class="activity">
-          <div class="posts">
+          <div class="post-count">
             <!-- TODO no information given about the posts => mabye load in another request -->
             <span class="number">241</span>
             <span class="description">Posts</span>
@@ -45,7 +45,9 @@
     </section>
 
     <section class="section">
-      <!-- <v-post></v-post> -->
+      <div class="posts">
+        <v-post v-for="post in posts" :key="post._id" :post="post" @post-updated="updatePost($event, post._id)"/>
+      </div>
     </section>
   </div>
 </template>
@@ -61,6 +63,7 @@ import { useAuthStore } from '../../stores/auth'
 import { backend } from '../../utils'
 
 const user = ref({})
+const posts = ref([])
 const following = ref(false)
 const self = ref(useAuthStore().user)
 
@@ -71,6 +74,15 @@ const props = defineProps({
     default: '',
   },
 })
+
+const updatePost = (updatedPost: Post, postID: string) => {
+  const post = posts.value.find(post => {
+    return post._id == postID
+  })
+
+  post.likes = updatedPost.likes
+  // TODO: updae the whole post here or use storage to do that
+}
 
 const isSelf = ref(true)
 
@@ -83,6 +95,21 @@ backend.client
   .catch((error) => {
     router.push('/error')
     console.log(error)
+  })
+
+
+const realUsername = props.username ? props.username : self.value.username
+backend.client
+  .get(`/api/posts/profile/${realUsername}`)
+  .then(response => {
+    posts.value = response.data.posts
+    console.log(posts.value);
+
+  })
+  .catch(error => {
+    // router.push("/error")
+    console.log(error);
+
   })
 
 const back = () => {

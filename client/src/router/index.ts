@@ -9,6 +9,7 @@ const router = createRouter({
     if (to.hash) {
       return {
         el: to.hash,
+        selector: to.hash,
         behavior: 'smooth',
       }
     }

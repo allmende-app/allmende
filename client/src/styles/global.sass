@@ -32,3 +32,15 @@ body
 
 .section
   margin-bottom: allmende.$size-medium
+
+.posts
+  width: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: allmende.$size-medium
+  @include allmende.screen-laptop
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
+    > .post
+      margin-inline: auto
