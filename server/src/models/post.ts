@@ -1,12 +1,59 @@
 import mongoose, { Schema, ObjectId, model, Model, Document } from "mongoose";
-import { PostInput } from "../interfaces";
+import { LocationInfo, PostInput } from "../interfaces";
+import { locationSearch, reverseLocationSearch } from "../utils";
+import { ISighting } from "./sighting";
 import { IUserDocument, User } from "./user";
+
+export interface IPostObject {
+    _id: string;
+    text?: string;
+    sightings?: unknown[];
+    likes?: unknown[];
+    author: unknown;
+    commentsCount?: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
+    let like = false;
+    let location: LocationInfo | null = null;
+    if (post.likes) {
+        for (const user of post.likes) {
+            if (user._id == me) {
+                like = true;
+                break;
+            }
+        }
+    }
+    if (post.sightings) {
+        const obj: any = post.sightings[0];
+        const foundLocation = await reverseLocationSearch(obj.lng, obj.lat);
+        location = foundLocation;
+    }
+    const doc: IPostObject & {
+        liked: boolean;
+        location: LocationInfo | null;
+    } = {
+        _id: post._id,
+        text: post.text,
+        sightings: post.sightings,
+        likes: post.likes,
+        author: post.author,
+        commentsCount: post.commentsCount,
+        createdAt: post.get("createdAt"),
+        updatedAt: post.get("updatedAt"),
+        liked: like,
+        location: location,
+    };
+    return doc;
+};
 
 export interface IPost {
     text?: string;
-    sightings?: ObjectId[];
+    sightings?: ObjectId[] | any[];
     author?: ObjectId;
-    likes?: ObjectId[];
+    likes?: ObjectId[] | any[];
     commentsCount?: number;
     // comments?: ObjectId[];
     tags?: string[];

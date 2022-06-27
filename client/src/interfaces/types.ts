@@ -11,6 +11,7 @@ export interface Post {
   likes: string[]
   sightings: Sighting[]
   text: string
+  location: LocationInfo
   updatedAt: string
 }
 

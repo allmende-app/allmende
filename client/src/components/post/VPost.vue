@@ -6,9 +6,9 @@
         {{ post.author.username }}
       </div>
       <div class="date">5d</div>
-      <div v-if="location" class="location">
+      <div v-if="post.location" class="location">
         <SvgLocation />
-        <p>{{ location.name }}</p>
+        <p>{{ post.location.name }}</p>
       </div>
     </div>
     <div class="image-wrapper">
@@ -59,12 +59,13 @@
 import SvgLocation from '@/assets/icon16/location.svg?component'
 import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
-import { computed, onMounted, reactive, ref, type PropType } from 'vue'
+import { computed, ref, type PropType } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
 import type { LocationInfo, Post, Sighting } from '@/interfaces/types'
 import { backend, reverseLocationSearch } from '@/utils'
 import type { AxiosError } from 'axios'
 import router from '../../router'
+import type { Post, Sighting } from '@/interfaces/types'
 
 interface ImageData extends Sighting {
   pos: string

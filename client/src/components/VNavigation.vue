@@ -11,15 +11,6 @@
           <SvgHome />
         </button>
       </div>
-      <!-- <div>
-        <button
-          aria-label="Search"
-          class="nav-button"
-          :class="{ active: $route.name === 'search' }"
-        >
-          <SvgSearch />
-        </button>
-      </div> -->
       <div>
         <button
           @click="router.push('/user')"
@@ -30,15 +21,6 @@
           <SvgUser />
         </button>
       </div>
-      <!-- <div>
-        <button
-          aria-label="Notifications"
-          class="nav-button"
-          :class="{ active: $route.name === 'notifications' }"
-        >
-          <SvgBell />
-        </button>
-      </div> -->
       <div class="search-wrapper">
         <input
           type="file"
@@ -90,16 +72,18 @@ nav
   color: var(--icon-disabled)
   z-index: 10
   // Mobile only
+  padding-inline: allmende.$size-small
   position: fixed
   display: grid
   border-top: 1px solid var(--border-seperator)
   left: 0
   right: 0
   bottom: 0
-  grid-template-columns: repeat(5, 1fr)
-  grid-template-areas: ". . add . ."
+  grid-template-columns: repeat(3, 1fr)
+  grid-template-areas: ". add ."
   @include allmende.screen-laptop
     // Desktop only
+    padding-inline: 0
     position: relative
     display: flex
     border: none

@@ -6,7 +6,7 @@
     "scripts": {
         "test": "dotenv -- jest",
         "start": "dotenv -e ./.env -- node dist/index.js",
-        "dev": "dotenv -e ./.env.local -- nodemon",
+        "dev": "dotenv -e ./.env -- nodemon",
         "lint": "eslint --ext .js,.ts -c .eslintrc.js src/",
         "prettier": "prettier --config .prettierrc.js --write --check .",
         "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
@@ -23,6 +23,7 @@
         "connect-mongodb-session": "^3.1.1",
         "connect-redis": "^6.1.3",
         "cors": "^2.8.5",
+        "csv-parser": "^3.0.0",
         "email-validator": "^2.0.4",
         "express": "^4.17.3",
         "express-session": "^1.17.2",

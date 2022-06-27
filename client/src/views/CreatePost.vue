@@ -1,7 +1,7 @@
 <template>
   <v-title v-if="step == 0" title="Create post">
     <template v-slot:left>
-      <v-button :icon="SvgClose" tooltip="Cancel" />
+      <v-button :icon="SvgClose" tooltip="Cancel" @click="$router.push('/')" />
     </template>
     <template v-slot:right>
       <v-button type="primary" @click="nextStep">Next</v-button>
@@ -24,7 +24,10 @@
       class="post"
     />
   </div>
-  <div v-if="step == 0">
+  <div class="notice" v-if="step == 0 && sightingInfo.length < 1">
+    <p>To create a post, upload photos</p>
+  </div>
+  <div class="upload-button" v-if="step == 0">
     <input
       class="file-input"
       type="file"
@@ -54,7 +57,7 @@ import VTitle from '@/components/VTitle.vue'
 import VPostEditor from '@/components/post/VPostEditor.vue'
 import VButton from '@/components/VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { backend } from '../utils'
 import type { LocationInfo } from '@/interfaces/types'
 
@@ -144,9 +147,21 @@ function nextStep() {
   gap: allmende.$size-medium
   &.preview-mode
     display: flex
+    gap: allmende.$size-xsmall
+    flex-wrap: wrap
+    justify-content: center
+
+.notice
+  text-align: center
+  padding: allmende.$size-medium
 
 .file-input
   display: none
+
+.upload-button
+  padding-top: allmende.$size-medium
+  display: flex
+  justify-content: center
 
 .text-editor
   width: 100%

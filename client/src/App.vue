@@ -3,8 +3,6 @@ import { RouterView } from 'vue-router'
 
 import { useRouter } from 'vue-router'
 import VNavigation from './components/VNavigation.vue'
-
-const router = useRouter()
 </script>
 
 <template>
@@ -42,8 +40,6 @@ const router = useRouter()
     box-sizing: border-box
     display: flex
     flex-direction: column
-    > .main
-      padding-block: allmende.$size-medium
     &.withNavigation
       gap: allmende.$size-xlarge
       > .main
