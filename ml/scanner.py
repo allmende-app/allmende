@@ -33,15 +33,15 @@ def scanImage(image: Image, kingdom: String):
     
     # Create JSON
     data_set = {
-        "class1": str(classnames[result[4]]),
+        "class1": int(classnames[result[4]]),
         "probability1": round(prediction[0][result[4]] * 100, 2),
-        "class2": str(classnames[result[3]]),
+        "class2": int(classnames[result[3]]),
         "probability2": round(prediction[0][result[3]] * 100, 2),
-        "class3": str(classnames[result[2]]),
+        "class3": int(classnames[result[2]]),
         "probability3": round(prediction[0][result[2]] * 100, 2),
-        "class4": str(classnames[result[1]]),
+        "class4": int(classnames[result[1]]),
         "probability4": round(prediction[0][result[1]] * 100, 2),
-        "class5": str(classnames[result[0]]),
+        "class5": int(classnames[result[0]]),
         "probability5": round(prediction[0][result[0]] * 100, 2)
     }
     json_dump = json.dumps(data_set)
