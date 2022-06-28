@@ -1,14 +1,14 @@
 import { BooleanSchemaDefinition, ObjectId } from "mongoose";
 
 export enum KingdomType {
-    BIRD = 'bird',
-    FUNGI = 'fungi',
-    INSECT = 'insect',
-    MAMMAL = 'mammal',
-    MOLLUSCA = 'mollusca',
-    OTHER = 'other',
-    PLANTAE = 'plantae',
-    REPTILE = 'reptile',
+    BIRD = "bird",
+    FUNGI = "fungi",
+    INSECT = "insect",
+    MAMMAL = "mammal",
+    MOLLUSCA = "mollusca",
+    OTHER = "other",
+    PLANTAE = "plantae",
+    REPTILE = "reptile",
 }
 
 export interface SightingInfo {
