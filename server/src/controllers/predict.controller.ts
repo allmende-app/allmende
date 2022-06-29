@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import axios from "axios";
 import { resolveToImageBuffer } from "../utils";
 import { checkValidKingdomType } from "../utils/check";
+import { Species } from "../models";
 
 export class PredictController {
     static async getPredictions(req: Request, res: Response) {
@@ -26,7 +27,11 @@ export class PredictController {
                             contentType: img.mimetype,
                             filename: img.originalname,
                         });
-                        formData.append("kingdom", types[i]);
+                        if (Array.isArray(types)) {
+                            formData.append("kingdom", types[i]);
+                        } else {
+                            formData.append("kingdom", types);
+                        }
                         const opt = {
                             method: "post",
                             data: formData,
@@ -46,38 +51,42 @@ export class PredictController {
                             predictions: [
                                 {
                                     id: r.data.class1,
-                                    score: r.data.propability1,
+                                    score: r.data.probability1,
                                 },
                                 {
                                     id: r.data.class2,
-                                    score: r.data.propability2,
+                                    score: r.data.probability2,
                                 },
                                 {
                                     id: r.data.class3,
-                                    score: r.data.propability3,
+                                    score: r.data.probability3,
+                                },
+                                {
+                                    id: r.data.class4,
+                                    score: r.data.probability4,
+                                },
+                                {
+                                    id: r.data.class5,
+                                    score: r.data.probability5,
                                 },
                             ],
                         };
                     });
 
-                    const gbifRequests = predictions.map((p) => {
+                    const pendingSpeciesRequests = predictions.map((p) => {
                         return Promise.all([
-                            axios.get(
-                                `https://api.gbif.org/v1/species/${p.predictions[0].id}`,
-                            ),
-                            axios.get(
-                                `https://api.gbif.org/v1/species/${p.predictions[1].id}`,
-                            ),
-                            axios.get(
-                                `https://api.gbif.org/v1/species/${p.predictions[2].id}`,
-                            ),
+                            Species.findBySpeciesID(p.predictions[0].id),
+                            Species.findBySpeciesID(p.predictions[1].id),
+                            Species.findBySpeciesID(p.predictions[2].id),
+                            Species.findBySpeciesID(p.predictions[3].id),
+                            Species.findBySpeciesID(p.predictions[4].id),
                         ]);
                     });
 
-                    const gbifResponses = await Promise.all(gbifRequests);
+                    const resultingSpecies = await Promise.all(pendingSpeciesRequests);
 
                     const returnedPredictions = images.map((img, i) => {
-                        const gbif = gbifResponses[i];
+                        const species = resultingSpecies[i];
                         const predictionForFile = predictions[i];
                         const fileInfo = {
                             originalname: img.originalname,
@@ -86,15 +95,23 @@ export class PredictController {
                             result: [
                                 {
                                     ...predictionForFile.predictions[0],
-                                    ...gbif[0].data,
+                                    species: species[0],
                                 },
                                 {
                                     ...predictionForFile.predictions[1],
-                                    ...gbif[1].data,
+                                    species: species[1],
                                 },
                                 {
                                     ...predictionForFile.predictions[2],
-                                    ...gbif[2].data,
+                                    species: species[2],
+                                },
+                                {
+                                    ...predictionForFile.predictions[3],
+                                    species: species[3],
+                                },
+                                {
+                                    ...predictionForFile.predictions[4],
+                                    species: species[4],
                                 },
                             ],
                         };
