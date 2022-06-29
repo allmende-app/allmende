@@ -7,7 +7,6 @@ import pLimit from "p-limit"
     const res = await connectDB();
 
     console.log(`Connected to db: ${res.connections[0].port}`)
-    console.log("hi")
     const limit = pLimit(1);
     const ids = await readIDsFromDirectory("resources")
     let current = 1;

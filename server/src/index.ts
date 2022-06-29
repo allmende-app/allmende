@@ -4,13 +4,8 @@ import {
     initializeFolderAndSampleAvatars,
     connectDB,
     connectRedis,
-    fetchGBIFData,
-    insertSpeciesEntriesIntoDB,
+    insertSpeciesJob,
 } from "./config";
-import { readIDsOfCSV } from "./config/";
-import fs from "fs";
-import path from "path";
-
 
 app.listen(CONFIG.port, async () => {
     try {
@@ -22,6 +17,8 @@ app.listen(CONFIG.port, async () => {
             .catch(console.error);
         // Logger.info("Connected to Redis DB client");
         await initializeFolderAndSampleAvatars();
+        const done = await insertSpeciesJob();
+        if (done) console.log(`Script for inserting species -> DONE.`);
         console.log(`Connected to DB: "${res.connections[0].name}"`);
         console.log(`Server listening on PORT: ${CONFIG.port}`);
     } catch (e) {

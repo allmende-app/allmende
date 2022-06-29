@@ -4,6 +4,7 @@ import csv from "csv-parser";
 import axios from "axios";
 import { GBIFInfo, GBIFMedia } from "../interfaces";
 import { ISpecies, ISpeciesDocument, Species } from "../models";
+import pLimit from "p-limit";
 
 export const readIDsOfCSV = async (file: string) => {
     const promise = new Promise<{ ID: string }[]>((resolve) => {
@@ -69,18 +70,20 @@ export const fetchGBIFData = async (ids: string[]) => {
             return null
         });
         const result = entries.filter(entry => entry !== null);
-        console.log(result);
         return result;
     } catch (e) {
         console.error(e);
     }
 }
 
+
 export const fetchAndInsert = async (ids: string[]) => {
     try {
         const species = await fetchGBIFData(ids);
+        console.log(`-------- Fetching species --------`);
         if (species) {
             insertSpeciesEntriesIntoDB(species);
+            console.log(`-------- Inserting species DB --------`);
         }
     } catch (e) {
         console.error(e);
@@ -103,7 +106,7 @@ export const insertSpeciesEntriesIntoDB = async (species: (ISpecies | null)[]) =
                     specieEntry.imageUrl = entry.imageUrl || "";
                     specieEntry.construct(entry).then(d => {
                         d.save().then(_ => {
-                            console.log(_)
+                            console.log(`Species '${entry.key}' - '${entry.vernacularName}' is stored.`)
                             resolve(_);
                         });
                     });
@@ -119,4 +122,19 @@ export const insertSpeciesEntriesIntoDB = async (species: (ISpecies | null)[]) =
     } catch (e) {
         console.error(e);
     }
+}
+
+export const insertSpeciesJob = async () => {
+    const limit = pLimit(4);
+    const ids = await readIDsFromDirectory("resources")
+    let current = 1;
+    const inputs = [];
+    for (let i = 0; i < ids.length; i += 20) {
+        const curr = ids.slice(i, i + 20);
+        console.log(`-------- Synchronously doing step: ${current} --------`);
+        current++;
+        inputs.push(limit(() => fetchAndInsert(curr)));
+    }
+    const res = await Promise.all(inputs);
+    return res;
 }
