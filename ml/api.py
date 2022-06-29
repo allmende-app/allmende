@@ -18,7 +18,7 @@ def scan():
         file = request.files['file']
         kingdom = request.form['kingdom']
 
-        if kingdom != 'plantae' and kingdom != "animalia" and kingdom != 'fungi':
+        if kingdom != 'bird' and kingdom != "fungi" and kingdom != 'insect' and kingdom != 'mammal' and kingdom != 'mollusca' and kingdom != 'other' and kingdom != 'plantae' and kingdom != 'reptile':
             return flask.Response(response="Kingdom param not supported", status=422)
 
         image = Image.open(file).convert('RGB')

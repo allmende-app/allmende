@@ -14,10 +14,10 @@ def scanImage(image: Image, kingdom: String):
     open_cv_image = open_cv_image[:, :, ::-1].copy() 
 
     # Prepare Image
-    img_size = 224 #Muss je nach Model angepasst werden
-    image_resized = cv2.resize(open_cv_image, (img_size, img_size))
-    image_prediction = np.expand_dims(image_resized, axis=0)
-
+    IMAGE_SHAPE = (224, 224) #Muss je nach Model angepasst werden
+    image_resized = image.resize(IMAGE_SHAPE)
+    # Normalize Image
+    image_prediction = np.array(image_resized)/255.0
 
     # Load Model and Name List
     export_path = os.path.join(os.getcwd()) + '/saved_model/' + kingdom
@@ -25,28 +25,24 @@ def scanImage(image: Image, kingdom: String):
     classnames = np.load(export_path + '/classnames.npy')
 
     # Image recognition
-    prediction = loaded_model.predict(image_prediction)
-    score = tf.nn.softmax(prediction[0])
+    prediction = loaded_model.predict(image_prediction[np.newaxis, ...])
+    sorted_index_array = np.argsort(prediction[0])
 
-    class1 = classnames[np.argmax(score)]
-    propability1 = round(100 * np.max(score), 2)
-    classnames = np.delete(classnames, np.argmax(score))
-    score = np.delete(score, np.argmax(score))
-    class2 = classnames[np.argmax(score)]
-    propability2 = round(100 * np.max(score), 2)
-    classnames = np.delete(classnames, np.argmax(score))
-    score = np.delete(score, np.argmax(score))
-    class3 = classnames[np.argmax(score)]
-    propability3 = round(100 * np.max(score), 2)
-
-    #Create json
+    n = 5
+    result = sorted_index_array[-n : ]
+    
+    # Create JSON
     data_set = {
-        "class1": class1, 
-        "propability1": propability1,
-        "class2": class2,
-        "propability2": propability2,
-        "class3": class3,
-        "propability3": propability3 
+        "class1": int(classnames[result[4]]),
+        "probability1": round(prediction[0][result[4]] * 100, 2),
+        "class2": int(classnames[result[3]]),
+        "probability2": round(prediction[0][result[3]] * 100, 2),
+        "class3": int(classnames[result[2]]),
+        "probability3": round(prediction[0][result[2]] * 100, 2),
+        "class4": int(classnames[result[1]]),
+        "probability4": round(prediction[0][result[1]] * 100, 2),
+        "class5": int(classnames[result[0]]),
+        "probability5": round(prediction[0][result[0]] * 100, 2)
     }
     json_dump = json.dumps(data_set)
     json_object = json.loads(json_dump)
