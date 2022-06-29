@@ -5,6 +5,7 @@ import axios from "axios";
 import { GBIFInfo, GBIFMedia } from "../interfaces";
 import { ISpecies, ISpeciesDocument, Species } from "../models";
 import pLimit from "p-limit";
+import { Logger } from "../lib";
 
 export const readIDsOfCSV = async (file: string) => {
     const promise = new Promise<{ ID: string }[]>((resolve) => {
@@ -72,7 +73,7 @@ export const fetchGBIFData = async (ids: string[]) => {
         const result = entries.filter(entry => entry !== null);
         return result;
     } catch (e) {
-        console.error(e);
+        Logger.error(e);
     }
 }
 
@@ -80,13 +81,13 @@ export const fetchGBIFData = async (ids: string[]) => {
 export const fetchAndInsert = async (ids: string[]) => {
     try {
         const species = await fetchGBIFData(ids);
-        console.log(`-------- Fetching species --------`);
+        Logger.info(`-------- Fetching species --------`);
         if (species) {
             insertSpeciesEntriesIntoDB(species);
-            console.log(`-------- Inserting species DB --------`);
+            Logger.info(`-------- Inserting species DB --------`);
         }
     } catch (e) {
-        console.error(e);
+        Logger.error(e);
     }
 }
 
@@ -106,21 +107,21 @@ export const insertSpeciesEntriesIntoDB = async (species: (ISpecies | null)[]) =
                     specieEntry.imageUrl = entry.imageUrl || "";
                     specieEntry.construct(entry).then(d => {
                         d.save().then(_ => {
-                            console.log(`Species '${entry.key}' - '${entry.vernacularName}' is stored.`)
+                            Logger.info(`Species '${entry.key}' - '${entry.vernacularName}' is stored.`)
                             resolve(_);
                         });
                     });
                 } else {
-                    console.log(`Species ->'${entry.key}' -- '${entry.vernacularName || entry.canonicalName || entry.scientificName}' already exists`);
+                    Logger.info(`Species ->'${entry.key}' -- '${entry.vernacularName || entry.canonicalName || entry.scientificName}' already exists`);
                 }
             } else {
-                console.log('Entry is null');
+                Logger.info('Entry is null');
             }
         })));
 
         return results;
     } catch (e) {
-        console.error(e);
+        Logger.error(e);
     }
 }
 
@@ -131,7 +132,7 @@ export const insertSpeciesJob = async () => {
     const inputs = [];
     for (let i = 0; i < ids.length; i += 20) {
         const curr = ids.slice(i, i + 20);
-        console.log(`-------- Synchronously doing step: ${current} --------`);
+        Logger.info(`-------- Synchronously doing step: ${current} --------`);
         current++;
         inputs.push(limit(() => fetchAndInsert(curr)));
     }

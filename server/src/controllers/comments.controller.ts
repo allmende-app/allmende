@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { CommentInput } from "../interfaces";
+import { Logger } from "../lib";
 import { ErrorMessages } from "../messages";
 import { Comment, ICommentDocument, Post, User } from "../models";
 
@@ -100,7 +101,7 @@ export class CommentsController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     createCommentErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -138,7 +139,7 @@ export class CommentsController {
                         comment: resolvedDoc,
                     });
                 } catch (er: any) {
-                    console.error(er);
+                    Logger.error(er);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                         editCommentErr: {
                             error: er.toString(),
@@ -177,7 +178,7 @@ export class CommentsController {
                         comment: resolvedDoc,
                     });
                 } catch (err: any) {
-                    console.error(err);
+                    Logger.error(err);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                         deleteCommentErr: {
                             error: err.toString(),
@@ -273,7 +274,7 @@ export class CommentsController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     getCommentByIDErr: {
                         error: ErrorMessages.INTERNAL_ERROR,

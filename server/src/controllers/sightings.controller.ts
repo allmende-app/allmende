@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { Logger } from "../lib";
 import { Sighting } from "../models";
 
 export class SightingsController {
@@ -22,7 +23,7 @@ export class SightingsController {
                     .status(StatusCodes.BAD_REQUEST)
                     .send("No ID provided");
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
             }
         } else {

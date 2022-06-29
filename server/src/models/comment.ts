@@ -1,5 +1,6 @@
 import mongoose, { Schema, ObjectId, model, Document, Model } from "mongoose";
 import { CommentInput } from "../interfaces";
+import { Logger } from "../lib";
 
 export interface IComment {
     body?: string;
@@ -78,10 +79,10 @@ commentSchema.statics.findCommentsByPostIDAndDelete = async function (
         return new Promise<boolean>((resolve, reject) => {
             comment.delete((err) => {
                 if (err) {
-                    console.error(err);
+                    Logger.error(err);
                     reject(err);
                 }
-                console.log(
+                Logger.info(
                     `Delete comment '${comment._id}' of post '${post}.'`,
                 );
                 resolve(true);

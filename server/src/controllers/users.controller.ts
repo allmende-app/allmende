@@ -7,6 +7,7 @@ import EmailValidator from "email-validator";
 import { compressImage } from "../utils";
 import { passwordStrength, Result } from "check-password-strength";
 import { ErrorMessages, SuccessMessages } from "../messages";
+import { Logger } from "../lib";
 
 declare module "express-session" {
     interface SessionData {
@@ -99,7 +100,7 @@ export class UsersController {
                 return res.status(StatusCodes.OK).json({ user: doc });
             } catch (e) {
                 // Logger.error(e);
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     signUpErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -139,7 +140,7 @@ export class UsersController {
                 await user.hideSensibleData();
                 return res.status(StatusCodes.ACCEPTED).json({ user: user });
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     loginErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -160,7 +161,7 @@ export class UsersController {
             req.session.destroy((err) => {
                 if (err) {
                     // Logger.error(err);
-                    console.error(err);
+                    Logger.error(err);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                         logoutErr: {
                             error: ErrorMessages.DESTROY_COOKIE_ERROR,
@@ -198,7 +199,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     ownProfileErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -234,7 +235,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     profileErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -274,7 +275,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     followErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -314,7 +315,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     unfollowErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -354,7 +355,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     removeFollowerErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -396,7 +397,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     uploadAvatarErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -432,7 +433,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     deleteProfileErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -518,7 +519,7 @@ export class UsersController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     editProfileErr: {
                         error: ErrorMessages.INTERNAL_ERROR,

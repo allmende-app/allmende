@@ -6,6 +6,7 @@ import { resolveToImageBuffer } from "../utils";
 import { checkValidKingdomType } from "../utils/check";
 import { Species } from "../models";
 import { ErrorMessages } from "../messages";
+import { Logger } from "../lib";
 
 export class PredictController {
     static async getPredictions(req: Request, res: Response) {
@@ -153,7 +154,7 @@ export class PredictController {
                     });
             }
         } catch (e: any) {
-            console.error(e);
+            Logger.error(e);
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 getPredictionsErr: {
                     error: e.toString(),
