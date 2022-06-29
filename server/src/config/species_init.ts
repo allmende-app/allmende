@@ -19,6 +19,20 @@ export const readIDsOfCSV = async (file: string) => {
     return result.map(e => e.ID);
 }
 
+export const readIDsFromDirectory = async (dir: string) => {
+    const files = fs.readdirSync(path.join(process.cwd(), dir));
+    const unresolved = files.map(file => readIDsOfCSV(file));
+    const promiseIds = await Promise.all(unresolved);
+
+    const promise = new Promise<string[]>((resolve) => {
+        const array: string[] = [];
+        promiseIds.forEach(arr => array.push(...arr));
+        resolve(array);
+    });
+    const result = await promise;
+    return result;
+}
+
 export const fetchGBIFData = async (ids: string[]) => {
     try {
         const header = {
@@ -54,7 +68,20 @@ export const fetchGBIFData = async (ids: string[]) => {
             }
             return null
         });
-        return entries.filter(entry => entry !== null);
+        const result = entries.filter(entry => entry !== null);
+        console.log(result);
+        return result;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export const fetchAndInsert = async (ids: string[]) => {
+    try {
+        const species = await fetchGBIFData(ids);
+        if (species) {
+            insertSpeciesEntriesIntoDB(species);
+        }
     } catch (e) {
         console.error(e);
     }
