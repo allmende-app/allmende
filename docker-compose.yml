@@ -15,9 +15,11 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
+      ML_URL: allmende-ml
     depends_on:
       - mongo-db
       - redis-db
+      - allmende-ml
   mongo-db:
     image: mongo
     restart: always
@@ -41,5 +43,11 @@ services:
       - "80:80"
     depends_on:
       - allmende-server
+  allmende-ml:
+    build: ./ml
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: api
 volumes:
   allmende:
