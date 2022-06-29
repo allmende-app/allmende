@@ -36,9 +36,11 @@ export const ErrorMessages = {
     COMMENT_LIMIT_QUERY: "Limit query is not a number",
     BAD_REQUEST_NO_USERNAME: "You forgot to submit the user's profile",
     INVALID_KINGDOM: "Invalid kingdom types.",
-    PREDICTION_ERROR: "Prediction error. Something went wrong with the prediction service.",
+    PREDICTION_ERROR:
+        "Prediction error. Something went wrong with the prediction service.",
     NO_IMAGES: "No images attached",
-    COUNT_MISMATCH: "The submitted images aren't the same length as the submitted kingdom types.",
+    COUNT_MISMATCH:
+        "The submitted images aren't the same length as the submitted kingdom types.",
 };
 
 export const SuccessMessages = {

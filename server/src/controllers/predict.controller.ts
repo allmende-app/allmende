@@ -13,15 +13,16 @@ export class PredictController {
             if (req.session.user) {
                 const types: string[] = req.body.types;
                 if (!checkValidKingdomType(types))
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            getPredictionsErr: {
-                                kingdomType: ErrorMessages.INVALID_KINGDOM,
-                            },
-                        });
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getPredictionsErr: {
+                            kingdomType: ErrorMessages.INVALID_KINGDOM,
+                        },
+                    });
                 const images = req.files as Express.Multer.File[];
-                if ((!Array.isArray(types) && images.length > 1) || (Array.isArray(types) && types.length !== images.length)) {
+                if (
+                    (!Array.isArray(types) && images.length > 1) ||
+                    (Array.isArray(types) && types.length !== images.length)
+                ) {
                     return res.status(StatusCodes.BAD_REQUEST).json({
                         getPredictionsErr: {
                             countMismatch: ErrorMessages.COUNT_MISMATCH,
@@ -97,7 +98,9 @@ export class PredictController {
                         ]);
                     });
 
-                    const resultingSpecies = await Promise.all(pendingSpeciesRequests);
+                    const resultingSpecies = await Promise.all(
+                        pendingSpeciesRequests,
+                    );
 
                     const returnedPredictions = images.map((img, i) => {
                         const species = resultingSpecies[i];
@@ -135,22 +138,18 @@ export class PredictController {
                         predictions: returnedPredictions,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .json({
-                            getPredictionsErr: {
-                                noImages: ErrorMessages.NO_IMAGES,
-                            },
-                        });
-                }
-            } else {
-                return res
-                    .status(StatusCodes.UNAUTHORIZED)
-                    .json({
+                    return res.status(StatusCodes.BAD_REQUEST).json({
                         getPredictionsErr: {
-                            error: ErrorMessages.NOT_REGISTERED,
+                            noImages: ErrorMessages.NO_IMAGES,
                         },
                     });
+                }
+            } else {
+                return res.status(StatusCodes.UNAUTHORIZED).json({
+                    getPredictionsErr: {
+                        error: ErrorMessages.NOT_REGISTERED,
+                    },
+                });
             }
         } catch (e: any) {
             console.error(e);
