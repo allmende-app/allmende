@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import path from "path";
 import fs from "fs";
 import { checkIfImage } from "../utils";
+import { Logger } from "../lib";
 
 export class ImageController {
     static async getImageController(req: Request, res: Response) {
@@ -20,7 +21,7 @@ export class ImageController {
                 }
                 return res.status(StatusCodes.NOT_FOUND).send("File not found");
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
             }
         }

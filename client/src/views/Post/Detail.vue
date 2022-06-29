@@ -12,16 +12,16 @@
       </div>
       <action-buttons
         :likes="likes"
-        :liked="false"
+        :liked="liked"
         @likesClicked="toggleLike"
-        :comments="comments.length"
+        :comments="commentsCount"
         @commentsClicked="scrollToComments"
       ></action-buttons>
     </section>
 
     <section class="section">
       <h2 class="headline">Map</h2>
-      <map-vue></map-vue>
+      <map-vue v-if="ready" :sightings="sightings"> </map-vue>
     </section>
 
     <section class="section" v-for="sighting in sightings" :key="sighting.id">
@@ -36,13 +36,14 @@
 
     <section class="section" id="comments">
       <h2 class="headline">Comments</h2>
-      <comments-vue :post-id="postID"></comments-vue>
+      <comments-vue :post-id="postID" @comment-added="commentsCount++">
+      </comments-vue>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PropType, Ref, ref } from 'vue'
+import { onMounted, PropType, Ref, ref } from 'vue'
 import MapVue from '@/components/Map.vue'
 import CommentsVue from '@/components/Comments.vue'
 import ArrowLeftSVG from '@/assets/icon24/arrow-left.svg?component'
@@ -68,14 +69,24 @@ const props = defineProps({
   },
 })
 
+const ready = ref(false)
+
+onMounted(() => {
+  if (router.currentRoute.value.hash == '#comments') {
+    setTimeout(() => {
+      scrollToComments()
+    }, 200)
+  }
+})
+
 /**
  * Data
  */
 const text = ref('')
-const comments = ref([]) // TODO: get comments length with post detail request
+const commentsCount = ref(0) // TODO: get comments length with post detail request
 const likes = ref(0)
 const sightings: Ref<Array<ISighting>> = ref([])
-const post = ref({})
+const liked = ref(false)
 
 /**
  * Functions
@@ -85,21 +96,30 @@ const setPost = (post: any) => {
   text.value = post.text
   likes.value = post.likes.length
   sightings.value = post.sightings
+  commentsCount.value = post.commentsCount
+  // liked.value = post.liked TODO: use this when implemented
+  ready.value = true
 }
-
 const scrollToComments = () =>
   router.replace(router.currentRoute.value.path + '#comments')
-
 const toggleLike = () => {
-  // TODO: toggle like here
+  // TODO: use new methodes to toggle like here
   backend.client
-    .put(`/api/posts/like/${props.postID}`)
-    .then((response) => setPost(response.data.post))
+    .put(`/api/posts/like/${props.postID}?`, null, {
+      params: {
+        like: !liked.value,
+      },
+    })
+    .then((response) => {
+      setPost(response.data.post)
+      // TODO: remove this if liked toggle is implemented correctly
+      liked.value = !liked.value
+    })
     .catch((error) => console.log(error))
 }
 
 /**
- * fetching post details
+ * Startup Calls
  */
 backend.client
   .get(`/api/posts/${props.postID}`)

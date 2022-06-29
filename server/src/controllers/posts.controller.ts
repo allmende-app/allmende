@@ -15,6 +15,7 @@ import { compressImage } from "../utils";
 import { ErrorMessages } from "../messages";
 import fs from "fs";
 import path from "path";
+import { Logger } from "../lib";
 
 export const userProps = ["username", "avatarUrl"];
 
@@ -71,14 +72,14 @@ export const deleteSightings = async (sightings: ObjectId[]) => {
             if (file) {
                 fs.unlink(path.join(process.cwd(), "uploads", file), (err) => {
                     if (err) {
-                        console.error(err);
+                        Logger.error(err);
                         throw err;
                     }
-                    console.log(`File ${file} is deleted.`);
+                    Logger.info(`File ${file} is deleted.`);
                 });
             }
             sighting.delete();
-            console.log(`Deleted sighting: ${sighting._id}`);
+            Logger.info(`Deleted sighting: ${sighting._id}`);
         }
     });
 };
@@ -130,7 +131,7 @@ export class PostsController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 // Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     createPostErr: {
@@ -208,7 +209,7 @@ export class PostsController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     getPostsErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -254,7 +255,7 @@ export class PostsController {
                     posts: copies,
                 });
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     getPostsErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -435,7 +436,7 @@ export class PostsController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     likePostByIDErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
@@ -495,7 +496,7 @@ export class PostsController {
                     });
                 }
             } catch (e) {
-                console.error(e);
+                Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     removeLikeByPostIDErr: {
                         error: ErrorMessages.INTERNAL_ERROR,

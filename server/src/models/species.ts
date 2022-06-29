@@ -1,5 +1,4 @@
-import mongoose, { Document, model, Model, Schema } from "mongoose";
-import { GBIFInfo } from "../interfaces";
+import { Document, model, Model, Schema } from "mongoose";
 
 export interface ISpecies {
     key?: number;

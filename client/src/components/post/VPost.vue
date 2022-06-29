@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="image-wrapper">
-      <ul class="slider">
+      <ul class="slider" @click="showPost()">
         <li v-for="image in activeImages" :key="image._id" :class="image.pos">
           <img
             :src="`${BACKEND_URL}api/image/${image.imageUrl}`"
@@ -46,9 +46,9 @@
         <action-buttons
           :likes="post.likes.length"
           :liked="false"
-          @likesClicked="someFunction"
-          :comments="0"
-          @commentsClicked="someFunction"
+          @likesClicked="toggleLike()"
+          :comments="post.commentsCount"
+          @commentsClicked="openPostsComments()"
         ></action-buttons>
       </div>
     </div>
@@ -59,10 +59,12 @@
 import SvgLocation from '@/assets/icon16/location.svg?component'
 import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
-import { computed, ref, type PropType } from 'vue'
+import { computed, ref, type PropType, onMounted } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
-import type { Post, Sighting } from '@/interfaces/types'
 import { BACKEND_URL} from '@/utils'
+import type { LocationInfo, Post, Sighting } from '@/interfaces/types'
+import { backend, reverseLocationSearch } from '@/utils'
+import router from '../../router'
 
 interface ImageData extends Sighting {
   pos: string
@@ -75,6 +77,20 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['post-updated'])
+
+const location = ref<LocationInfo | null>(null)
+
+onMounted(async () => {
+  // iterate over props.post.sightings until we find a location
+  for (const sighting of props.post.sightings) {
+    if (sighting.lng && sighting.lat) {
+      location.value = await reverseLocationSearch(sighting.lng, sighting.lat)
+      break
+    }
+  }
+})
+
 function getImageData(index: number, pos: string): ImageData | null {
   return props.post.sightings[index] !== null
     ? ({
@@ -84,9 +100,32 @@ function getImageData(index: number, pos: string): ImageData | null {
     : null
 }
 
-function someFunction() {
-  console.log('someFunction was called!')
+function openPostsComments() {
+  router.push(`/posts/${props.post._id}#comments`)
 }
+
+// TODO: replace this later
+const liked = ref(false)
+const toggleLike = () => {
+  // TODO: use new methodes to toggle like here
+  backend.client
+    .put(`/api/posts/like/${props.post._id}?`, null, {
+      params: {
+        like: !liked.value,
+      },
+    })
+    .then((response) => {
+      // TODO: update post
+      emit('post-updated', response.data.post)
+      liked.value = !liked.value // TODO: remove this if liked is implemented
+    })
+    .catch((error) => console.log(error))
+}
+
+function showPost() {
+  router.push(`/posts/${props.post._id}`)
+}
+
 function nextImage() {
   if (currentImage.value < props.post.sightings.length - 1) {
     currentImage.value++

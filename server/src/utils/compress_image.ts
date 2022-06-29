@@ -2,6 +2,7 @@ import sharp from "sharp";
 import fs from "fs";
 import path from "path";
 import { v4 as uuid4 } from "uuid";
+import { Logger } from "../lib";
 
 export interface ImageInfo extends sharp.OutputInfo {
     filename: string;
@@ -28,7 +29,7 @@ export function compressImage(file: Express.Multer.File) {
         })
         .toBuffer((err, buffer) => {
             if (err) {
-                console.error(err);
+                Logger.error(err);
                 throw err;
             }
             fs.writeFile(
@@ -36,7 +37,7 @@ export function compressImage(file: Express.Multer.File) {
                 buffer,
                 (e) => {
                     if (e) {
-                        console.error(e);
+                        Logger.error(e);
                         throw e;
                     }
                 },
@@ -78,7 +79,7 @@ export const resolveToFileInfoOutput = async (
                 path.join(process.cwd(), "uploads", `${id}.${type}`),
                 (err, info) => {
                     if (err) {
-                        console.error(err);
+                        Logger.error(err);
                         reject(err);
                     }
                     const res = {
@@ -112,7 +113,7 @@ export const resolveToImageBuffer = async (buffer: Buffer) => {
             })
             .toBuffer((err, newBuffer) => {
                 if (err) {
-                    console.error(err);
+                    Logger.error(err);
                     reject(err);
                 }
                 resolve(newBuffer);

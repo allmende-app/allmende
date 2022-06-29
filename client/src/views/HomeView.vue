@@ -2,7 +2,12 @@
   <div>
     <v-title />
     <div class="posts">
-      <v-post v-for="post in posts" :key="post._id" :post="post" />
+      <v-post
+        v-for="post in posts"
+        :key="post._id"
+        :post="post"
+        @post-updated="updatePost($event, post._id)"
+      />
     </div>
   </div>
 </template>
@@ -16,6 +21,7 @@ import router from '@/router'
 import { backend } from '../utils'
 import { ref } from 'vue'
 import type { Post } from '@/interfaces/types'
+import { ObjectId } from 'mongoose'
 
 const authStore = useAuthStore()
 
@@ -32,6 +38,15 @@ const logout = () => {
     })
 }
 
+const updatePost = (updatedPost: Post, postID: string) => {
+  const post = posts.value.find((post) => {
+    return post._id == postID
+  })
+
+  post.likes = updatedPost.likes
+  // TODO: updae the whole post here or use storage to do that
+}
+
 backend.client
   .get('/api/posts')
   .then((response) => {
@@ -43,16 +58,4 @@ backend.client
   })
 </script>
 
-<style lang="sass" scoped>
-.posts
-  width: 100%
-  display: flex
-  flex-direction: column
-  align-items: center
-  gap: allmende.$size-medium
-  @include allmende.screen-laptop
-    display: grid
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
-    > .post
-      margin-inline: auto
-</style>
+<style lang="sass" scoped></style>
