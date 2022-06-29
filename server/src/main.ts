@@ -1,6 +1,10 @@
 import Express from "express";
 import Routes from "./routes";
-import { middlewareCors, sessionMiddleWare, morganMiddleware } from "./middlewares";
+import {
+    middlewareCors,
+    sessionMiddleWare,
+    morganMiddleware,
+} from "./middlewares";
 
 const app = Express();
 app.use(Express.json());

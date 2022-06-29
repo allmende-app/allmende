@@ -28,8 +28,8 @@ const format = Winston.format.combine(
     Winston.format.timestamp({ format: "YYY-MM-dd HH:mm:ss" }),
     Winston.format.colorize({ all: true }),
     Winston.format.printf(
-        (info) => `${info.timestamp} ${info.level}: ${info.message}`
-    )
+        (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+    ),
 );
 
 const transports = [
@@ -46,12 +46,14 @@ const logger = Winston.createLogger({
     levels,
     format,
     transports,
-})
+});
 
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new Winston.transports.Console({
-        format: Winston.format.simple(),
-    }));
+if (process.env.NODE_ENV !== "production") {
+    logger.add(
+        new Winston.transports.Console({
+            format: Winston.format.simple(),
+        }),
+    );
 }
 
 export const Logger = logger;

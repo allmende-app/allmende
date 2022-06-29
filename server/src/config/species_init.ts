@@ -130,27 +130,41 @@ export const insertSpeciesEntriesIntoDB = async (
             ),
         );
 
-        const results = await Promise.all(alreadyExist.map((exist, index) => new Promise<ISpeciesDocument>((resolve) => {
-            const entry = species[index];
-            if (entry) {
-                if (!exist) {
-                    const specieEntry = new Species();
-                    specieEntry.key = entry.key;
-                    specieEntry.vernacularName = entry.vernacularName || "";
-                    specieEntry.imageUrl = entry.imageUrl || "";
-                    specieEntry.construct(entry).then(d => {
-                        d.save().then(_ => {
-                            Logger.info(`Species '${entry.key}' - '${entry.vernacularName}' is stored.`)
-                            resolve(_);
-                        });
-                    });
-                } else {
-                    Logger.info(`Species ->'${entry.key}' -- '${entry.vernacularName || entry.canonicalName || entry.scientificName}' already exists`);
-                }
-            } else {
-                Logger.info('Entry is null');
-            }
-        })));
+        const results = await Promise.all(
+            alreadyExist.map(
+                (exist, index) =>
+                    new Promise<ISpeciesDocument>((resolve) => {
+                        const entry = species[index];
+                        if (entry) {
+                            if (!exist) {
+                                const specieEntry = new Species();
+                                specieEntry.key = entry.key;
+                                specieEntry.vernacularName =
+                                    entry.vernacularName || "";
+                                specieEntry.imageUrl = entry.imageUrl || "";
+                                specieEntry.construct(entry).then((d) => {
+                                    d.save().then((_) => {
+                                        Logger.info(
+                                            `Species '${entry.key}' - '${entry.vernacularName}' is stored.`,
+                                        );
+                                        resolve(_);
+                                    });
+                                });
+                            } else {
+                                Logger.info(
+                                    `Species ->'${entry.key}' -- '${
+                                        entry.vernacularName ||
+                                        entry.canonicalName ||
+                                        entry.scientificName
+                                    }' already exists`,
+                                );
+                            }
+                        } else {
+                            Logger.info("Entry is null");
+                        }
+                    }),
+            ),
+        );
 
         return results;
     } catch (e) {

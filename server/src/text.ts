@@ -1,13 +1,12 @@
-import { connectDB, fetchAndInsert, readIDsFromDirectory } from "./config"
-import pLimit from "p-limit"
+import { connectDB, fetchAndInsert, readIDsFromDirectory } from "./config";
+import pLimit from "p-limit";
 import { Logger } from "./lib";
-
 
 (async () => {
     // const pLimit = await import("p-limit")
     const res = await connectDB();
 
-    Logger.info(`Connected to db: ${res.connections[0].port}`)
+    Logger.info(`Connected to db: ${res.connections[0].port}`);
     const limit = pLimit(1);
     const ids = await readIDsFromDirectory("resources");
     let current = 1;
