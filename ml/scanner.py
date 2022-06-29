@@ -26,6 +26,11 @@ def scanImage(image: Image, kingdom: String):
 
     # Image recognition
     prediction = loaded_model.predict(image_prediction[np.newaxis, ...])
+    
+    if kingdom == 'bird' or kingdom  ==  'plantae' or kingdom == 'insect':
+        lastElementIndex = len(prediction[0])-1
+        prediction = prediction[:,:lastElementIndex]
+    
     sorted_index_array = np.argsort(prediction[0])
 
     n = 5
