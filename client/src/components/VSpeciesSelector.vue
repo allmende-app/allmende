@@ -3,7 +3,16 @@
     <label>Species</label>
     <div class="options">
       <div>
-        <div v-for="option in options" class="option" :key="option.value">
+        <div v-if="true" class="genus">
+          <VButton>Bird</VButton>
+          <VButton>Mammal</VButton>
+          <VButton>Insect</VButton>
+          <VButton>Mollusca</VButton>
+          <VButton>Fungi</VButton>
+          <VButton>Reptile</VButton>
+          <VButton>Other</VButton>
+        </div>
+        <div v-else v-for="option in options" class="option" :key="option.value">
           <input
             type="radio"
             name="species"
@@ -32,6 +41,7 @@
 <script setup lang="ts">
 import { getRandomId } from '@/utils'
 import { ref } from 'vue'
+import VButton from './VButton.vue'
 
 const id = getRandomId()
 
@@ -125,4 +135,18 @@ const species = ref(undefined as string | undefined)
     background: var(--action-secondary-active)
   input:focus-visible + label
     box-shadow: inset 0 0 0 2px var(--border-focus)
+
+.genus
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+  justify-content: stretch
+  > button
+    @include allmende.text-footnote
+    min-height: 40px
+    padding: 0 4px
+    flex-grow: 1
+    border-radius: allmende.$size-xxxsmall
+  :nth-child(1), :nth-child(2), :nth-child(3)
+      padding: 0 16px
 </style>

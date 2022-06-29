@@ -15,7 +15,7 @@
       <ul class="slider">
         <li v-for="image in activeImages" :key="image._id" :class="image.pos">
           <img
-            :src="`//localhost:3000/api/image/${image.imageUrl}`"
+            :src="`${BACKEND_URL}api/image/${image.imageUrl}`"
             :alt="image.alt"
           />
         </li>
@@ -62,6 +62,7 @@ import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
 import { computed, ref, type PropType } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
 import type { Post, Sighting } from '@/interfaces/types'
+import { BACKEND_URL} from '@/utils'
 
 interface ImageData extends Sighting {
   pos: string
@@ -112,7 +113,7 @@ const activeImages = computed(() => {
 <style lang="sass" scoped>
 
 .post
-  width: 400px
+  width: 100%
 
 .meta
   display: grid

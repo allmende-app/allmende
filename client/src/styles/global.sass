@@ -32,3 +32,40 @@ body
 
 .section
   margin-bottom: allmende.$size-medium
+
+.spinner
+  display: inline-block
+  height: allmende.$size-small
+  width: allmende.$size-small
+  &::before
+    content: ''
+    height: allmende.$size-small
+    width: allmende.$size-small
+    display: block
+    box-sizing: border-box
+    inset: 0
+    border-radius: 50%
+    border: 3px solid #3e5c5052
+    border-top-color: #3e5c50
+    animation: spin 1s cubic-bezier(0.5, 0.2, 0.5, 0.8) infinite
+  &.background
+    border-radius: 50%
+    background: var(--layer-10)
+    padding: allmende.$size-xxxxsmall
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+.fade-in-offset
+  animation: fade-in 1s ease-in-out
+
+@keyframes fade-in
+  0%
+    opacity: 0
+  80%
+    opacity: 0
+  100%
+    opacity: 1

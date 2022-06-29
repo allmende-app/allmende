@@ -1,9 +1,10 @@
 <template>
   <div class="title">
+    <div class="logo"><LogoSvg /></div>
     <div class="left">
       <slot name="left"></slot>
     </div>
-    <span class="center"> {{ title }}<LogoSvg /> </span>
+    <span class="center"> {{ title }}</span>
     <div class="right">
       <slot name="right"></slot>
     </div>
@@ -42,13 +43,26 @@ defineProps({
   .center
     @include allmende.text-navbar
     align-self: center
-    position: relative
+    z-index: -1
+
+  .logo
+    position: absolute
+    overflow: hidden
+    left: 0
+    right: 0
+    top: 0
+    display: flex
+    align-items: center
+    justify-content: center
     z-index: -1
     > svg
-      position: absolute
+      flex-shrink: 0
+      margin-top: -370px
       color: var(--layer-05)
-      left: -130px
-      top: -370px
+      margin-left: 90px
       width: 557px
       height: 557px
+      @include allmende.screen-laptop
+        margin-top: -370px
+        margin-left: 230px
 </style>

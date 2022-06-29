@@ -2,6 +2,11 @@
   <section :class="{ 'preview-mode': previewMode }">
     <div class="preview">
       <img v-if="fileData" :src="(fileData as string)" />
+      <div class="grid">
+        <p class="fade-in-offset">
+          <span class="spinner"></span>Analyzing image...
+        </p>
+      </div>
     </div>
     <form v-if="!previewMode" class="information" @submit.prevent>
       <v-species-selector />
@@ -121,6 +126,40 @@ section
   max-height: 512px
   align-self: start
   width: 100%
+  position: relative
+  .grid
+    position: absolute
+    inset: 0
+    display: flex
+    flex-direction: column
+    justify-content: end
+    align-items: start
+    padding: allmende.$size-xsmall
+    > p
+      @include allmende.text-footnote
+      text-transform: uppercase
+      font-weight: 600
+      display: flex
+      align-items: center
+      background: rgba(255, 255, 255, 0.75)
+      backdrop-filter: blur(16px)
+      gap: allmende.$size-xxxsmall
+      padding: allmende.$size-xxxsmall
+      padding-right: allmende.$size-xsmall
+      border-radius: allmende.$size-large
+    &::before
+      content: ''
+      position: absolute
+      inset: 0
+      -webkit-mask-repeat: no-repeat
+      -webkit-mask-size: 400% 400%
+      -webkit-mask-position: 0 0
+      -webkit-mask-image: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 10%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0) 100%)
+      background-image: url('/scan-dot.svg')
+      background-size: 30%
+      background-position: center
+      mix-blend-mode: overlay
+      animation: mask-movement 3s infinite cubic-bezier(0, 0.5, 1, 0.5)
   img
     display: block
     width: 100%
@@ -139,4 +178,12 @@ section
   .preview
     width: 100%
     height: 100%
+    .grid
+      display: none
+
+@keyframes mask-movement
+  0%
+    -webkit-mask-position: 150% 0
+  100%
+    -webkit-mask-position: -100% 0
 </style>
