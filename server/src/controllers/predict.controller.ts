@@ -5,6 +5,7 @@ import axios from "axios";
 import { resolveToImageBuffer } from "../utils";
 import { checkValidKingdomType } from "../utils/check";
 import { Species } from "../models";
+import { ErrorMessages } from "../messages";
 
 export class PredictController {
     static async getPredictions(req: Request, res: Response) {
@@ -14,8 +15,19 @@ export class PredictController {
                 if (!checkValidKingdomType(types))
                     return res
                         .status(StatusCodes.BAD_REQUEST)
-                        .send("Invalid kingdom types");
+                        .json({
+                            getPredictionsErr: {
+                                kingdomType: ErrorMessages.INVALID_KINGDOM,
+                            },
+                        });
                 const images = req.files as Express.Multer.File[];
+                if ((!Array.isArray(types) && images.length > 1) || (Array.isArray(types) && types.length !== images.length)) {
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getPredictionsErr: {
+                            countMismatch: ErrorMessages.COUNT_MISMATCH,
+                        },
+                    });
+                }
                 if (images && images.length > 0) {
                     const requests = images.map(async (img, i) => {
                         const formData = new FormData();
@@ -45,8 +57,10 @@ export class PredictController {
 
                     const results = await Promise.all(requests);
                     const predictions = results.map((r) => {
-                        if (r.status !== 200)
-                            throw new Error("Prediction Error - 500");
+                        if (r.status !== 200) {
+                            throw Error(ErrorMessages.PREDICTION_ERROR);
+                        }
+
                         return {
                             predictions: [
                                 {
@@ -123,16 +137,28 @@ export class PredictController {
                 } else {
                     return res
                         .status(StatusCodes.BAD_REQUEST)
-                        .send("No images attached");
+                        .json({
+                            getPredictionsErr: {
+                                noImages: ErrorMessages.NO_IMAGES,
+                            },
+                        });
                 }
             } else {
                 return res
                     .status(StatusCodes.UNAUTHORIZED)
-                    .send("Not logged in or registered");
+                    .json({
+                        getPredictionsErr: {
+                            error: ErrorMessages.NOT_REGISTERED,
+                        },
+                    });
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                getPredictionsErr: {
+                    error: e.toString(),
+                },
+            });
         }
     }
 }
