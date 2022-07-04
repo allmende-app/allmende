@@ -41,6 +41,10 @@ export const ErrorMessages = {
     NO_IMAGES: "No images attached",
     COUNT_MISMATCH:
         "The submitted images aren't the same length as the submitted kingdom types.",
+    NO_SEARCH_QUERY: "Query 'q' for search species is missing.",
+    NO_VALID_SEARCH: "Query 'q' is not a single string.",
+    NO_SPECIES_ID: "No species id requested.",
+    NOT_VALID_SPECIES_ID: "Species id is not valid.",
 };
 
 export const SuccessMessages = {
