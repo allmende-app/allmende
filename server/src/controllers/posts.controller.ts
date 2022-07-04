@@ -197,9 +197,11 @@ export class PostsController {
                         Number(limit),
                         Number(page),
                     );
-                    const promises = await resolveNestedPosts(posts);
 
+                    const promises = await resolveNestedPosts(posts);
                     const results = await Promise.all(promises);
+                    // return res.json({ posts: results })
+
                     const me = req.session.user;
                     const copies = await Promise.all(
                         results.map((result) => replicateIPost(result, me)),

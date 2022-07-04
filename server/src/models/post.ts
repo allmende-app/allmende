@@ -27,10 +27,16 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         }
     }
     if (post.sightings) {
-        const obj: any = post.sightings[0];
-        const foundLocation = await reverseLocationSearch(obj.lng, obj.lat);
-        location = foundLocation;
+        for (let i = 0; i < post.sightings.length; i++) {
+            const sighting = post.sightings[i];
+            if (sighting && sighting.lat && sighting.lng) {
+                const foundLocation = await reverseLocationSearch(sighting.lng, sighting.lat);
+                location = foundLocation;
+                break;
+            }
+        }
     }
+
     const doc: IPostObject & {
         liked: boolean;
         location: LocationInfo | null;
