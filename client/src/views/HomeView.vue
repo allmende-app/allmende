@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-title />
+    <v-title>
+      <template v-slot:right>
+        <!-- <v-button class="primary" tooltip="Back" @click="logout()">Logout</v-button> -->
+      </template>
+    </v-title>
     <div class="posts">
       <v-post
         v-for="post in posts"
@@ -14,6 +18,7 @@
 
 <script setup lang="ts">
 import VPost from '@/components/post/VPost.vue'
+import VButton from '@/components/VButton.vue'
 import VTitle from '@/components/VTitle.vue'
 import type { AxiosError } from 'axios'
 import { useAuthStore } from '../stores/auth'
