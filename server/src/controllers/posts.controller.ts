@@ -16,6 +16,9 @@ import { ErrorMessages } from "../messages";
 import fs from "fs";
 import path from "path";
 import { Logger } from "../lib";
+import pLimit from "p-limit";
+
+const concurrent = pLimit(1);
 
 export const userProps = ["username", "avatarUrl"];
 
@@ -200,14 +203,16 @@ export class PostsController {
 
                     const promises = await resolveNestedPosts(posts);
                     const results = await Promise.all(promises);
-                    // return res.json({ posts: results })
 
                     const me = req.session.user;
-                    const copies = await Promise.all(
-                        results.map((result) => replicateIPost(result, me)),
-                    );
+                    const queuedDocs = [];
+                    for (let i = 0; i < results.length; i += 5) {
+                        const temp = results.slice(i, i + 5);
+                        const pendings = await Promise.all(temp.map(doc => replicateIPost(doc, me)))
+                        queuedDocs.push(...pendings);
+                    }
                     return res.status(StatusCodes.OK).json({
-                        posts: copies,
+                        posts: queuedDocs,
                     });
                 }
             } catch (e) {
@@ -250,11 +255,14 @@ export class PostsController {
 
                 const results = await Promise.all(promises);
                 const me = req.session.user;
-                const copies = await Promise.all(
-                    results.map((result) => replicateIPost(result, me)),
-                );
+                const queuedDocs = [];
+                for (let i = 0; i < results.length; i += 5) {
+                    const temp = results.slice(i, i + 5);
+                    const pendings = await Promise.all(temp.map(doc => replicateIPost(doc, me)))
+                    queuedDocs.push(...pendings);
+                }
                 return res.status(StatusCodes.OK).json({
-                    posts: copies,
+                    posts: queuedDocs,
                 });
             } catch (e) {
                 Logger.error(e);
@@ -332,18 +340,18 @@ export class PostsController {
                                 (post.author as any)._id.toString() ===
                                 (me._id as any).toString()
                             ) {
-                                await post.delete();
                                 res.status(StatusCodes.ACCEPTED).json({
                                     post: post,
                                 });
-                                // deletes attached sightings and images
                                 await Comment.findCommentsByPostIDAndDelete(
-                                    post["_id"],
+                                    (post._id as any).toString(),
                                 );
                                 const sightings = post.sightings;
                                 if (sightings) {
                                     await deleteSightings(sightings);
                                 }
+                                await post.delete();
+                                // deletes attached sightings and images
                             } else {
                                 return res
                                     .status(StatusCodes.NOT_ACCEPTABLE)
@@ -407,7 +415,7 @@ export class PostsController {
                             else if (like === "false")
                                 await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
-                            const copy = replicateIPost(
+                            const copy = await replicateIPost(
                                 resolvedPost,
                                 req.session.user,
                             );
