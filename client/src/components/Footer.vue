@@ -1,21 +1,16 @@
 <template>
   <div class="footer">
-    <v-button @click="openPrivacy" class="secondary" >
-      Privacy
-    </v-button>
-    <v-button @click="openLicense" class="secondary" >
-      License
-    </v-button>
-    </div>
+    <v-button @click="openPrivacy" class="secondary"> Privacy </v-button>
+    <v-button @click="openLicense" class="secondary"> License </v-button>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import router from '../router'
 import VButton from './VButton.vue'
 
-const openPrivacy = () => router.push("/privacy")
-const openLicense = () => router.push("/license")
-
+const openPrivacy = () => router.push('/privacy')
+const openLicense = () => router.push('/license')
 </script>
 
 <style lang="sass">
@@ -32,5 +27,4 @@ const openLicense = () => router.push("/license")
   background-color: var(--layer-20)
   border-bottom-left-radius: allmende.$radius-card
   border-top-left-radius: allmende.$radius-card
-
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LogoSvg from '@/assets/logo.svg?component'
-import FooterVue from '@/components/Footer.vue';
+import FooterVue from '@/components/Footer.vue'
 </script>
 
 <template>
