@@ -22,6 +22,7 @@ import { backend } from '../utils'
 import { ref } from 'vue'
 import type { Post } from '@/interfaces/types'
 import { ObjectId } from 'mongoose'
+import FooterVue from '@/components/Footer.vue'
 
 const authStore = useAuthStore()
 

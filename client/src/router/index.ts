@@ -103,6 +103,26 @@ const router = createRouter({
         fullSize: true,
       },
     },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: () => import('../views/Privacy.vue'),
+      meta: {
+        requiresAuth: false,
+        hideNavigation: true,
+        fullSize: false,
+      },
+    },
+    {
+      path: '/license',
+      name: 'license',
+      component: () => import('../views/License.vue'),
+      meta: {
+        requiresAuth: false,
+        hideNavigation: true,
+        fullSize: false,
+      },
+    },
   ],
 })
 
