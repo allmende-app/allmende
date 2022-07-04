@@ -26,3 +26,26 @@ export const connectRedis = () => {
     client.on("error", console.error);
     return client;
 };
+
+export const fixImageUrlOfProfiles = async () => {
+    const profiles = await User.find({
+        avatarUrl: {
+            $regex: "http",
+            $options: "i",
+        },
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const pendings = await Promise.all(
+        profiles.map(
+            (profile) =>
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                new Promise<IUserDocument & { _id: any }>((resolve) => {
+                    profile.avatarUrl = randomAvatarURL();
+                    profile.save().then((d) => {
+                        Logger.info(`Fix avatarUrl of: ${d._id}`);
+                        resolve(d);
+                    });
+                }),
+        ),
+    );
+};

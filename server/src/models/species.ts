@@ -20,11 +20,13 @@ export interface ISpecies {
     rank?: string;
     origin?: string;
     taxonomicStatus?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     nomenclaturalStatus?: any[];
     remarks?: string;
     numDescendants?: number;
     lastCrawled?: string;
     lastInterpreted?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     issues?: any[];
     synonym?: boolean;
     imageUrl?: string;

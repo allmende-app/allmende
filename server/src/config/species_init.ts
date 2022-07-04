@@ -49,6 +49,7 @@ export const fetchGBIFData = async (ids: string[]) => {
                             { headers: header },
                         )
                         .then((r) => resolve(r.data))
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         .catch((e) => resolve(null)),
                 ),
         );
@@ -60,6 +61,7 @@ export const fetchGBIFData = async (ids: string[]) => {
                             `https://api.gbif.org/v1/species/${id}/media?limit=1`,
                         )
                         .then((r) => resolve(r.data))
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         .catch((e) => resolve(null)),
                 ),
         );
@@ -152,10 +154,9 @@ export const insertSpeciesEntriesIntoDB = async (
                                 });
                             } else {
                                 Logger.info(
-                                    `Species ->'${entry.key}' -- '${
-                                        entry.vernacularName ||
-                                        entry.canonicalName ||
-                                        entry.scientificName
+                                    `Species ->'${entry.key}' -- '${entry.vernacularName ||
+                                    entry.canonicalName ||
+                                    entry.scientificName
                                     }' already exists`,
                                 );
                             }
@@ -175,6 +176,27 @@ export const insertSpeciesEntriesIntoDB = async (
 export const insertSpeciesJob = async () => {
     const limit = pLimit(4);
     const ids = await readIDsFromDirectory("resources");
+
+    const copy = ids;
+    const resolved = await Promise.all(
+        copy.map(
+            (id) =>
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                new Promise<(ISpeciesDocument & { _id: any }) | null>(
+                    (resolve) => {
+                        Species.findOne({ key: id }).then((d) => resolve(d));
+                    },
+                ),
+        ),
+    );
+    for (let i = 0; i < copy.length; i++) {
+        const species = resolved[i];
+        if (species !== null) {
+            copy[i] = "-1";
+        }
+    }
+    const uninsertedIds = copy.filter((id) => id !== "-1");
+
     let current = 1;
     const inputs = [];
     for (let i = 0; i < ids.length; i += 20) {
