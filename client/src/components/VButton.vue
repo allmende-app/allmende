@@ -82,5 +82,4 @@ button
       background: var(--action-primary-active)
     &:disabled
       background: var(--action-primary-disabled)
-
 </style>

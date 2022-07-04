@@ -76,13 +76,12 @@ const login = (event: Event) => {
       router.push('/')
     })
     .catch((error) => {
-
-      if (error.message === "Network Error") {
-        username.error = "Network Error, please try again later."
+      if (error.message === 'Network Error') {
+        username.error = 'Network Error, please try again later.'
       }
 
       const errorMessage = error.response.data
-      console.log(errorMessage.loginErr);
+      console.log(errorMessage.loginErr)
       if (errorMessage.loginErr) {
         const loginErr = errorMessage.loginErr
         username.error = loginErr.username || loginErr.email

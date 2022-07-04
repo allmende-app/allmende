@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import VPost from '@/components/post/VPost.vue'
-import VButton from '@/components/VButton.vue';
+import VButton from '@/components/VButton.vue'
 import VTitle from '@/components/VTitle.vue'
 import type { AxiosError } from 'axios'
 import { useAuthStore } from '../stores/auth'
