@@ -8,7 +8,7 @@ export class SpeciesController {
     static async getSpeciesByID(req: Request, res: Response) {
         if (req.session.user) {
             try {
-                const id = req.params;
+                const id = req.params.id;
                 if (!id) {
                     return res.status(StatusCodes.BAD_REQUEST).json({
                         getSpeciesByErr: {
@@ -16,7 +16,7 @@ export class SpeciesController {
                         },
                     });
                 }
-                if (id instanceof String) {
+                if (typeof id === "string") {
                     const species = await Species.findById(id);
                     return res.status(StatusCodes.OK).json({
                         species: species,
@@ -56,7 +56,7 @@ export class SpeciesController {
                         },
                     });
                 }
-                if (q instanceof String) {
+                if (typeof q === "string") {
                     const entries = await Species.find({
                         vernacularName: {
                             "$regex": q,

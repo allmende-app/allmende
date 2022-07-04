@@ -3,7 +3,7 @@ import { SpeciesController } from "../../../controllers";
 
 const router = Router();
 
-router.get("/:id", SpeciesController.getSpeciesByID);
+router.get("/entry/:id", SpeciesController.getSpeciesByID);
 router.get("/search", SpeciesController.searchSpecies);
 
 export = router;
