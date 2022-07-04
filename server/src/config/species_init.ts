@@ -4,6 +4,8 @@ import csv from "csv-parser";
 import axios from "axios";
 import { GBIFInfo, GBIFMedia } from "../interfaces";
 import { ISpecies, ISpeciesDocument, Species } from "../models";
+import pLimit from "p-limit";
+import { Logger } from "../lib";
 
 export const readIDsOfCSV = async (file: string) => {
     const promise = new Promise<{ ID: string }[]>((resolve) => {
@@ -17,6 +19,20 @@ export const readIDsOfCSV = async (file: string) => {
     });
     const result = await promise;
     return result.map((e) => e.ID);
+};
+
+export const readIDsFromDirectory = async (dir: string) => {
+    const files = fs.readdirSync(path.join(process.cwd(), dir));
+    const unresolved = files.map((file) => readIDsOfCSV(file));
+    const promiseIds = await Promise.all(unresolved);
+
+    const promise = new Promise<string[]>((resolve) => {
+        const array: string[] = [];
+        promiseIds.forEach((arr) => array.push(...arr));
+        resolve(array);
+    });
+    const result = await promise;
+    return result;
 };
 
 export const fetchGBIFData = async (ids: string[]) => {
@@ -78,9 +94,22 @@ export const fetchGBIFData = async (ids: string[]) => {
                 return null;
             },
         );
-        return entries.filter((entry) => entry !== null);
+        const result = entries.filter((entry) => entry !== null);
+        return result;
     } catch (e) {
-        console.error(e);
+        Logger.error(e);
+    }
+};
+
+export const fetchAndInsert = async (ids: string[]) => {
+    try {
+        const species = await fetchGBIFData(ids);
+        if (species && species.length > 0) {
+            Logger.info(`-------- Inserting species DB --------`);
+            insertSpeciesEntriesIntoDB(species);
+        }
+    } catch (e) {
+        Logger.error(e);
     }
 };
 
@@ -114,12 +143,14 @@ export const insertSpeciesEntriesIntoDB = async (
                                 specieEntry.imageUrl = entry.imageUrl || "";
                                 specieEntry.construct(entry).then((d) => {
                                     d.save().then((_) => {
-                                        console.log(_);
+                                        Logger.info(
+                                            `Species '${entry.key}' - '${entry.vernacularName}' is stored.`,
+                                        );
                                         resolve(_);
                                     });
                                 });
                             } else {
-                                console.log(
+                                Logger.info(
                                     `Species ->'${entry.key}' -- '${
                                         entry.vernacularName ||
                                         entry.canonicalName ||
@@ -128,7 +159,7 @@ export const insertSpeciesEntriesIntoDB = async (
                                 );
                             }
                         } else {
-                            console.log("Entry is null");
+                            Logger.info("Entry is null");
                         }
                     }),
             ),
@@ -136,6 +167,41 @@ export const insertSpeciesEntriesIntoDB = async (
 
         return results;
     } catch (e) {
-        console.error(e);
+        Logger.error(e);
     }
+};
+
+export const insertSpeciesJob = async () => {
+    const limit = pLimit(4);
+    const ids = await readIDsFromDirectory("resources");
+
+    const copy = ids;
+    const resolved = await Promise.all(
+        copy.map(
+            (id) =>
+                new Promise<(ISpeciesDocument & { _id: any }) | null>(
+                    (resolve) => {
+                        Species.findOne({ key: id }).then((d) => resolve(d));
+                    },
+                ),
+        ),
+    );
+    for (let i = 0; i < copy.length; i++) {
+        const species = resolved[i];
+        if (species !== null) {
+            copy[i] = "-1";
+        }
+    }
+    const uninsertedIds = copy.filter((id) => id !== "-1");
+
+    let current = 1;
+    const inputs = [];
+    for (let i = 0; i < uninsertedIds.length; i += 20) {
+        const curr = uninsertedIds.slice(i, i + 20);
+        Logger.info(`-------- Synchronously doing step: ${current} --------`);
+        current++;
+        inputs.push(limit(() => fetchAndInsert(curr)));
+    }
+    const res = await Promise.all(inputs);
+    return res;
 };

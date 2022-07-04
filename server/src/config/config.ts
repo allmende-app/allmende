@@ -1,6 +1,6 @@
 import fs from "fs";
+import { Logger } from "../lib";
 import { avatarURLs, downloadImage } from "../utils";
-// import { Logger } from "../lib";
 
 export const CONFIG = {
     port: process.env.PORT || 3000,
@@ -12,10 +12,10 @@ export const CONFIG = {
 
 export const initializeFolderAndSampleAvatars = async () => {
     if (!fs.existsSync(`${process.cwd()}/uploads`)) {
-        console.log("Upload folder does not exist yet, create /uploads folder");
+        Logger.info("Upload folder does not exist yet, create /uploads folder");
         fs.mkdirSync(`${process.cwd()}/uploads`);
         const downloadUrls = avatarURLs.map((url, i) =>
-            downloadImage(url, `${process.cwd()}/uploads/random-${i}.jpg`),
+            downloadImage(url, `${process.cwd()}/uploads/${i}.jpg`),
         );
         await Promise.all(downloadUrls);
     }

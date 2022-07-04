@@ -4,6 +4,9 @@ import { StatusCodes } from "http-status-codes";
 import axios from "axios";
 import { resolveToImageBuffer } from "../utils";
 import { checkValidKingdomType } from "../utils/check";
+import { Species } from "../models";
+import { ErrorMessages } from "../messages";
+import { Logger } from "../lib";
 
 export class PredictController {
     static async getPredictions(req: Request, res: Response) {
@@ -11,10 +14,22 @@ export class PredictController {
             if (req.session.user) {
                 const types: string[] = req.body.types;
                 if (!checkValidKingdomType(types))
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .send("Invalid kingdom types");
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getPredictionsErr: {
+                            kingdomType: ErrorMessages.INVALID_KINGDOM,
+                        },
+                    });
                 const images = req.files as Express.Multer.File[];
+                if (
+                    (!Array.isArray(types) && images.length > 1) ||
+                    (Array.isArray(types) && types.length !== images.length)
+                ) {
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getPredictionsErr: {
+                            countMismatch: ErrorMessages.COUNT_MISMATCH,
+                        },
+                    });
+                }
                 if (images && images.length > 0) {
                     const requests = images.map(async (img, i) => {
                         const formData = new FormData();
@@ -26,11 +41,20 @@ export class PredictController {
                             contentType: img.mimetype,
                             filename: img.originalname,
                         });
-                        formData.append("kingdom", types[i]);
+                        if (Array.isArray(types)) {
+                            formData.append("kingdom", types[i]);
+                        } else {
+                            formData.append("kingdom", types);
+                        }
                         const opt = {
                             method: "post",
                             data: formData,
-                            url: "http://localhost:5000/scan",
+                            url:
+                                process.env.NODE_ENV !== "production"
+                                    ? "http://127.0.0.1:5000/scan"
+                                    : "http://" +
+                                      process.env.ML_URL +
+                                      ":5000/scan",
                             headers: {
                                 ...formData.getHeaders(),
                             },
@@ -40,44 +64,52 @@ export class PredictController {
 
                     const results = await Promise.all(requests);
                     const predictions = results.map((r) => {
-                        if (r.status !== 200)
-                            throw new Error("Prediction Error - 500");
+                        if (r.status !== 200) {
+                            throw Error(ErrorMessages.PREDICTION_ERROR);
+                        }
+
                         return {
                             predictions: [
                                 {
                                     id: r.data.class1,
-                                    score: r.data.propability1,
+                                    score: r.data.probability1,
                                 },
                                 {
                                     id: r.data.class2,
-                                    score: r.data.propability2,
+                                    score: r.data.probability2,
                                 },
                                 {
                                     id: r.data.class3,
-                                    score: r.data.propability3,
+                                    score: r.data.probability3,
+                                },
+                                {
+                                    id: r.data.class4,
+                                    score: r.data.probability4,
+                                },
+                                {
+                                    id: r.data.class5,
+                                    score: r.data.probability5,
                                 },
                             ],
                         };
                     });
 
-                    const gbifRequests = predictions.map((p) => {
+                    const pendingSpeciesRequests = predictions.map((p) => {
                         return Promise.all([
-                            axios.get(
-                                `https://api.gbif.org/v1/species/${p.predictions[0].id}`,
-                            ),
-                            axios.get(
-                                `https://api.gbif.org/v1/species/${p.predictions[1].id}`,
-                            ),
-                            axios.get(
-                                `https://api.gbif.org/v1/species/${p.predictions[2].id}`,
-                            ),
+                            Species.findBySpeciesID(p.predictions[0].id),
+                            Species.findBySpeciesID(p.predictions[1].id),
+                            Species.findBySpeciesID(p.predictions[2].id),
+                            Species.findBySpeciesID(p.predictions[3].id),
+                            Species.findBySpeciesID(p.predictions[4].id),
                         ]);
                     });
 
-                    const gbifResponses = await Promise.all(gbifRequests);
+                    const resultingSpecies = await Promise.all(
+                        pendingSpeciesRequests,
+                    );
 
                     const returnedPredictions = images.map((img, i) => {
-                        const gbif = gbifResponses[i];
+                        const species = resultingSpecies[i];
                         const predictionForFile = predictions[i];
                         const fileInfo = {
                             originalname: img.originalname,
@@ -86,15 +118,23 @@ export class PredictController {
                             result: [
                                 {
                                     ...predictionForFile.predictions[0],
-                                    ...gbif[0].data,
+                                    species: species[0],
                                 },
                                 {
                                     ...predictionForFile.predictions[1],
-                                    ...gbif[1].data,
+                                    species: species[1],
                                 },
                                 {
                                     ...predictionForFile.predictions[2],
-                                    ...gbif[2].data,
+                                    species: species[2],
+                                },
+                                {
+                                    ...predictionForFile.predictions[3],
+                                    species: species[3],
+                                },
+                                {
+                                    ...predictionForFile.predictions[4],
+                                    species: species[4],
                                 },
                             ],
                         };
@@ -104,18 +144,26 @@ export class PredictController {
                         predictions: returnedPredictions,
                     });
                 } else {
-                    return res
-                        .status(StatusCodes.BAD_REQUEST)
-                        .send("No images attached");
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                        getPredictionsErr: {
+                            noImages: ErrorMessages.NO_IMAGES,
+                        },
+                    });
                 }
             } else {
-                return res
-                    .status(StatusCodes.UNAUTHORIZED)
-                    .send("Not logged in or registered");
+                return res.status(StatusCodes.UNAUTHORIZED).json({
+                    getPredictionsErr: {
+                        error: ErrorMessages.NOT_REGISTERED,
+                    },
+                });
             }
-        } catch (e) {
-            console.error(e);
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+        } catch (e: any) {
+            Logger.error(e);
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                getPredictionsErr: {
+                    error: e.toString(),
+                },
+            });
         }
     }
 }

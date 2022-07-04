@@ -1,5 +1,6 @@
 import axios from "axios";
 import { LocationInfo, OsmSearchResult } from "../interfaces";
+import { Logger } from "../lib";
 
 // Code copied from @JulianWels
 
@@ -44,7 +45,7 @@ export const osmToLocationInfo = (osm: OsmSearchResult): LocationInfo => {
 export const locationSearch = async (
     search: string,
 ): Promise<LocationInfo[]> => {
-    console.log("locationSearch", search);
+    Logger.info("locationSearch", search);
     const options = {
         method: "POST",
         url: "https://nominatim.openstreetmap.org/search",
