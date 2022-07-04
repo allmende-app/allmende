@@ -31,16 +31,21 @@ export const connectRedis = () => {
 export const fixImageUrlOfProfiles = async () => {
     const profiles = await User.find({
         avatarUrl: {
-            "$regex": "http",
-            "$options": "i",
-        }
+            $regex: "http",
+            $options: "i",
+        },
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const pendings = await Promise.all(profiles.map(profile => new Promise<(IUserDocument & { _id: any })>((resolve) => {
-        profile.avatarUrl = randomAvatarURL();
-        profile.save().then(d => {
-            Logger.info(`Fix avatarUrl of: ${d._id}`);
-            resolve(d);
-        });
-    })));
-}
+    const pendings = await Promise.all(
+        profiles.map(
+            (profile) =>
+                new Promise<IUserDocument & { _id: any }>((resolve) => {
+                    profile.avatarUrl = randomAvatarURL();
+                    profile.save().then((d) => {
+                        Logger.info(`Fix avatarUrl of: ${d._id}`);
+                        resolve(d);
+                    });
+                }),
+        ),
+    );
+};
