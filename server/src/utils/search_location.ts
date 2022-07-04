@@ -81,7 +81,7 @@ export const reverseLocationSearch = async (
         },
         headers: {
             "user-agent": "allmende v1.0 contact info@allmende-student.de",
-        }
+        },
     };
 
     const response = await axios.request(options);

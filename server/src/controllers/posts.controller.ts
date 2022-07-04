@@ -208,7 +208,9 @@ export class PostsController {
                     const queuedDocs = [];
                     for (let i = 0; i < results.length; i += 5) {
                         const temp = results.slice(i, i + 5);
-                        const pendings = await Promise.all(temp.map(doc => replicateIPost(doc, me)))
+                        const pendings = await Promise.all(
+                            temp.map((doc) => replicateIPost(doc, me)),
+                        );
                         queuedDocs.push(...pendings);
                     }
                     return res.status(StatusCodes.OK).json({
@@ -258,7 +260,9 @@ export class PostsController {
                 const queuedDocs = [];
                 for (let i = 0; i < results.length; i += 5) {
                     const temp = results.slice(i, i + 5);
-                    const pendings = await Promise.all(temp.map(doc => replicateIPost(doc, me)))
+                    const pendings = await Promise.all(
+                        temp.map((doc) => replicateIPost(doc, me)),
+                    );
                     queuedDocs.push(...pendings);
                 }
                 return res.status(StatusCodes.OK).json({
