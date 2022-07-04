@@ -153,9 +153,10 @@ export const insertSpeciesEntriesIntoDB = async (
                                 });
                             } else {
                                 Logger.info(
-                                    `Species ->'${entry.key}' -- '${entry.vernacularName ||
-                                    entry.canonicalName ||
-                                    entry.scientificName
+                                    `Species ->'${entry.key}' -- '${
+                                        entry.vernacularName ||
+                                        entry.canonicalName ||
+                                        entry.scientificName
                                     }' already exists`,
                                 );
                             }
