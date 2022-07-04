@@ -151,9 +151,10 @@ export const insertSpeciesEntriesIntoDB = async (
                                 });
                             } else {
                                 Logger.info(
-                                    `Species ->'${entry.key}' -- '${entry.vernacularName ||
-                                    entry.canonicalName ||
-                                    entry.scientificName
+                                    `Species ->'${entry.key}' -- '${
+                                        entry.vernacularName ||
+                                        entry.canonicalName ||
+                                        entry.scientificName
                                     }' already exists`,
                                 );
                             }
@@ -175,16 +176,23 @@ export const insertSpeciesJob = async () => {
     const ids = await readIDsFromDirectory("resources");
 
     const copy = ids;
-    const resolved = await Promise.all(copy.map(id => new Promise<(ISpeciesDocument & { _id: any }) | null>((resolve) => {
-        Species.findOne({ key: id }).then(d => resolve(d))
-    })));
+    const resolved = await Promise.all(
+        copy.map(
+            (id) =>
+                new Promise<(ISpeciesDocument & { _id: any }) | null>(
+                    (resolve) => {
+                        Species.findOne({ key: id }).then((d) => resolve(d));
+                    },
+                ),
+        ),
+    );
     for (let i = 0; i < copy.length; i++) {
         const species = resolved[i];
         if (species !== null) {
             copy[i] = "-1";
         }
     }
-    const uninsertedIds = copy.filter(id => id !== "-1");
+    const uninsertedIds = copy.filter((id) => id !== "-1");
 
     let current = 1;
     const inputs = [];
