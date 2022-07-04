@@ -1,23 +1,12 @@
 version: "3.9" 
+
 services:
-  allmende-server: 
-    build: ./server
+  allmende-ml:
+    build: ./ml
     ports:
-      - "3000:3000"
-    volumes:
-      - allmende:/var/src/allmende-server/logs
-      - allmende:/var/src/allmende-serer/uploads
+      - "5000:5000"
     environment:
-      MONGO_USER: ${MONGO_USER}
-      MONGO_PW: ${MONGO_PW}
-      MONGO_HOST: ${MONGO_HOST}
-      SECRET: ${SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      NODE_ENV: ${NODE_ENV}
-      PORT: ${PORT}
-    depends_on:
-      - mongo-db
-      - redis-db
+      FLASK_APP: api
   mongo-db:
     image: mongo
     restart: always
@@ -41,5 +30,25 @@ services:
       - "80:80"
     depends_on:
       - allmende-server
+  allmende-server: 
+    build: ./server
+    ports:
+      - "3000:3000"
+    volumes:
+      - allmende:/var/src/allmende-server/logs
+      - allmende:/var/src/allmende-serer/uploads
+    environment:
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PW: ${MONGO_PW}
+      MONGO_HOST: ${MONGO_HOST}
+      SECRET: ${SECRET}
+      REDIS_HOST: ${REDIS_HOST}
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      ML_URL: allmende-ml
+    depends_on:
+      - mongo-db
+      - redis-db
+      - allmende-ml
 volumes:
   allmende:

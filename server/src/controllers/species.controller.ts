@@ -28,7 +28,6 @@ export class SpeciesController {
                         },
                     });
                 }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (e: any) {
                 Logger.error(e.toString());
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -74,7 +73,6 @@ export class SpeciesController {
                         },
                     });
                 }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (e: any) {
                 Logger.error(e.toString());
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

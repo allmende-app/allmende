@@ -1,7 +1,8 @@
 import { connect, ConnectOptions } from "mongoose";
-// import { ClientClosedError, createClient } from "redis";
 import redis from "ioredis";
-// import { Logger } from "../lib";
+import { IUserDocument, User } from "../models";
+import { randomAvatarURL } from "../utils";
+import { Logger } from "../lib";
 
 const MONGO_USER = process.env.MONGO_USER || "admin";
 const MONGO_PW = process.env.MONGO_PW || "password";
@@ -23,7 +24,7 @@ export const connectRedis = () => {
         port: 6379,
         host: process.env.REDIS_HOST || "localhost",
     });
-    client.on("error", console.error);
+    client.on("error", Logger.error);
     return client;
 };
 
@@ -38,7 +39,6 @@ export const fixImageUrlOfProfiles = async () => {
     const pendings = await Promise.all(
         profiles.map(
             (profile) =>
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 new Promise<IUserDocument & { _id: any }>((resolve) => {
                     profile.avatarUrl = randomAvatarURL();
                     profile.save().then((d) => {

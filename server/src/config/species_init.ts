@@ -106,10 +106,9 @@ export const fetchGBIFData = async (ids: string[]) => {
 export const fetchAndInsert = async (ids: string[]) => {
     try {
         const species = await fetchGBIFData(ids);
-        Logger.info(`-------- Fetching species --------`);
-        if (species) {
-            insertSpeciesEntriesIntoDB(species);
+        if (species && species.length > 0) {
             Logger.info(`-------- Inserting species DB --------`);
+            insertSpeciesEntriesIntoDB(species);
         }
     } catch (e) {
         Logger.error(e);
@@ -181,7 +180,6 @@ export const insertSpeciesJob = async () => {
     const resolved = await Promise.all(
         copy.map(
             (id) =>
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 new Promise<(ISpeciesDocument & { _id: any }) | null>(
                     (resolve) => {
                         Species.findOne({ key: id }).then((d) => resolve(d));
@@ -199,8 +197,8 @@ export const insertSpeciesJob = async () => {
 
     let current = 1;
     const inputs = [];
-    for (let i = 0; i < ids.length; i += 20) {
-        const curr = ids.slice(i, i + 20);
+    for (let i = 0; i < uninsertedIds.length; i += 20) {
+        const curr = uninsertedIds.slice(i, i + 20);
         Logger.info(`-------- Synchronously doing step: ${current} --------`);
         current++;
         inputs.push(limit(() => fetchAndInsert(curr)));
