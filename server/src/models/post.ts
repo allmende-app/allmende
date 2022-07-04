@@ -30,7 +30,10 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         for (let i = 0; i < post.sightings.length; i++) {
             const sighting = post.sightings[i];
             if (sighting && sighting.lat && sighting.lng) {
-                const foundLocation = await reverseLocationSearch(sighting.lng, sighting.lat);
+                const foundLocation = await reverseLocationSearch(
+                    sighting.lng,
+                    sighting.lat,
+                );
                 location = foundLocation;
                 break;
             }
