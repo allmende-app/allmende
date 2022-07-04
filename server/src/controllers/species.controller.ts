@@ -59,9 +59,9 @@ export class SpeciesController {
                 if (typeof q === "string") {
                     const entries = await Species.find({
                         vernacularName: {
-                            "$regex": q,
-                            "$options": "i"
-                        }
+                            $regex: q,
+                            $options: "i",
+                        },
                     });
                     return res.status(StatusCodes.OK).json({
                         species: entries,
