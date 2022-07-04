@@ -7,10 +7,9 @@ export const avatarURLs = [
     "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Taka_Shiba.jpg/800px-Taka_Shiba.jpg",
     "https://media.4-paws.org/5/4/4/c/544c2b2fd37541596134734c42bf77186f0df0ae/VIER%20PFOTEN_2017-10-20_164-3854x2667-1920x1329.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/a/aa/A._gigantea_Aldabra_Giant_Tortoise.jpg",
-    // Random joke images :D
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Donald_Trump_official_portrait.jpg/1920px-Donald_Trump_official_portrait.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Kanye_West_at_the_2009_Tribeca_Film_Festival_%28cropped%29.jpg/220px-Kanye_West_at_the_2009_Tribeca_Film_Festival_%28cropped%29.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Eminem_-_Concert_for_Valor_in_Washington%2C_D.C._Nov._11%2C_2014_%282%29_%28cropped%29.jpg/640px-Eminem_-_Concert_for_Valor_in_Washington%2C_D.C._Nov._11%2C_2014_%282%29_%28cropped%29.jpg",
+    "https://www.zoo-leipzig.de/fileadmin/_processed_/c/9/csm_Nepalesischer_Roter_Panda_2_96fa3e4c72.jpg",
+    "https://www.tierpark-berlin.de/fileadmin/_processed_/0/7/csm_Jae_Jae_Cecile_Garans_252695cb69.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG",
 ];
 
 export const downloadImage = (url: string, image_path: string) =>
