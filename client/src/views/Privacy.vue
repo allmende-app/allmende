@@ -682,7 +682,11 @@ const back = () => router.back()
 
 <style lang="sass" scoped>
 .privacy
+  overflow: hidden
   display: flex
   flex-direction: column
   gap: 12px
+
+  h1, h2, h3
+    word-break: break-all
 </style>

@@ -23,8 +23,10 @@ import VNavigation from './components/VNavigation.vue'
   width: 100%
   max-width: 1200px
   margin: 0 auto
-  padding-inline: allmende.$size-medium
   box-sizing: border-box
+  @include allmende.screen-laptop
+    padding-inline: allmende.$size-medium
+
   > .main
     flex: 1
     margin-inline: allmende.$size-xsmall
@@ -34,6 +36,7 @@ import VNavigation from './components/VNavigation.vue'
     width: 100%
     max-width: none
     margin: 0
+    padding-inline: 0
     > .main
       margin: 0
   @include allmende.screen-laptop

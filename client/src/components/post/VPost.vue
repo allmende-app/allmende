@@ -148,7 +148,8 @@ const activeImages = computed(() => {
 <style lang="sass" scoped>
 
 .post
-  width: 400px
+  max-width: 400px
+  width: 100%
 
 .meta
   display: grid
@@ -228,7 +229,11 @@ const activeImages = computed(() => {
       display: block
       position: absolute
       inset: 0
-      opacity: 0
+
+      // always show next and prev on mobile, on laptop screen only show on hover
+      opacity: 1
+      @include allmende.screen-laptop
+        opacity: 0
       transition: opacity 0.25s ease-in-out
       display: flex
       align-items: center
