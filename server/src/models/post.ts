@@ -27,10 +27,19 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
         }
     }
     if (post.sightings) {
-        const obj: any = post.sightings[0];
-        const foundLocation = await reverseLocationSearch(obj.lng, obj.lat);
-        location = foundLocation;
+        for (let i = 0; i < post.sightings.length; i++) {
+            const sighting = post.sightings[i];
+            if (sighting && sighting.lat && sighting.lng) {
+                const foundLocation = await reverseLocationSearch(
+                    sighting.lng,
+                    sighting.lat,
+                );
+                location = foundLocation;
+                break;
+            }
+        }
     }
+
     const doc: IPostObject & {
         liked: boolean;
         location: LocationInfo | null;
@@ -79,6 +88,8 @@ export interface IPostModel extends Model<IPostDocument> {
         page: number,
         limit: number,
     ) => Promise<IPostDocument[]>;
+
+    countPostsOfUser: (user: string) => Promise<number>;
 }
 
 export const postSchema = new Schema<IPostDocument>(
@@ -200,6 +211,13 @@ postSchema.statics.findPostsOfUser = async function (
             createdAt: "descending",
         });
     return posts;
+};
+
+postSchema.statics.countPostsOfUser = async function (user: string) {
+    const profile = await User.findByUsername(user);
+    const id = profile._id;
+    const number = await this.countDocuments({ author: id });
+    return number;
 };
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);

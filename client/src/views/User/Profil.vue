@@ -4,11 +4,11 @@
       <template v-slot:left v-if="!isSelf">
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
       </template>
-      <template v-slot:right>
+      <!-- <template v-slot:right v-if="!isSelf">
         <v-button type="primary" tooltip="Follow" @click="toggleFollow">
           {{ following ? 'Follow' : 'Following' }}
         </v-button>
-      </template>
+      </template> -->
     </v-title-vue>
 
     <section class="section">
@@ -29,7 +29,7 @@
         <div class="activity">
           <div class="post-count">
             <!-- TODO no information given about the posts => mabye load in another request -->
-            <span class="number">241</span>
+            <span class="number">{{ posts.length }}</span>
             <span class="description">Posts</span>
           </div>
           <div class="followers">
@@ -46,12 +46,7 @@
 
     <section class="section">
       <div class="posts">
-        <v-post
-          v-for="post in posts"
-          :key="post._id"
-          :post="post"
-          @post-updated="updatePost($event, post._id)"
-        />
+        <v-post v-for="post in posts" :key="post._id" :prop-post="post" />
       </div>
     </section>
   </div>
@@ -81,15 +76,6 @@ const props = defineProps({
   },
 })
 
-const updatePost = (updatedPost: Post, postID: string) => {
-  const post = posts.value.find((post) => {
-    return post._id == postID
-  })
-
-  post.likes = updatedPost.likes
-  // TODO: updae the whole post here or use storage to do that
-}
-
 const isSelf = ref(true)
 
 backend.client
@@ -97,6 +83,7 @@ backend.client
   .then((response) => {
     user.value = response.data.user
     isSelf.value = self?.value.username === response.data.user.username
+    console.log(user.value)
   })
   .catch((error) => {
     router.push('/error')
@@ -108,10 +95,8 @@ backend.client
   .get(`/api/posts/profile/${realUsername}`)
   .then((response) => {
     posts.value = response.data.posts
-    console.log(posts.value)
   })
   .catch((error) => {
-    // router.push("/error")
     console.log(error)
   })
 

@@ -76,8 +76,17 @@ const login = (event: Event) => {
       router.push('/')
     })
     .catch((error) => {
+      if (error.message === 'Network Error') {
+        username.error = 'Network Error, please try again later.'
+      }
+
       const errorMessage = error.response.data
-      console.log(errorMessage)
+      console.log(errorMessage.loginErr)
+      if (errorMessage.loginErr) {
+        const loginErr = errorMessage.loginErr
+        username.error = loginErr.username || loginErr.email
+        password.error = loginErr.password
+      }
       if (errorMessage.includes('Email not found')) {
         username.error = '???'
       }

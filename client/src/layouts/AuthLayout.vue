@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LogoSvg from '@/assets/logo.svg?component'
+import FooterVue from '@/components/Footer.vue'
 </script>
 
 <template>
@@ -21,10 +22,12 @@ import LogoSvg from '@/assets/logo.svg?component'
         </form>
       </div>
     </div>
+    <footer-vue></footer-vue>
   </div>
 </template>
 
 <style lang="sass">
+
 .layout
   background-color: var(--layer-20)
   background-repeat: no-repeat

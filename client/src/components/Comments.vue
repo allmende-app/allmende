@@ -10,6 +10,9 @@
         v-model="commentMessage"
         @keypress.enter="addComment"
       />
+      <v-button class="secondary" @click="addComment">
+        <SvgArrowLeft />
+      </v-button>
     </div>
 
     <div
@@ -55,6 +58,8 @@ import { useAuthStore } from '../stores/auth'
 import router from '../router'
 import { compareDesc, formatDistance, subDays } from 'date-fns'
 import { IUser } from '../../../server/src/models/user'
+import VButton from './VButton.vue'
+import SvgArrowLeft from '@/assets/icon24/arrow-right.svg?component'
 
 /**
  * Props
@@ -142,10 +147,20 @@ const visitAuthor = (username: string) => {
     display: flex
     flex-direction: row
     justify-content: flex-start
+    align-items: center
     gap: allmende.$size-xxxsmall
 
     input
+      border: 1px var(--border-seperator) solid
       width: 100%
+      height: fit-content
+      padding: allmende.$size-xxxsmall
+      font-size: 16px
+      border-radius: allmende.$radius-input
+      outline: none
+
+      &:focus
+        border-color: var(--border-focus)
 
   .meta
     display: flex

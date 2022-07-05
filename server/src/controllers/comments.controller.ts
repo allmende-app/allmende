@@ -138,6 +138,7 @@ export class CommentsController {
                     return res.status(StatusCodes.OK).json({
                         comment: resolvedDoc,
                     });
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } catch (er: any) {
                     Logger.error(er);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -177,6 +178,7 @@ export class CommentsController {
                     return res.status(StatusCodes.OK).json({
                         comment: resolvedDoc,
                     });
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } catch (err: any) {
                     Logger.error(err);
                     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

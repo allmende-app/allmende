@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { LocationInfo, OsmSearchResult } from "../interfaces";
 import { Logger } from "../lib";
 
@@ -70,7 +70,7 @@ export const reverseLocationSearch = async (
     longitude: number,
     latitude: number,
 ): Promise<LocationInfo> => {
-    const options = {
+    const options: AxiosRequestConfig = {
         method: "POST",
         url: "https://nominatim.openstreetmap.org/reverse",
         params: {
@@ -78,6 +78,9 @@ export const reverseLocationSearch = async (
             lon: longitude,
             format: "json",
             addressdetails: "1",
+        },
+        headers: {
+            "user-agent": "allmende v1.0 contact info@allmende-student.de",
         },
     };
 

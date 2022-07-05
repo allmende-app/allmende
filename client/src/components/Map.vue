@@ -37,9 +37,11 @@ onMounted(() => {
   }
 
   // set correct zoom at the beginning
-  let group = L.featureGroup(markers)
-  map.fitBounds(group.getBounds())
-  map.zoomOut(0.6)
+  if (markers.length > 0) {
+    let group = L.featureGroup(markers)
+    map.fitBounds(group.getBounds())
+    map.zoomOut(0.6)
+  }
 
   // reference to leaflet
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

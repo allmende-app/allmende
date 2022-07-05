@@ -33,22 +33,28 @@ def scanImage(image: Image, kingdom: String):
     
     sorted_index_array = np.argsort(prediction[0])
 
-    n = 5
-    result = sorted_index_array[-n : ]
+    # Change values to adapt output
+    maxResults = 5
+    minPercent = 10
+
+    result = sorted_index_array[-maxResults : ]
     
     # Create JSON
     data_set = {
-        "class1": int(classnames[result[4]]),
-        "probability1": round(prediction[0][result[4]] * 100, 2),
-        "class2": int(classnames[result[3]]),
-        "probability2": round(prediction[0][result[3]] * 100, 2),
-        "class3": int(classnames[result[2]]),
-        "probability3": round(prediction[0][result[2]] * 100, 2),
-        "class4": int(classnames[result[1]]),
-        "probability4": round(prediction[0][result[1]] * 100, 2),
-        "class5": int(classnames[result[0]]),
-        "probability5": round(prediction[0][result[0]] * 100, 2)
+        "class1": int(classnames[result[maxResults-1]]),
+        "probability1": round(prediction[0][result[maxResults-1]] * 100, 2),
     }
+
+    j = 2
+
+    for i in reversed(range(maxResults-1)):
+        if prediction[0][result[i]] * 100 > minPercent:
+            data_set['class' + str(j)] = int(classnames[result[i]])
+            data_set['probability' + str(j)] = round(prediction[0][result[i]] * 100, 2)
+            j+=1
+        else:
+            break
+
     json_dump = json.dumps(data_set)
     json_object = json.loads(json_dump)
 

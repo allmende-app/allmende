@@ -110,6 +110,10 @@ const sendRequest = (event: Event) => {
       router.push('/')
     })
     .catch((error) => {
+      if (error.message === 'Network Error') {
+        email.error = 'Network Error, please try again later.'
+      }
+
       const errorMessage = error.response.data
       if (errorMessage instanceof Object) {
         if (errorMessage.message.includes('username')) {

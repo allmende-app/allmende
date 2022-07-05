@@ -97,24 +97,24 @@ const setPost = (post: any) => {
   likes.value = post.likes.length
   sightings.value = post.sightings
   commentsCount.value = post.commentsCount
-  // liked.value = post.liked TODO: use this when implemented
+  liked.value = post.liked
+
+  console.log(post)
+
   ready.value = true
 }
+
 const scrollToComments = () =>
   router.replace(router.currentRoute.value.path + '#comments')
+
 const toggleLike = () => {
-  // TODO: use new methodes to toggle like here
   backend.client
     .put(`/api/posts/like/${props.postID}?`, null, {
       params: {
         like: !liked.value,
       },
     })
-    .then((response) => {
-      setPost(response.data.post)
-      // TODO: remove this if liked toggle is implemented correctly
-      liked.value = !liked.value
-    })
+    .then((response) => setPost(response.data.post))
     .catch((error) => console.log(error))
 }
 

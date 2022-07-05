@@ -74,7 +74,8 @@ commentSchema.statics.findCommentsByPostID = async function (
 commentSchema.statics.findCommentsByPostIDAndDelete = async function (
     post: string,
 ) {
-    const comments = this.find({ post: post });
+    const comments = await Comment.find({ post });
+    if (comments.length < 1) return;
     const promises = comments.map((comment: ICommentDocument) => {
         return new Promise<boolean>((resolve, reject) => {
             comment.delete((err) => {

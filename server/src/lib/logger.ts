@@ -11,7 +11,7 @@ const levels = {
 const level = () => {
     const env = process.env.NODE_ENV || "development";
     const isDevelopment = env === "development";
-    return isDevelopment ? "debug" : "info";
+    return isDevelopment ? "debug" : "debug";
 };
 
 const colors = {
@@ -25,7 +25,7 @@ const colors = {
 Winston.addColors(colors);
 
 const format = Winston.format.combine(
-    Winston.format.timestamp({ format: "YYY-MM-dd HH:mm:ss" }),
+    Winston.format.timestamp({ format: "YYYY-MM-dd HH:mm:ss" }),
     Winston.format.colorize({ all: true }),
     Winston.format.printf(
         (info) => `${info.timestamp} ${info.level}: ${info.message}`,

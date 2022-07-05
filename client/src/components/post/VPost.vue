@@ -2,7 +2,9 @@
   <article class="post">
     <div class="meta">
       <div class="author">
-        <div class="userpic"><img :src="post.author.avatarUrl" /></div>
+        <div class="userpic">
+          <img :src="post.author.avatarUrl" alt="avatar" />
+        </div>
         {{ post.author.username }}
       </div>
       <div class="date">5d</div>
@@ -32,9 +34,9 @@
           <span><SvgArrowRight /></span>
         </button>
       </div>
-      <div class="image-index" v-if="props.post.sightings.length > 1">
+      <div class="image-index" v-if="post.sightings.length > 1">
         <div
-          v-for="i in props.post.sightings.length"
+          v-for="i in post.sightings.length"
           :key="i"
           :class="{ active: i - 1 === currentImage }"
         ></div>
@@ -45,7 +47,7 @@
         </div>
         <action-buttons
           :likes="post.likes.length"
-          :liked="false"
+          :liked="post.liked"
           @likesClicked="toggleLike()"
           :comments="post.commentsCount"
           @commentsClicked="openPostsComments()"
@@ -71,19 +73,18 @@ interface ImageData extends Sighting {
 }
 
 const props = defineProps({
-  post: {
+  propPost: {
     type: Object as PropType<Post>,
     required: true,
   },
 })
 
-const emit = defineEmits(['post-updated'])
-
+const post = ref<Post>(props.propPost)
 const location = ref<LocationInfo | null>(null)
 
 onMounted(async () => {
   // iterate over props.post.sightings until we find a location
-  for (const sighting of props.post.sightings) {
+  for (const sighting of post.value.sightings) {
     if (sighting.lng && sighting.lat) {
       location.value = await reverseLocationSearch(sighting.lng, sighting.lat)
       break
@@ -92,42 +93,37 @@ onMounted(async () => {
 })
 
 function getImageData(index: number, pos: string): ImageData | null {
-  return props.post.sightings[index] !== null
+  return post.value.sightings[index] !== null
     ? ({
-        ...props.post.sightings[index],
+        ...post.value.sightings[index],
         pos,
       } as ImageData)
     : null
 }
 
 function openPostsComments() {
-  router.push(`/posts/${props.post._id}#comments`)
+  router.push(`/posts/${post.value._id}#comments`)
 }
 
-// TODO: replace this later
-const liked = ref(false)
 const toggleLike = () => {
-  // TODO: use new methodes to toggle like here
   backend.client
-    .put(`/api/posts/like/${props.post._id}?`, null, {
+    .put(`/api/posts/like/${post.value._id}?`, null, {
       params: {
-        like: !liked.value,
+        like: !post.value.liked,
       },
     })
     .then((response) => {
-      // TODO: update post
-      emit('post-updated', response.data.post)
-      liked.value = !liked.value // TODO: remove this if liked is implemented
+      post.value = response.data.post
     })
     .catch((error) => console.log(error))
 }
 
 function showPost() {
-  router.push(`/posts/${props.post._id}`)
+  router.push(`/posts/${post.value._id}`)
 }
 
 function nextImage() {
-  if (currentImage.value < props.post.sightings.length - 1) {
+  if (currentImage.value < post.value.sightings.length - 1) {
     currentImage.value++
   }
 }
@@ -232,7 +228,11 @@ const activeImages = computed(() => {
       display: block
       position: absolute
       inset: 0
-      opacity: 0
+
+      // always show next and prev on mobile, on laptop screen only show on hover
+      opacity: 1
+      @include allmende.screen-laptop
+        opacity: 0
       transition: opacity 0.25s ease-in-out
       display: flex
       align-items: center

@@ -49,7 +49,12 @@ export class PredictController {
                         const opt = {
                             method: "post",
                             data: formData,
-                            url: "http://127.0.0.1:5000/scan",
+                            url:
+                                process.env.NODE_ENV !== "production"
+                                    ? "http://127.0.0.1:5000/scan"
+                                    : "http://" +
+                                      process.env.ML_URL +
+                                      ":5000/scan",
                             headers: {
                                 ...formData.getHeaders(),
                             },

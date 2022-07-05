@@ -57,10 +57,22 @@ const getSightings = async (sightings: ObjectId[]) => {
 };
 
 export const resolveNestedPost = async (post: IPostDocument) => {
-    const doc = await (
-        await (await post.populate("sightings")).populate("author", userProps)
-    ).populate("likes", userProps);
-    return doc;
+    const promise = new Promise<IPostDocument>((resolve) => {
+        post.populate("sightings").then((r) =>
+            r
+                .populate("author", userProps)
+                .then((r) =>
+                    r
+                        .populate("likes", userProps)
+                        .then((r) =>
+                            r
+                                .populate("sightings.species")
+                                .then((d) => resolve(d)),
+                        ),
+                ),
+        );
+    });
+    return await promise;
 };
 
 export const deleteSightings = async (sightings: ObjectId[]) => {
@@ -92,6 +104,7 @@ export const resolveNestedPosts = async (posts: IPostDocument[]) => {
                     p
                         .populate("author", userProps)
                         .then((r) => r.populate("likes", userProps))
+                        .then((r) => r.populate("sightings.species"))
                         .then((r) => resolve(r)),
                 );
             }),
@@ -197,15 +210,21 @@ export class PostsController {
                         Number(limit),
                         Number(page),
                     );
-                    const promises = await resolveNestedPosts(posts);
 
+                    const promises = await resolveNestedPosts(posts);
                     const results = await Promise.all(promises);
+
                     const me = req.session.user;
-                    const copies = await Promise.all(
-                        results.map((result) => replicateIPost(result, me)),
-                    );
+                    const queuedDocs = [];
+                    for (let i = 0; i < results.length; i += 5) {
+                        const temp = results.slice(i, i + 5);
+                        const pendings = await Promise.all(
+                            temp.map((doc) => replicateIPost(doc, me)),
+                        );
+                        queuedDocs.push(...pendings);
+                    }
                     return res.status(StatusCodes.OK).json({
-                        posts: copies,
+                        posts: queuedDocs,
                     });
                 }
             } catch (e) {
@@ -244,15 +263,23 @@ export class PostsController {
                     Number(page),
                     Number(limit),
                 );
+                const count = await Post.countPostsOfUser(user);
                 const promises = await resolveNestedPosts(posts);
 
                 const results = await Promise.all(promises);
                 const me = req.session.user;
-                const copies = await Promise.all(
-                    results.map((result) => replicateIPost(result, me)),
-                );
+                const queuedDocs = [];
+                for (let i = 0; i < results.length; i += 5) {
+                    const temp = results.slice(i, i + 5);
+                    const pendings = await Promise.all(
+                        temp.map((doc) => replicateIPost(doc, me)),
+                    );
+                    queuedDocs.push(...pendings);
+                }
+
                 return res.status(StatusCodes.OK).json({
-                    posts: copies,
+                    count: count,
+                    posts: queuedDocs,
                 });
             } catch (e) {
                 Logger.error(e);
@@ -330,18 +357,18 @@ export class PostsController {
                                 (post.author as any)._id.toString() ===
                                 (me._id as any).toString()
                             ) {
-                                await post.delete();
                                 res.status(StatusCodes.ACCEPTED).json({
                                     post: post,
                                 });
-                                // deletes attached sightings and images
                                 await Comment.findCommentsByPostIDAndDelete(
-                                    post["_id"],
+                                    (post._id as any).toString(),
                                 );
                                 const sightings = post.sightings;
                                 if (sightings) {
                                     await deleteSightings(sightings);
                                 }
+                                await post.delete();
+                                // deletes attached sightings and images
                             } else {
                                 return res
                                     .status(StatusCodes.NOT_ACCEPTABLE)
@@ -405,7 +432,7 @@ export class PostsController {
                             else if (like === "false")
                                 await post.removeLike(me);
                             const resolvedPost = await resolveNestedPost(post);
-                            const copy = replicateIPost(
+                            const copy = await replicateIPost(
                                 resolvedPost,
                                 req.session.user,
                             );

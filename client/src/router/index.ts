@@ -68,7 +68,7 @@ const router = createRouter({
     {
       path: '/user/:username*',
       name: 'user',
-      component: () => import('../views/User/Index.vue'),
+      component: () => import('../views/User/Profil.vue'),
       meta: {
         requiresAuth: true,
         hideNavigation: false,
@@ -101,6 +101,26 @@ const router = createRouter({
         requiresAuth: false,
         hideNavigation: true,
         fullSize: true,
+      },
+    },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: () => import('../views/Privacy.vue'),
+      meta: {
+        requiresAuth: false,
+        hideNavigation: true,
+        fullSize: false,
+      },
+    },
+    {
+      path: '/license',
+      name: 'license',
+      component: () => import('../views/License.vue'),
+      meta: {
+        requiresAuth: false,
+        hideNavigation: true,
+        fullSize: false,
       },
     },
   ],
