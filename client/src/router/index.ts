@@ -68,7 +68,7 @@ const router = createRouter({
     {
       path: '/user/:username*',
       name: 'user',
-      component: () => import('../views/User/Index.vue'),
+      component: () => import('../views/User/Profil.vue'),
       meta: {
         requiresAuth: true,
         hideNavigation: false,

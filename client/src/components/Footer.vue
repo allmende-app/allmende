@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
-    <v-button @click="openPrivacy" class="secondary"> Privacy </v-button>
-    <v-button @click="openLicense" class="secondary"> License </v-button>
+    <a @click="openPrivacy" class="footer-link"> Privacy </a>
+    <a @click="openLicense" class="footer-link"> License </a>
   </div>
 </template>
 
@@ -15,7 +15,9 @@ const openLicense = () => router.push('/license')
 
 <style lang="sass">
 .footer
-  position: fixed
+  position: relative
+  @include allmende.screen-laptop
+    position: fixed
   right: 0
   bottom: 0
 
@@ -27,4 +29,8 @@ const openLicense = () => router.push('/license')
   background-color: var(--layer-20)
   border-bottom-left-radius: allmende.$radius-card
   border-top-left-radius: allmende.$radius-card
+
+  .footer-link
+    cursor: pointer
+
 </style>

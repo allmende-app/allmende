@@ -27,6 +27,7 @@ import FooterVue from '@/components/Footer.vue'
 </template>
 
 <style lang="sass">
+
 .layout
   background-color: var(--layer-20)
   background-repeat: no-repeat
