@@ -263,6 +263,7 @@ export class PostsController {
                     Number(page),
                     Number(limit),
                 );
+                const count = await Post.countPostsOfUser(user);
                 const promises = await resolveNestedPosts(posts);
 
                 const results = await Promise.all(promises);
@@ -275,7 +276,9 @@ export class PostsController {
                     );
                     queuedDocs.push(...pendings);
                 }
+
                 return res.status(StatusCodes.OK).json({
+                    count: count,
                     posts: queuedDocs,
                 });
             } catch (e) {

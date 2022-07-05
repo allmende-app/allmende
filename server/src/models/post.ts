@@ -88,6 +88,8 @@ export interface IPostModel extends Model<IPostDocument> {
         page: number,
         limit: number,
     ) => Promise<IPostDocument[]>;
+
+    countPostsOfUser: (user: string) => Promise<number>;
 }
 
 export const postSchema = new Schema<IPostDocument>(
@@ -210,5 +212,12 @@ postSchema.statics.findPostsOfUser = async function (
         });
     return posts;
 };
+
+postSchema.statics.countPostsOfUser = async function (user: string) {
+    const profile = await User.findByUsername(user);
+    const id = profile._id;
+    const number = await this.countDocuments({ author: id });
+    return number;
+}
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);
