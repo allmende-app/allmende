@@ -9,8 +9,7 @@
       <v-post
         v-for="post in posts"
         :key="post._id"
-        :post="post"
-        @post-updated="updatePost($event, post._id)"
+        :prop-post="post"
       />
     </div>
   </div>
@@ -44,14 +43,6 @@ const logout = () => {
     })
 }
 
-const updatePost = (updatedPost: Post, postID: string) => {
-  const post = posts.value.find((post) => {
-    return post._id == postID
-  })
-
-  post.likes = updatedPost.likes
-  // TODO: updae the whole post here or use storage to do that
-}
 
 backend.client
   .get('/api/posts')

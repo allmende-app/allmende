@@ -49,7 +49,7 @@
         <v-post
           v-for="post in posts"
           :key="post._id"
-          :post="post"
+          :prop-post="post"
           @post-updated="updatePost($event, post._id)"
         />
       </div>
