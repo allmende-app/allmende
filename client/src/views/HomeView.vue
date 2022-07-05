@@ -6,11 +6,7 @@
       </template>
     </v-title>
     <div class="posts">
-      <v-post
-        v-for="post in posts"
-        :key="post._id"
-        :prop-post="post"
-      />
+      <v-post v-for="post in posts" :key="post._id" :prop-post="post" />
     </div>
   </div>
 </template>
@@ -42,7 +38,6 @@ const logout = () => {
       console.log(error)
     })
 }
-
 
 backend.client
   .get('/api/posts')

@@ -1,6 +1,8 @@
 <template>
   <div class="actions">
-    <button @click="$emit('likesClicked')"><SvgLike :class="liked ? 'liked': ''"/>{{ likes }}</button>
+    <button @click="$emit('likesClicked')">
+      <SvgLike :class="liked ? 'liked' : ''" />{{ likes }}
+    </button>
     <button @click="$emit('commentsClicked')">
       <SvgComment />{{ comments }}
     </button>
@@ -26,7 +28,6 @@ const props = defineProps({
     required: true,
   },
 })
-
 </script>
 
 <style lang="sass">

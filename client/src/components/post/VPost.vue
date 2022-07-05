@@ -2,7 +2,9 @@
   <article class="post">
     <div class="meta">
       <div class="author">
-        <div class="userpic"><img :src="post.author.avatarUrl" alt="avatar"/></div>
+        <div class="userpic">
+          <img :src="post.author.avatarUrl" alt="avatar" />
+        </div>
         {{ post.author.username }}
       </div>
       <div class="date">5d</div>
