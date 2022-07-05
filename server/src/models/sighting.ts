@@ -43,7 +43,7 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String },
-        species: { type: Schema.Types.ObjectId },
+        species: { type: Schema.Types.ObjectId, ref: "Species" },
         alt: { type: Schema.Types.String },
     },
     {

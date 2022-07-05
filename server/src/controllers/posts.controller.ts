@@ -16,9 +16,6 @@ import { ErrorMessages } from "../messages";
 import fs from "fs";
 import path from "path";
 import { Logger } from "../lib";
-import pLimit from "p-limit";
-
-const concurrent = pLimit(1);
 
 export const userProps = ["username", "avatarUrl"];
 
@@ -60,10 +57,15 @@ const getSightings = async (sightings: ObjectId[]) => {
 };
 
 export const resolveNestedPost = async (post: IPostDocument) => {
-    const doc = await (
-        await (await post.populate("sightings")).populate("author", userProps)
-    ).populate("likes", userProps);
-    return doc;
+    const promise = new Promise<IPostDocument>((resolve) => {
+        post.populate("sightings").then((r) =>
+            r.populate("author", userProps)
+                .then((r) => r.populate("likes", userProps)
+                    .then((r) => r.populate("sightings.species")
+                        .then((d) => resolve(d))))
+        );
+    });
+    return await promise;
 };
 
 export const deleteSightings = async (sightings: ObjectId[]) => {
@@ -95,6 +97,7 @@ export const resolveNestedPosts = async (posts: IPostDocument[]) => {
                     p
                         .populate("author", userProps)
                         .then((r) => r.populate("likes", userProps))
+                        .then((r) => r.populate("sightings.species"))
                         .then((r) => resolve(r)),
                 );
             }),
