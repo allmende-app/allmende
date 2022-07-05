@@ -29,7 +29,7 @@
         <div class="activity">
           <div class="post-count">
             <!-- TODO no information given about the posts => mabye load in another request -->
-            <span class="number">241</span>
+            <span class="number">{{ posts.length }}</span>
             <span class="description">Posts</span>
           </div>
           <div class="followers">
@@ -50,7 +50,6 @@
           v-for="post in posts"
           :key="post._id"
           :prop-post="post"
-          @post-updated="updatePost($event, post._id)"
         />
       </div>
     </section>
