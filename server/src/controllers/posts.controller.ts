@@ -59,10 +59,17 @@ const getSightings = async (sightings: ObjectId[]) => {
 export const resolveNestedPost = async (post: IPostDocument) => {
     const promise = new Promise<IPostDocument>((resolve) => {
         post.populate("sightings").then((r) =>
-            r.populate("author", userProps)
-                .then((r) => r.populate("likes", userProps)
-                    .then((r) => r.populate("sightings.species")
-                        .then((d) => resolve(d))))
+            r
+                .populate("author", userProps)
+                .then((r) =>
+                    r
+                        .populate("likes", userProps)
+                        .then((r) =>
+                            r
+                                .populate("sightings.species")
+                                .then((d) => resolve(d)),
+                        ),
+                ),
         );
     });
     return await promise;
