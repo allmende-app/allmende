@@ -67,6 +67,7 @@ export interface SightingData {
   description: string
   datetime: number
   location: LocationInfo | null
+  species: string | undefined | null
 }
 
 const store = useFilesStore()
@@ -81,6 +82,7 @@ store.getAndDeleteFiles().forEach((file, i) => {
     description: '',
     datetime: 0,
     location: null,
+    species: undefined,
   }
 })
 
@@ -99,6 +101,7 @@ function handleFileEvent(event: Event) {
       description: '',
       datetime: 0,
       location: null,
+      species: undefined,
     })),
   )
 }
@@ -127,6 +130,7 @@ function nextStep() {
         description: info.description.length < 1 ? undefined : info.description,
         lat: info.location?.lat,
         lng: info.location?.lng,
+        species: info?.species,
       })),
     }),
   )

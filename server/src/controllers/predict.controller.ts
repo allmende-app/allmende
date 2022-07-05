@@ -49,7 +49,7 @@ export class PredictController {
                         const opt = {
                             method: "post",
                             data: formData,
-                            url: "http://localhost:5000/scan",
+                            url: "http://127.0.0.1:5000/scan",
                             headers: {
                                 ...formData.getHeaders(),
                             },

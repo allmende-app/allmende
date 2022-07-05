@@ -2,14 +2,14 @@
   <section :class="{ 'preview-mode': previewMode }">
     <div class="preview">
       <img v-if="fileData" :src="(fileData as string)" />
-      <div class="grid">
+      <div v-if="analyzing" class="grid">
         <p class="fade-in-offset">
           <span class="spinner"></span>Analyzing image...
         </p>
       </div>
     </div>
-    <form v-if="!previewMode" class="information" @submit.prevent>
-      <v-species-selector />
+    <form class="information" @submit.prevent :class="{hidden: previewMode}">
+      <v-species-selector :file="props.modelValue.file" v-model="species" @updating="(b) => analyzing = b" />
       <v-location-selector
         v-model="location"
         :helper-text="
@@ -52,6 +52,12 @@ const updateValue = (data: SightingData) => {
   emit('update:modelValue', data)
 }
 
+const log = (...args: any[]) => {
+  console.log(...args)
+}
+
+const analyzing = ref(false)
+
 const description = computed({
   get: () => {
     return props.modelValue.description
@@ -71,6 +77,17 @@ const location = computed({
     updateValue({
       ...props.modelValue,
       location: value,
+    })
+  },
+})
+const species = computed({
+  get: () => {
+    return props.modelValue.species
+  },
+  set: (value) => {
+    updateValue({
+      ...props.modelValue,
+      species: value,
     })
   },
 })
@@ -115,6 +132,7 @@ section
   border-radius: allmende.$radius-card
   display: flex
   flex-direction: column
+  width: 100%
 
 .preview
   border-radius: allmende.$radius-card
@@ -171,6 +189,8 @@ section
   flex-direction: column
   gap: allmende.$size-xsmall
   padding: allmende.$size-small
+  &.hidden
+    display: none
 
 .preview-mode
   width: 100px
