@@ -4,7 +4,7 @@
       <template v-slot:left v-if="!isSelf">
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
       </template>
-      <template v-slot:right>
+      <template v-slot:right v-if="!isSelf">
         <v-button type="primary" tooltip="Follow" @click="toggleFollow">
           {{ following ? 'Follow' : 'Following' }}
         </v-button>
