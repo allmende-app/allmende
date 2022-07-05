@@ -218,6 +218,6 @@ postSchema.statics.countPostsOfUser = async function (user: string) {
     const id = profile._id;
     const number = await this.countDocuments({ author: id });
     return number;
-}
+};
 
 export const Post = model<IPostDocument, IPostModel>("Post", postSchema);
