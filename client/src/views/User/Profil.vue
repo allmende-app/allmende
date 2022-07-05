@@ -88,8 +88,7 @@ backend.client
   .then((response) => {
     user.value = response.data.user
     isSelf.value = self?.value.username === response.data.user.username
-    console.log(user.value);
-
+    console.log(user.value)
   })
   .catch((error) => {
     router.push('/error')

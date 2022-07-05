@@ -32,5 +32,4 @@ const openLicense = () => router.push('/license')
 
   .footer-link
     cursor: pointer
-
 </style>
