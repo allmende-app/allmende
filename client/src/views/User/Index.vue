@@ -4,7 +4,7 @@
       <template v-slot:left v-if="!isSelf">
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
       </template>
-      <template v-slot:right>
+      <template v-slot:right v-if="!isSelf">
         <v-button type="primary" tooltip="Follow" @click="toggleFollow">
           {{ following ? 'Follow' : 'Following' }}
         </v-button>
@@ -49,7 +49,7 @@
         <v-post
           v-for="post in posts"
           :key="post._id"
-          :post="post"
+          :prop-post="post"
           @post-updated="updatePost($event, post._id)"
         />
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="actions">
-    <button @click="$emit('likesClicked')"><SvgLike />{{ likes }}</button>
+    <button @click="$emit('likesClicked')"><SvgLike :class="liked ? 'liked': ''"/>{{ likes }}</button>
     <button @click="$emit('commentsClicked')">
       <SvgComment />{{ comments }}
     </button>
@@ -26,9 +26,14 @@ const props = defineProps({
     required: true,
   },
 })
+
 </script>
 
 <style lang="sass">
+.liked
+  color: red
+
+
 .actions
   display: grid
   grid-template-columns: 1fr 1fr

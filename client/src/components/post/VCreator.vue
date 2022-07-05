@@ -19,7 +19,7 @@ const props = defineProps({
     required: true,
   },
   userId: {
-    type: Number as PropType<number>,
+    type: String as PropType<string>,
     required: true,
   },
   author: {
