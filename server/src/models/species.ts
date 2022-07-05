@@ -176,6 +176,6 @@ speciesSchema.statics.speciesExist = async function (id: string) {
 };
 
 export const Species = model<ISpeciesDocument, ISpeciesModel>(
-    "species",
+    "Species",
     speciesSchema,
 );
