@@ -61,7 +61,6 @@ import { IUser } from '../../../server/src/models/user'
 import VButton from './VButton.vue'
 import SvgArrowLeft from '@/assets/icon24/arrow-right.svg?component'
 
-
 /**
  * Props
  */
