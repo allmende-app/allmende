@@ -99,6 +99,8 @@ const setPost = (post: any) => {
   commentsCount.value = post.commentsCount
   liked.value = post.liked
 
+  console.log(post);
+
   ready.value = true
 }
 
