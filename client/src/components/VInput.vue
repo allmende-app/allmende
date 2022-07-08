@@ -17,7 +17,14 @@
     </div>
     <div class="helper-text" v-if="error || helperText || helperAction">
       {{ error || helperText }}
-      <span class="link" role="button" tabindex="0" v-if="helperAction" @click="emit('helperClick')">{{helperAction}}</span>
+      <span
+        class="link"
+        role="button"
+        tabindex="0"
+        v-if="helperAction"
+        @click="emit('helperClick')"
+        >{{ helperAction }}</span
+      >
     </div>
   </div>
 </template>

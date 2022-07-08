@@ -19,7 +19,6 @@ import { backend } from '../utils'
 import { ref } from 'vue'
 import type { Post } from '@/interfaces/types'
 
-
 const posts = ref([] as Post[])
 
 backend.client

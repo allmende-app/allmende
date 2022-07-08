@@ -33,8 +33,9 @@ onMounted(() => {
   const markers: Array<L.Marker> = []
   for (const sighting of props.sightings) {
     if (sighting.lat && sighting.lng) {
-      const marker = L.marker([sighting.lat, sighting.lng], {icon: customMarker})
-        .addTo(map)
+      const marker = L.marker([sighting.lat, sighting.lng], {
+        icon: customMarker,
+      }).addTo(map)
       if (sighting.alt) {
         marker.bindPopup(sighting.alt)
       }
@@ -56,7 +57,6 @@ onMounted(() => {
     maxZoom: 19,
     attribution: '© OpenStreetMap',
   }).addTo(map)
-
 })
 </script>
 
