@@ -9,7 +9,7 @@
         tooltip="Remove photo"
         class="overlay-btn top"
         @click="emit('remove')"
-        />
+      />
       <v-button
         v-if="!showAlt && !previewMode"
         type="overlay"
