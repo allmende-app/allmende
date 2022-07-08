@@ -18,6 +18,12 @@ const props = defineProps({
 
 const mapContainer = ref(null)
 
+const customMarker = L.icon({
+  iconUrl: '/marker.svg',
+  iconSize: [24, 35],
+  iconAnchor: [12, 35],
+})
+
 onMounted(() => {
   // create map with leaflet
   if (!mapContainer.value) {
@@ -27,9 +33,11 @@ onMounted(() => {
   const markers: Array<L.Marker> = []
   for (const sighting of props.sightings) {
     if (sighting.lat && sighting.lng) {
-      const marker = L.marker([sighting.lat, sighting.lng])
+      const marker = L.marker([sighting.lat, sighting.lng], {icon: customMarker})
         .addTo(map)
-        .bindPopup(sighting.alt || 'Another Sighting :)')
+      if (sighting.alt) {
+        marker.bindPopup(sighting.alt)
+      }
       markers.push(marker)
     } else {
       console.warn('No coordinates given for that sighting')
@@ -48,6 +56,7 @@ onMounted(() => {
     maxZoom: 19,
     attribution: '© OpenStreetMap',
   }).addTo(map)
+
 })
 </script>
 

@@ -58,3 +58,35 @@ export interface OsmSearchResult {
   importance: number
   address: { [key: string]: string }
 }
+
+export interface PredictionResult {
+  id: number
+  score: number
+  species: Species
+}
+
+export interface Species {
+  _id: string
+  key: number
+  vernacularName?: string
+  imageUrl?: string
+  nubKey: number
+  nameKey: number
+  taxonID: string
+  sourceTaxonKey: number
+  kingdom: string
+  kingdomKey: number
+  phylumKey: number
+  datasetKey: string
+  constituentKey: string
+  parentKey: number
+  scientificName: string
+  canonicalName: string
+  nameType: string
+  rank: string
+  origin: string
+  taxonomicStatus: string
+  numDescendants: number
+  lastCrawled: Date
+  lastInterpreted: Date
+}

@@ -15,8 +15,9 @@
       />
       <label :for="inputId">{{ label }}</label>
     </div>
-    <div class="helper-text" v-if="error || helperText">
+    <div class="helper-text" v-if="error || helperText || helperAction">
       {{ error || helperText }}
+      <span class="link" role="button" tabindex="0" v-if="helperAction" @click="emit('helperClick')">{{helperAction}}</span>
     </div>
   </div>
 </template>
@@ -28,7 +29,7 @@ import type { PropType } from 'vue'
 const inputId = getRandomId()
 const helperId = getRandomId()
 
-const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
+const emit = defineEmits(['update:modelValue', 'focus', 'blur', 'helperClick'])
 
 defineProps({
   label: {
@@ -36,6 +37,9 @@ defineProps({
     default: '',
   },
   helperText: {
+    type: String as PropType<string | undefined>,
+  },
+  helperAction: {
     type: String as PropType<string | undefined>,
   },
   error: {
@@ -100,4 +104,9 @@ const updateValue = (event: Event) => {
       background-color: var(--layer-error)
     > .helper-text, > .textfield-wrapper label
       color: var(--text-error)
+
+span.link
+  text-decoration: underline
+  cursor: pointer
+  color: var(--text-secondary)
 </style>

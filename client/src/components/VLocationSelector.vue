@@ -12,7 +12,7 @@
             debouncedSearch()
           }
         "
-        label="Location"
+        label="Where were you?"
         @focus="(event: FocusEvent) => {
           (event.target as HTMLInputElement | null)?.select()
         }"

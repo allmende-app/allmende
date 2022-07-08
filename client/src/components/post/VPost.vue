@@ -17,7 +17,7 @@
       <ul class="slider" @click="showPost()">
         <li v-for="image in activeImages" :key="image._id" :class="image.pos">
           <img
-            :src="`//localhost:3000/api/image/${image.imageUrl}`"
+            :src="`${BACKEND_URL}api/image/${image.imageUrl}`"
             :alt="image.alt"
           />
         </li>
@@ -63,9 +63,9 @@ import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
 import { computed, ref, type PropType, onMounted } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
+import { BACKEND_URL} from '@/utils'
 import type { LocationInfo, Post, Sighting } from '@/interfaces/types'
 import { backend, reverseLocationSearch } from '@/utils'
-import type { AxiosError } from 'axios'
 import router from '../../router'
 
 interface ImageData extends Sighting {
@@ -148,7 +148,6 @@ const activeImages = computed(() => {
 <style lang="sass" scoped>
 
 .post
-  max-width: 400px
   width: 100%
 
 .meta
