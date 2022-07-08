@@ -21,7 +21,7 @@ const props = defineProps({
     type: String as PropType<string>,
     default: 'secondary',
     validator: (value: PropType<string>) =>
-      ['primary', 'secondary'].includes(String(value)),
+      ['primary', 'secondary', 'overlay'].includes(String(value)),
   },
   icon: {
     type: Object as PropType<null | FunctionalComponent<SVGAttributes>>,
@@ -82,4 +82,16 @@ button
       background: var(--action-primary-active)
     &:disabled
       background: var(--action-primary-disabled)
+  &.overlay
+      background: rgba(0, 0, 0, 0.4)
+      backdrop-filter: blur(16px)
+      color: #ffffff
+      outline-color: #ffffff
+      &:hover
+        background: rgba(0, 0, 0, 0.5)
+      &:active
+        background: rgba(0, 0, 0, 0.9)
+      &:disabled
+        background: rgba(0, 0, 0, 0.65)
+        color: rgba(255,255,255,0.3)
 </style>

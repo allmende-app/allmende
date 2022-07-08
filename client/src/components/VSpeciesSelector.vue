@@ -1,14 +1,20 @@
 <template>
   <div class="species-selector">
-    <label>Species</label>
+    <div class="header">
+      <label>Species</label>
+      <button @click="showModal = true">Learn more</button>
+    </div>
     <div class="options">
-      <div v-if="modelValue === undefined" class="genus">
+      <div v-if="modelValue === undefined">
         <VButton
           v-for="g in genus"
           :key="g.value"
+          class="genus-option"
           @click="selectGenus(g.value)"
-          >{{ g.name }}</VButton
         >
+          <component v-if="g.icon" :is="g.icon" />
+          {{ g.name }}
+        </VButton>
       </div>
       <div v-else>
         <div v-if="loading" v-for="i in 5" :key="i" class="loading-wrapper">
@@ -62,6 +68,19 @@
         </button>
       </div>
     </div>
+    <Modal v-if="showModal" @close="showModal = false">
+      <h1>Tagging animals and plants</h1>
+      <p>
+        If you have taken a photo of a certain species, you can tag in your
+        post.
+      </p>
+      <p>
+        After selecting one of the 7 supercategories - Plant, Mammal, Bird,
+        Insect, Mollusca, Fungi, or Reptile - Allmende can help you identify
+        what kind of species it is. Alternatively, you can enter the species
+        manually.
+      </p>
+    </Modal>
   </div>
 </template>
 
@@ -71,6 +90,16 @@ import { ref, type PropType } from 'vue'
 import VButton from './VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
 import type { PredictionResult } from '@/interfaces/types'
+import { computed } from '@vue/reactivity'
+
+import SvgPlant from '@/assets/species/plant.svg?component'
+import SvgBird from '@/assets/species/bird.svg?component'
+import SvgFungi from '@/assets/species/fungi.svg?component'
+import SvgInsect from '@/assets/species/insect.svg?component'
+import SvgMollusca from '@/assets/species/mollusca.svg?component'
+import SvgReptile from '@/assets/species/reptile.svg?component'
+import SvgSquirrel from '@/assets/species/squirrel.svg?component'
+import Modal from './Modal.vue'
 
 interface Suggestion {
   id: number
@@ -95,11 +124,19 @@ const props = defineProps({
   },
 })
 
+const showModal = ref(false)
 const loading = ref(false)
 
 const options = ref([] as Suggestion[])
 
-const species = ref(undefined as string | undefined)
+const species = computed({
+  get: () => {
+    return props.modelValue
+  },
+  set: (value: string | undefined | null) => {
+    emit('update:modelValue', value)
+  },
+})
 
 async function selectGenus(genus: string) {
   const bodyFormData = new FormData()
@@ -121,9 +158,12 @@ async function selectGenus(genus: string) {
   emit('updating', false)
   loading.value = false
 
-  options.value = result.data.predictions[0].result.map(
-    (o: PredictionResult) => ({
-      id: o.id,
+  console.log(result)
+
+  options.value = result.data.predictions[0].result
+    .filter((o: PredictionResult | Record<string, never>) => o.id)
+    .map((o: PredictionResult) => ({
+      id: o.species._id,
       score: o.score,
       type: 'ml',
       name: o.species.vernacularName || o.species.canonicalName,
@@ -131,57 +171,68 @@ async function selectGenus(genus: string) {
       binomial: o.species.vernacularName
         ? o.species.canonicalName
         : o.species.scientificName,
-    }),
-  )
+    }))
 }
 
 const genus = [
   {
     value: 'plantae',
     name: 'Plant',
+    icon: SvgPlant,
   },
   {
     value: 'mammal',
     name: 'Mammal',
+    icon: SvgSquirrel,
   },
   {
     value: 'bird',
     name: 'Bird',
+    icon: SvgBird,
   },
   {
     value: 'insect',
     name: 'Insect',
+    icon: SvgInsect,
   },
   {
     value: 'mollusca',
     name: 'Mollusca',
+    icon: SvgMollusca,
   },
   {
     value: 'fungi',
     name: 'Fungi',
+    icon: SvgFungi,
   },
   {
     value: 'reptile',
     name: 'Reptile',
+    icon: SvgReptile,
   },
   {
     value: 'other',
     name: 'Other',
+    icon: undefined,
   },
 ]
 </script>
 
 <style lang="sass" scoped>
-.species-selector > label
+.species-selector > .header
   @include allmende.text-footnote
-  display: block
+  display: flex
   color: var(--text-secondary)
   padding-inline: allmende.$size-xxsmall
   padding-block-end: allmende.$size-xxxxsmall
+  label
+    flex: 1
+  button
+    text-decoration: underline
+    cursor: pointer
 
 .options
   box-sizing: border-box
-  margin-bottom: allmende.$size-xxsmall
   overflow-x: auto
   margin-inline: - allmende.$size-small
   scrollbar-width: none
@@ -271,17 +322,18 @@ const genus = [
   input:focus-visible + label
     box-shadow: inset 0 0 0 2px var(--border-focus), inset 0 0 0 4px var(--action-secondary)
 
-.genus
+button.genus-option
+  color: var(--text-primary)
   display: flex
-  flex-wrap: wrap
-  gap: 8px
-  justify-content: stretch
-  > button
-    @include allmende.text-footnote
-    min-height: 40px
-    padding: 0 8px
-    flex-grow: 1
-    border-radius: allmende.$size-xxxsmall
+  align-items: center
+  flex-direction: column
+  height: allmende.$size-huge
+  border-radius: allmende.$size-xxxsmall
+  > svg
+    color: var(--text-secondary)
+  &:focus-visible
+    outline: none
+    box-shadow: inset 0 0 0 2px var(--border-focus), inset 0 0 0 4px var(--action-secondary)
 
 .loading-wrapper
   display: flex

@@ -2,14 +2,33 @@
   <section :class="{ 'preview-mode': previewMode }">
     <div class="preview">
       <img v-if="fileData" :src="(fileData as string)" />
+      <v-button
+        v-if="!previewMode"
+        type="overlay"
+        :icon="SvgIcon"
+        tooltip="Remove photo"
+        class="overlay-btn top"
+        @click="emit('remove')"
+        />
+      <v-button
+        v-if="!showAlt && !previewMode"
+        type="overlay"
+        class="overlay-btn bottom"
+        @click="showAlt = true"
+        >+ALT</v-button
+      >
       <div v-if="analyzing" class="grid">
         <p class="fade-in-offset">
           <span class="spinner"></span>Analyzing image...
         </p>
       </div>
     </div>
-    <form class="information" @submit.prevent :class="{hidden: previewMode}">
-      <v-species-selector :file="props.modelValue.file" v-model="species" @updating="(b) => analyzing = b" />
+    <form class="information" @submit.prevent :class="{ hidden: previewMode }">
+      <v-species-selector
+        :file="props.modelValue.file"
+        v-model="species"
+        @updating="(b) => (analyzing = b)"
+      />
       <v-location-selector
         v-model="location"
         :helper-text="
@@ -18,7 +37,25 @@
             : undefined
         "
       />
-      <v-input v-model="description" label="Description" />
+      <v-input
+        v-if="showAlt"
+        v-model="description"
+        label="Image description"
+        helperAction="What is alt text?"
+        @helperClick="showAltModal = true"
+      />
+      <modal v-if="showAltModal" @close="showAltModal = false">
+        <h1>Photo descriptions</h1>
+        <p>
+          You can add a description, also called alt text, to your photos to
+          make them accessible to more people, including those who are blind or
+          visually impaired.
+        </p>
+        <p>
+          Good descriptions are short and concise, but convey the content of
+          your photos accurately enough for readers to understand the context.
+        </p>
+      </modal>
     </form>
   </section>
 </template>
@@ -31,8 +68,11 @@ import { computed, ref, type PropType } from 'vue'
 import exifr from 'exifr'
 import type { SightingData } from '@/views/CreatePost.vue'
 import { reverseLocationSearch } from '@/utils'
+import VButton from '../VButton.vue'
+import SvgIcon from '@/assets/icon16/close.svg?component'
+import Modal from '../Modal.vue'
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'remove'])
 
 const fileData = ref(null as string | ArrayBuffer | null)
 const locationExtracted = ref(false)
@@ -52,10 +92,8 @@ const updateValue = (data: SightingData) => {
   emit('update:modelValue', data)
 }
 
-const log = (...args: any[]) => {
-  console.log(...args)
-}
-
+const showAlt = ref(false)
+const showAltModal = ref(false)
 const analyzing = ref(false)
 
 const description = computed({
@@ -151,7 +189,7 @@ section
     display: flex
     flex-direction: column
     justify-content: end
-    align-items: start
+    align-items: end
     padding: allmende.$size-xsmall
     > p
       @include allmende.text-footnote
@@ -165,7 +203,8 @@ section
       padding: allmende.$size-xxxsmall
       padding-right: allmende.$size-xsmall
       border-radius: allmende.$size-large
-    &::before
+      z-index: 2
+    &::after
       content: ''
       position: absolute
       inset: 0
@@ -176,7 +215,8 @@ section
       background-image: url('/scan-dot.svg')
       background-size: 30%
       background-position: center
-      mix-blend-mode: overlay
+      background-color: rgba(123, 97, 255, 0.25)
+      opacity: 0.75
       animation: mask-movement 3s infinite cubic-bezier(0, 0.5, 1, 0.5)
   img
     display: block
@@ -206,4 +246,17 @@ section
     -webkit-mask-position: 150% 0
   100%
     -webkit-mask-position: -100% 0
+
+button.overlay-btn
+  position: absolute
+  left: allmende.$size-xxsmall
+  min-height: allmende.$size-medium
+  z-index: 2
+  &.top
+    top: allmende.$size-xxsmall
+    width: allmende.$size-medium
+  &.bottom
+    padding: 0 allmende.$size-xxsmall
+    bottom: allmende.$size-xxsmall
+    top: auto
 </style>

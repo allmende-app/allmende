@@ -1,54 +1,61 @@
 <template>
-  <v-title v-if="step == 0" title="Create post">
-    <template v-slot:left>
-      <v-button :icon="SvgClose" tooltip="Cancel" @click="$router.push('/')" />
-    </template>
-    <template v-slot:right>
-      <v-button type="primary" @click="nextStep">Next</v-button>
-    </template>
-  </v-title>
-  <v-title v-else title="Create post">
-    <template v-slot:left>
-      <v-button type="primary" @click="step = 0">Back</v-button>
-    </template>
-    <template v-slot:right>
-      <v-button type="primary" @click="nextStep">Next</v-button>
-    </template>
-  </v-title>
-  <div class="posts" :class="{ 'preview-mode': step == 1 }">
-    <v-post-editor
-      v-for="(info, i) in sightingInfo"
-      :key="i"
-      :preview-mode="step == 1"
-      v-model="sightingInfo[i]"
-      class="post"
-    />
-  </div>
-  <div class="notice" v-if="step == 0 && sightingInfo.length < 1">
-    <p>To create a post, upload photos</p>
-  </div>
-  <div class="upload-button" v-if="step == 0">
-    <input
-      class="file-input"
-      type="file"
-      id="file-button"
-      multiple
-      @change="handleFileEvent"
-      accept="image/png, image/gif, image/jpeg"
-      ref="fileInput"
-    />
-    <v-button @click="fileInput?.click()" type="primary"
-      >Add more photos</v-button
-    >
-  </div>
-  <div v-if="step == 1">
-    <div class="text-editor">
-      <textarea
-        placeholder="What did you see..."
-        v-model="description"
-      ></textarea>
+  <main>
+    <v-title v-if="step == 0" title="Create post">
+      <template v-slot:left>
+        <v-button
+          :icon="SvgClose"
+          tooltip="Cancel"
+          @click="$router.push('/')"
+        />
+      </template>
+      <template v-slot:right>
+        <v-button type="primary" @click="nextStep">Next</v-button>
+      </template>
+    </v-title>
+    <v-title v-else title="Create post">
+      <template v-slot:left>
+        <v-button type="primary" @click="step = 0">Back</v-button>
+      </template>
+      <template v-slot:right>
+        <v-button type="primary" @click="nextStep">Next</v-button>
+      </template>
+    </v-title>
+    <div class="posts" :class="{ 'preview-mode': step == 1 }">
+      <v-post-editor
+        v-for="(info, i) in sightingInfo"
+        :key="info.rid"
+        :preview-mode="step == 1"
+        v-model="sightingInfo[i]"
+        class="post"
+        @remove="removeSighting(i)"
+      />
     </div>
-  </div>
+    <div class="notice" v-if="step == 0 && sightingInfo.length < 1">
+      <p>To create a post, upload photos</p>
+    </div>
+    <div class="upload-button" v-if="step == 0">
+      <input
+        class="file-input"
+        type="file"
+        id="file-button"
+        multiple
+        @change="handleFileEvent"
+        accept="image/png, image/gif, image/jpeg"
+        ref="fileInput"
+      />
+      <v-button @click="fileInput?.click()" type="primary"
+        >Add more photos</v-button
+      >
+    </div>
+    <div v-if="step == 1">
+      <div class="text-editor">
+        <textarea
+          placeholder="What did you see..."
+          v-model="description"
+        ></textarea>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -57,11 +64,12 @@ import VTitle from '@/components/VTitle.vue'
 import VPostEditor from '@/components/post/VPostEditor.vue'
 import VButton from '@/components/VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
-import { onMounted, reactive, ref } from 'vue'
-import { backend } from '../utils'
+import { reactive, ref } from 'vue'
+import { backend, getRandomId } from '../utils'
 import type { LocationInfo } from '@/interfaces/types'
 
 export interface SightingData {
+  rid: string
   file: File
   title: string
   description: string
@@ -77,6 +85,7 @@ const description = ref('')
 
 store.getAndDeleteFiles().forEach((file, i) => {
   sightingInfo[i] = {
+    rid: getRandomId(),
     file,
     title: '',
     description: '',
@@ -88,6 +97,11 @@ store.getAndDeleteFiles().forEach((file, i) => {
 
 const fileInput = ref(null as HTMLInputElement | null)
 
+function removeSighting(i: number) {
+  // remove item with index i from sightingInfo
+  sightingInfo.splice(i, 1)
+}
+
 function handleFileEvent(event: Event) {
   const file = event.target as HTMLInputElement
   const files2 = file.files
@@ -96,6 +110,7 @@ function handleFileEvent(event: Event) {
   }
   sightingInfo.push(
     ...Array.from(files2).map((file) => ({
+      rid: getRandomId(),
       file,
       title: '',
       description: '',
@@ -121,6 +136,8 @@ function nextStep() {
   sightingInfo.forEach((info) => {
     bodyFormData.append('file', info.file)
   })
+
+  console.log('sightingInfo', sightingInfo)
 
   bodyFormData.append(
     'post',
@@ -151,6 +168,7 @@ function nextStep() {
   gap: allmende.$size-medium
   &.preview-mode
     display: flex
+    flex-direction: row
     gap: allmende.$size-xsmall
     flex-wrap: wrap
     justify-content: center
@@ -163,7 +181,7 @@ function nextStep() {
   display: none
 
 .upload-button
-  padding-top: allmende.$size-medium
+  padding-block: allmende.$size-medium
   display: flex
   justify-content: center
 
