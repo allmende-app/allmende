@@ -7,6 +7,8 @@ services:
       - "5000:5000"
     environment:
       FLASK_APP: api
+    volumes:
+     - ./ml/saved_model:/var/src/allmende-ml/saved_model
   mongo-db:
     image: mongo
     restart: always
@@ -50,5 +52,13 @@ services:
       - mongo-db
       - redis-db
       - allmende-ml
+  allmende-client: 
+    depends_on:
+     - allmende-server
+    build: ./client
+    ports:
+      - "5050:5050"
+    stdin_open: true
+    restart: always
 volumes:
   allmende:
