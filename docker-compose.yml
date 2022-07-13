@@ -1,8 +1,6 @@
 version: "3.9" 
 
 services:
- 
-
   allmende-ml:
     build: ./ml
     ports:
@@ -57,5 +55,6 @@ services:
     ports:
       - "5050:5050"
     stdin_open: true
+    restart: always
 volumes:
   allmende:
