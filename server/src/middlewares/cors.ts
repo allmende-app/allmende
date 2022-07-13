@@ -8,7 +8,7 @@ export const createWhiteList = () => {
             whiteList.push(url);
         }
     } else {
-        whiteList = ["https://142.93.232.240/","http://142.93.232.240/"];
+        whiteList = ["https://142.93.232.240/", "http://142.93.232.240/"];
     }
     return whiteList;
 };
