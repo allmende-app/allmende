@@ -17,7 +17,7 @@ export function getRandomId() {
 export const BACKEND_URL =
   process.env.NODE_ENV != 'production'
     ? 'http://localhost:3000/'
-    : 'http://localhost/'
+    : 'http://142.93.232.240/'
 
 export const backend = {
   baseURL: BACKEND_URL,
