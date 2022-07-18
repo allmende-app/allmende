@@ -1,14 +1,13 @@
 import mongoose, { Schema, ObjectId, model, Model, Document } from "mongoose";
 import { LocationInfo, PostInput } from "../interfaces";
-import { locationSearch, reverseLocationSearch } from "../utils";
-import { ISighting } from "./sighting";
-import { IUserDocument, User } from "./user";
+import { ISighting, ISightingDocument } from "./sighting";
+import { IUser, IUserDocument, User } from "./user";
 
 export interface IPostObject {
     _id: string;
     text?: string;
-    sightings?: unknown[];
-    likes?: unknown[];
+    sightings?: ISightingDocument[] | ObjectId[];
+    likes?: IUserDocument[] | ObjectId[];
     author: unknown;
     commentsCount?: number;
     createdAt: string;
@@ -19,7 +18,8 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
     let like = false;
     let location: LocationInfo | null = null;
     if (post.likes) {
-        for (const user of post.likes) {
+        for (let i = 0; i < post.likes.length; i++) {
+            const user = post.likes[i] as IUserDocument;
             if (user._id == me) {
                 like = true;
                 break;
@@ -28,13 +28,19 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
     }
     if (post.sightings) {
         for (let i = 0; i < post.sightings.length; i++) {
-            const sighting = post.sightings[i];
-            if (sighting && sighting.lat && sighting.lng) {
-                const foundLocation = await reverseLocationSearch(
-                    sighting.lng,
-                    sighting.lat,
-                );
-                location = foundLocation;
+            const sighting = post.sightings[i] as ISighting;
+            if (sighting.lat && sighting.lng) {
+                const { location: l, osmId, subname } = sighting;
+
+                if (l) {
+                    location = {
+                        name: l,
+                        subname: subname || '',
+                        osmId: osmId || '',
+                        lat: sighting.lat,
+                        lng: sighting.lng,
+                    };
+                }
                 break;
             }
         }
@@ -60,11 +66,10 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
 
 export interface IPost {
     text?: string;
-    sightings?: ObjectId[] | any[];
-    author?: ObjectId;
-    likes?: ObjectId[] | any[];
+    sightings?: ObjectId[] | ISightingDocument[];
+    author?: ObjectId | IUserDocument;
+    likes?: ObjectId[] | IUserDocument[];
     commentsCount?: number;
-    // comments?: ObjectId[];
     tags?: string[];
 }
 
@@ -73,9 +78,6 @@ export interface IPostDocument extends IPost, Document {
     removeLike: (user: IUserDocument) => Promise<void>;
     incrementCommentsCount: () => Promise<number>;
     decrementCommentsCount: () => Promise<number>;
-    // addComment: (comment: ObjectId) => Promise<void>;
-    // removeComment: (comment: ObjectId) => Promise<void>;
-
     construct: (post: PostInput, user: ObjectId) => Promise<IPostDocument>;
     changeProperties: (post: PostInput) => Promise<void>;
 }
@@ -98,7 +100,6 @@ export const postSchema = new Schema<IPostDocument>(
         sightings: [{ type: Schema.Types.ObjectId, ref: "Sighting" }],
         author: { type: Schema.Types.ObjectId, required: true, ref: "User" },
         likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-        // comments: [{type: Schema.Types.ObjectId}],
         commentsCount: { type: Schema.Types.Number },
         tags: [{ type: Schema.Types.String }],
     },

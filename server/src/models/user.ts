@@ -8,8 +8,8 @@ export interface IUser {
     email?: string;
     password?: string;
     avatarUrl?: string;
-    following?: ObjectId[];
-    followers?: ObjectId[];
+    following?: ObjectId[] | IUserDocument[];
+    followers?: ObjectId[] | IUserDocument[];
     confirmed?: boolean;
     bio?: string;
 }

@@ -36,7 +36,7 @@ export const fixImageUrlOfProfiles = async () => {
         },
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const pendings = await Promise.all(
+    await Promise.all(
         profiles.map(
             (profile) =>
                 new Promise<IUserDocument & { _id: any }>((resolve) => {
