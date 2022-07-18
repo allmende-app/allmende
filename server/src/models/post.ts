@@ -35,8 +35,8 @@ export const replicateIPost = async (post: IPostDocument, me: ObjectId) => {
                 if (l) {
                     location = {
                         name: l,
-                        subname: subname || '',
-                        osmId: osmId || '',
+                        subname: subname || "",
+                        osmId: osmId || "",
                         lat: sighting.lat,
                         lng: sighting.lng,
                     };

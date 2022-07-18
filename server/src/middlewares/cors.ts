@@ -8,7 +8,12 @@ export const createWhiteList = () => {
             whiteList.push(url);
         }
     } else {
-        whiteList = ["https://142.93.232.240/", "http://142.93.232.240/", "http://allmendeapp.xyz", "https://allmendeapp.xyz"];
+        whiteList = [
+            "https://142.93.232.240/",
+            "http://142.93.232.240/",
+            "http://allmendeapp.xyz",
+            "https://allmendeapp.xyz",
+        ];
     }
     return whiteList;
 };
