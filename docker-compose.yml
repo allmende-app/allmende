@@ -38,7 +38,7 @@ services:
       - "3000:3000"
     volumes:
       - allmende:/var/src/allmende-server/logs
-      - allmende:/var/src/allmende-serer/uploads
+      - allmende:/var/src/allmende-server/uploads
     environment:
       MONGO_USER: ${MONGO_USER}
       MONGO_PW: ${MONGO_PW}
