@@ -18,6 +18,5 @@ export const initializeFolderAndSampleAvatars = async () => {
             downloadImage(url, `${process.cwd()}/uploads/${i}.jpg`),
         );
         await Promise.all(downloadUrls);
-
     }
 };
