@@ -7,7 +7,6 @@
 
 <script lang="ts" setup>
 import router from '../router'
-import VButton from './VButton.vue'
 
 const openPrivacy = () => router.push('/privacy')
 const openLicense = () => router.push('/license')

@@ -66,7 +66,8 @@ import VButton from '@/components/VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
 import { reactive, ref } from 'vue'
 import { backend, getRandomId } from '../utils'
-import type { LocationInfo } from '@/interfaces/types'
+import type { LocationInfo, Post } from '@/interfaces/types'
+import router from '@/router'
 
 export interface SightingData {
   rid: string
@@ -121,7 +122,7 @@ function handleFileEvent(event: Event) {
   )
 }
 
-function nextStep() {
+async function nextStep() {
   // only if there are files
   if (sightingInfo.length === 0) {
     return
@@ -152,11 +153,18 @@ function nextStep() {
     }),
   )
 
-  backend.client({
+  const result = await backend.client({
     method: 'post',
     url: '/api/posts',
     data: bodyFormData,
   })
+
+  if (result.status === 201) {
+    const post = result.data.post as Post
+    router.push({ name: 'post-detail', params: { postID: post._id } })
+  } else {
+    console.error(result)
+  }
 }
 </script>
 

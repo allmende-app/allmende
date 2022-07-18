@@ -14,10 +14,12 @@ export interface Post {
   author: Author
   createdAt: string
   likes: string[]
+  liked: boolean
   sightings: Sighting[]
   text: string
   location: LocationInfo
   updatedAt: string
+  commentsCount: number
 }
 
 export interface Sighting {
@@ -26,6 +28,8 @@ export interface Sighting {
   alt: string
   lat?: number
   lng?: number
+  location?: string
+  species?: Species
   createdAt: string
   updatedAt: string
 }
@@ -89,4 +93,23 @@ export interface Species {
   numDescendants: number
   lastCrawled: Date
   lastInterpreted: Date
+}
+
+export interface User {
+  _id: string
+  following: unknown[]
+  followers: unknown[]
+  avatarUrl: string
+  username: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface Comment {
+  _id: string
+  body: string
+  post: Post
+  author: User
+  createdAt: Date
+  updatedAt: Date
 }

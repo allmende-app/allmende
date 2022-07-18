@@ -26,7 +26,7 @@ import VButton from './VButton.vue'
 const emit = defineEmits(['close'])
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .modal-wrapper
   position: fixed
   inset: 0
@@ -62,10 +62,10 @@ const emit = defineEmits(['close'])
   padding-inline: allmende.$size-medium
   padding-block-start: allmende.$size-xsmall
   padding-block-end: allmende.$size-xlarge
-  h1
+  :global(h1)
     @include allmende.text-navbar
     margin-block-end: allmende.$size-xsmall
-  p
+  :global(p)
     color: var(--text-secondary)
     margin-block-end: allmende.$size-xxxsmall
 </style>

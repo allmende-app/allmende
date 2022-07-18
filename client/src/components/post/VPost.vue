@@ -3,18 +3,21 @@
     <div class="meta">
       <div class="author">
         <div class="userpic">
-          <img :src="post.author.avatarUrl" alt="avatar" />
+          <img
+            :src="`${BACKEND_URL}api/image/${post.author.avatarUrl}`"
+            alt="avatar"
+          />
         </div>
         {{ post.author.username }}
       </div>
-      <div class="date">5d</div>
+      <div class="date">{{ formatDate(new Date(post.createdAt)) }}</div>
       <div v-if="post.location" class="location">
         <SvgLocation />
         <p>{{ post.location.name }}</p>
       </div>
     </div>
     <div class="image-wrapper">
-      <ul class="slider" @click="showPost()">
+      <ul class="slider">
         <li v-for="image in activeImages" :key="image._id" :class="image.pos">
           <img
             :src="`${BACKEND_URL}api/image/${image.imageUrl}`"
@@ -43,7 +46,11 @@
       </div>
       <div class="info">
         <div class="description">
-          <span class="clamp">{{ post.text }}</span>
+          <span v-if="post.text.length > 0" class="clamp">{{ post.text }}</span>
+          <router-link
+            :to="{ name: 'post-detail', params: { postID: post._id } }"
+            >Read more…</router-link
+          >
         </div>
         <action-buttons
           :likes="post.likes.length"
@@ -63,7 +70,7 @@ import SvgArrowLeft from '@/assets/icon24/arrow-left.svg?component'
 import SvgArrowRight from '@/assets/icon24/arrow-right.svg?component'
 import { computed, ref, type PropType, onMounted } from 'vue'
 import ActionButtons from '../ActionButtons.vue'
-import { BACKEND_URL } from '@/utils'
+import { formatDate, BACKEND_URL } from '@/utils'
 import type { LocationInfo, Post, Sighting } from '@/interfaces/types'
 import { backend, reverseLocationSearch } from '@/utils'
 import router from '../../router'
@@ -116,10 +123,6 @@ const toggleLike = () => {
       post.value = response.data.post
     })
     .catch((error) => console.log(error))
-}
-
-function showPost() {
-  router.push(`/posts/${post.value._id}`)
 }
 
 function nextImage() {
@@ -196,10 +199,11 @@ const activeImages = computed(() => {
   background: #e1eae1
   border-radius: allmende.$size-medium
   padding: allmende.$size-xxxsmall
+  box-shadow: var(--shadow-card)
 
 .image-index
   z-index: 1
-  background: rgba(0, 0, 0, 0.25)
+  background: rgba(0, 0, 0, 0.75)
   border-radius: allmende.$size-large
   display: inline-flex
   align-self: center
@@ -265,6 +269,10 @@ const activeImages = computed(() => {
     overflow: hidden
     word-break: break-word
     -webkit-line-clamp: 3
+  a
+    color: var(--text-secondary)
+    text-decoration: none
+    font-weight: 700
 .slider
   list-style: none
   li

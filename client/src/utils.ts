@@ -2,6 +2,7 @@ import { customAlphabet } from 'nanoid/non-secure'
 import _axios, { AxiosError } from 'axios'
 import router from './router'
 import type { LocationInfo, OsmSearchResult } from './interfaces/types'
+import { formatDistance } from 'date-fns'
 
 const alphabet =
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -105,3 +106,8 @@ export const reverseLocationSearch = async (
   const response = await _axios.request(options)
   return osmToLocationInfo(response.data)
 }
+
+export const formatDate = (date: Date) =>
+  formatDistance(date, new Date(), {
+    addSuffix: true,
+  })

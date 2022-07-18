@@ -38,11 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import SvgBell from '@/assets/icon24/bell.svg?component'
 import SvgHome from '@/assets/icon24/home.svg?component'
 import SvgPlus from '@/assets/icon24/plus.svg?component'
 import SvgUser from '@/assets/icon24/user.svg?component'
-import SvgSearch from '@/assets/icon24/search.svg?component'
 import { useRouter } from 'vue-router'
 import { useFilesStore } from '@/stores/files'
 

@@ -1,6 +1,5 @@
-import { backend } from '@/utils'
+import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +25,7 @@ const router = createRouter({
       component: () => import('../views/Error.vue'),
       props: { errorCode: 404, errorMessage: 'Page Not Found' },
       meta: {
+        title: 'Page Not Found',
         requiresAuth: false,
       },
     },
@@ -35,6 +35,7 @@ const router = createRouter({
       component: () => import('../views/Error.vue'),
       props: { errorCode: 404, errorMessage: 'Page Not Found' },
       meta: {
+        title: 'Page Not Found',
         requiresAuth: false,
       },
     },
@@ -51,6 +52,7 @@ const router = createRouter({
       name: 'create-post',
       component: () => import('../views/CreatePost.vue'),
       meta: {
+        title: 'Create Post',
         requiresAuth: true,
         hideNavigation: true,
       },
@@ -60,8 +62,8 @@ const router = createRouter({
       name: 'post-detail',
       component: () => import('../views/Post/Detail.vue'),
       meta: {
+        title: 'Post',
         requiresAuth: true,
-        hideNavigation: true,
       },
       props: true,
     },
@@ -70,6 +72,7 @@ const router = createRouter({
       name: 'user',
       component: () => import('../views/User/Profil.vue'),
       meta: {
+        title: 'User',
         requiresAuth: true,
         hideNavigation: false,
       },
@@ -80,6 +83,7 @@ const router = createRouter({
       name: 'playground',
       component: () => import('../views/Playground.vue'),
       meta: {
+        title: 'Playground',
         requiresAuth: false,
       },
     },
@@ -88,6 +92,7 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/Auth/Register.vue'),
       meta: {
+        title: 'Sign up',
         requiresAuth: false,
         hideNavigation: true,
         fullSize: true,
@@ -98,6 +103,7 @@ const router = createRouter({
       name: 'login',
       component: () => import('../views/Auth/Login.vue'),
       meta: {
+        title: 'Sign in',
         requiresAuth: false,
         hideNavigation: true,
         fullSize: true,
@@ -108,6 +114,7 @@ const router = createRouter({
       name: 'privacy',
       component: () => import('../views/Privacy.vue'),
       meta: {
+        title: 'Privacy',
         requiresAuth: false,
         hideNavigation: true,
         fullSize: false,
@@ -118,12 +125,19 @@ const router = createRouter({
       name: 'license',
       component: () => import('../views/License.vue'),
       meta: {
+        title: 'License',
         requiresAuth: false,
         hideNavigation: true,
         fullSize: false,
       },
     },
   ],
+})
+
+router.afterEach((to) => {
+  nextTick(() => {
+    document.title = to.meta.title ? `${to.meta.title} | Allmende` : 'Allmende'
+  })
 })
 
 export default router

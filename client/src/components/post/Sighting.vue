@@ -1,52 +1,45 @@
 <template>
   <div class="sighting">
-    <img :src="`${baseURL}api/image/${source}`" :alt="alt" />
+    <img
+      :src="`${baseURL}api/image/${props.sighting.imageUrl}`"
+      :alt="props.sighting.alt"
+    />
 
-    <div class="details">
-      <div class="location">
-        {{ location }}
+    <div
+      class="details"
+      v-if="props.sighting.location || props.sighting.species"
+    >
+      <div v-if="props.sighting.location" class="location">
+        {{ props.sighting.location }}
       </div>
 
-      <div class="specie">
-        {{ species }}
+      <div v-if="props.sighting.species" class="species">
+        {{
+          props.sighting.species.vernacularName ||
+          props.sighting.species.canonicalName
+        }}
       </div>
 
-      <div class="animal-kindom">
-        {{ kingdom }}
+      <div v-if="props.sighting.species" class="animal-kindom">
+        {{
+          props.sighting.species.vernacularName
+            ? props.sighting.species.canonicalName
+            : props.sighting.species.scientificName
+        }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ObjectId } from 'mongoose'
+import type { Sighting } from '@/interfaces/types'
+import { backend } from '@/utils'
 import type { PropType } from 'vue'
-import { ref } from 'vue'
-import type { KingdomType } from '../../../../server/src/interfaces'
-import { backend } from '../../utils'
 const baseURL = backend.baseURL
 
 const props = defineProps({
-  source: {
-    type: String as PropType<string | undefined>,
-    required: true,
-  },
-  alt: {
-    type: String as PropType<string | undefined>,
-    required: true,
-  },
-  // TODO: do we need something like a location description
-  location: {
-    type: String as PropType<string>,
-    required: false,
-    default: null,
-  },
-  kindom: {
-    type: String as PropType<KingdomType | undefined>,
-    required: true,
-  },
-  species: {
-    type: Object as PropType<ObjectId | undefined>,
+  sighting: {
+    type: Object as PropType<Sighting>,
     required: true,
   },
 })
@@ -54,7 +47,6 @@ const props = defineProps({
 
 <style lang="sass" scoped>
 .sighting
-
   background-color: white
   border-radius: allmende.$radius-card
 
@@ -62,10 +54,13 @@ const props = defineProps({
     height: auto
     width: 100%
     border-radius: allmende.$radius-card
+    background: var(--layer-05)
+    box-shadow: var(--shadow-card-subtle)
+    display: block
 
   .details
     padding: 12px allmende.$size-small 16px 24px
-    .specie
+    .species
       @include allmende.text-headline
 
     .animal-kindom, .location
@@ -73,4 +68,7 @@ const props = defineProps({
 
     .location
       color: var(--text-secondary)
+      &:not(:last-child)
+        margin-bottom: 4
+        px
 </style>
