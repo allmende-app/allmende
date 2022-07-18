@@ -7,24 +7,14 @@ export interface ISighting {
     lat?: number;
     lng?: number;
     location?: string;
+    subname?: string;
+    osmId?: string;
     species?: ObjectId;
     kingdom?: KingdomType;
     alt?: string;
 }
-
-export interface GeoBounds {
-    lat: {
-        minLat: number;
-        maxLat: number;
-    };
-    lng: {
-        minLng: number;
-        maxLng: number;
-    };
-}
-
 export interface ISightingDocument extends ISighting, Document {
-    setBounds: (bounds: GeoBounds) => Promise<void>;
+    // some methods
 }
 
 export interface ISightingModel extends Model<ISightingDocument> {
@@ -34,7 +24,6 @@ export interface ISightingModel extends Model<ISightingDocument> {
         limit?: number,
         page?: number,
     ) => Promise<ISightingDocument[]>;
-    findByBounds: (bounds: GeoBounds) => Promise<ISightingDocument[]>;
 }
 
 export const sightingSchema = new Schema<ISightingDocument>(
@@ -43,6 +32,8 @@ export const sightingSchema = new Schema<ISightingDocument>(
         lat: { type: Schema.Types.Number },
         lng: { type: Schema.Types.Number },
         location: { type: Schema.Types.String },
+        subname: { type: Schema.Types.String },
+        osmId: { type: Schema.Types.String },
         species: { type: Schema.Types.ObjectId, ref: "Species" },
         alt: { type: Schema.Types.String },
     },

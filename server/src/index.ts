@@ -6,6 +6,7 @@ import {
     connectRedis,
     insertSpeciesJob,
     fixImageUrlOfProfiles,
+    initializeLocations,
 } from "./config";
 import { Logger } from "./lib";
 
@@ -20,6 +21,7 @@ app.listen(CONFIG.port, async () => {
         await initializeFolderAndSampleAvatars();
         await fixImageUrlOfProfiles();
         const done = await insertSpeciesJob();
+        await initializeLocations();
         if (done) Logger.info(`Script for inserting species -> DONE.`);
         Logger.info(`Connected to DB: "${res.connections[0].name}"`);
         Logger.info(`Server listening on PORT: ${CONFIG.port}`);

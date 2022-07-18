@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { SightingInfo } from "./types";
 
 export interface RegisterInput {
@@ -16,7 +15,6 @@ export interface LoginInput {
 
 export interface PostInput {
     text: string;
-    // tags: string[];
     sightings: SightingInfo[];
 }
 

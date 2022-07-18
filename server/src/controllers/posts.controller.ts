@@ -365,7 +365,7 @@ export class PostsController {
                                 );
                                 const sightings = post.sightings;
                                 if (sightings) {
-                                    await deleteSightings(sightings);
+                                    await deleteSightings(sightings as ObjectId[]);
                                 }
                                 await post.delete();
                                 // deletes attached sightings and images

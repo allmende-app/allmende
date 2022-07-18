@@ -8,7 +8,7 @@ export const createWhiteList = () => {
             whiteList.push(url);
         }
     } else {
-        whiteList = ["https://142.93.232.240/", "http://142.93.232.240/"];
+        whiteList = ["https://142.93.232.240/", "http://142.93.232.240/", "http://allmendeapp.xyz", "https://allmendeapp.xyz"];
     }
     return whiteList;
 };
@@ -19,7 +19,15 @@ export const middlewareCors = () => {
         credentials: true,
         origin: (origin: any, callback) => {
             // cases for frontend
-            callback(null, true);
+            if (process.env.NODE !== "production") {
+                callback(null, true);
+            } else {
+                if (whiteList.indexOf(origin) !== -1 || !origin) {
+                    callback(null, true);
+                } else {
+                    callback(null, false);
+                }
+            }
         },
     });
 };
