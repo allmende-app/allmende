@@ -1,5 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { LocationInfo, OsmSearchResult } from "../interfaces";
+import {
+    LocationInfo,
+    MapType,
+    OsmIdResponse,
+    OsmSearchResult,
+    OsmType,
+} from "../interfaces";
 import { Logger } from "../lib";
 
 // Code copied from @JulianWels
@@ -86,4 +92,43 @@ export const reverseLocationSearch = async (
 
     const response = await axios.request(options);
     return osmToLocationInfo(response.data);
+};
+
+export const locationSearchById = async (id: string): Promise<LocationInfo> => {
+    const options: AxiosRequestConfig = {
+        url: "https://nominatim.openstreetmap.org/details.php",
+        params: {
+            osmtype: "W",
+            osmid: id,
+            addressdetails: "1",
+            hierarchy: "0",
+            group_hierarchy: "1",
+            format: "json",
+        },
+        headers: {
+            "user-agent": "allmende v1.0 contact info@allmende-student.de",
+        },
+    };
+    const response = await axios.request<OsmIdResponse>(options);
+    const { data } = response;
+    const { localname, address, geometry, osm_id } = data;
+
+    const localNames: string[] = [];
+    address.forEach((a) => {
+        if (
+            a.place_type === MapType.CITY ||
+            a.type === MapType.COUNTRY ||
+            a.type === MapType.POSTAL_CODE
+        ) {
+            localNames.push(a.localname);
+        }
+    });
+    const subname = localNames.join(", ");
+    return {
+        osmId: String(osm_id),
+        name: localname,
+        subname,
+        lat: geometry.coordinates[1],
+        lng: geometry.coordinates[0],
+    };
 };

@@ -78,6 +78,76 @@ export interface LocationInfo {
     lng: number;
 }
 
+export enum OsmType {
+    W = "W",
+    R = "R",
+    N = "N",
+}
+
+export enum MapType {
+    PLATFORM = "platform",
+    POINT = "point",
+    COUNTRY_CODE = "country_code",
+    COUNTRY = "country",
+    CITY = "city",
+    ADMINISTRATIVE = "administrative",
+    BOROUGH = "borough",
+    SUBURB = "suburb",
+    SERVICE = "service",
+    POSTAL_CODE = "postal_code",
+}
+
+export enum MapClass {
+    HIGHWAY = "highway",
+    PLACE = "place",
+    BOUNDARY = "boundary",
+    RAILWAY = "railway",
+}
+
+export interface OsmAddress {
+    localname: string;
+    place_id: number;
+    osm_id: number;
+    osm_type: OsmType;
+    place_type: MapType;
+    class: MapClass;
+    type: MapType;
+    admin_level: number;
+    rank_address: number;
+    distance: number;
+    isaddress: boolean;
+}
+
+export interface Geometry {
+    type: MapType;
+    coordinates: number[];
+}
+
+export interface OsmIdResponse {
+    place_id: number | string;
+    parent_place_id: number | string;
+    osm_type: OsmType;
+    osm_id: number | string;
+    type: MapType;
+    admin_level: number;
+    localname: string;
+    names: Map<string, any>;
+    addresstags: string[];
+    houseNumber: string;
+    calculated_postcode: string;
+    country_code: string;
+    indexed_date: string;
+    importance: number;
+    calculated_importance: number;
+    extratags: Map<string, any>;
+    rank_address: number;
+    rank_search: number;
+    isarea: boolean;
+    centroid: Geometry;
+    geometry: Geometry;
+    address: OsmAddress[];
+}
+
 /**
  * @author @JulianWels
  */
