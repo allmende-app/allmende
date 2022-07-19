@@ -122,14 +122,13 @@ export const speciesSearch = async (
       q: query,
     },
   })
-  return result.data.species.map((item: SpeciesSearchResult) => ({
-    ...item,
-    name: item.vernacularName || item.canonicalName,
-    binomial: item.vernacularName
-      ? item.canonicalName
-      : item.scientificName,
-  }))
-  .slice(0, 15)
+  return result.data.species
+    .map((item: SpeciesSearchResult) => ({
+      ...item,
+      name: item.vernacularName || item.canonicalName,
+      binomial: item.vernacularName ? item.canonicalName : item.scientificName,
+    }))
+    .slice(0, 15)
 }
 
 export const formatDate = (date: Date) =>

@@ -4,7 +4,7 @@
       <div class="modal-wrapper">
         <section class="modal">
           <div class="action">
-            <h1 v-if="props.title">{{props.title}}</h1>
+            <h1 v-if="props.title">{{ props.title }}</h1>
             <v-button
               v-if="props.showClose"
               :icon="SvgClose"
@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import SvgClose from '@/assets/icon24/close.svg?component'
-import type { PropType } from 'vue';
+import type { PropType } from 'vue'
 import VButton from './VButton.vue'
 
 const emit = defineEmits(['close'])

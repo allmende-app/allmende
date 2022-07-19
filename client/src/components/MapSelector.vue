@@ -7,7 +7,7 @@ import { onMounted, ref, watch, type PropType } from 'vue'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { reverseLocationSearch } from '../utils'
-import type { LocationInfo } from '@/interfaces/types';
+import type { LocationInfo } from '@/interfaces/types'
 
 const emit = defineEmits(['update:modelValue'])
 
