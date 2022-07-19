@@ -14,8 +14,8 @@ const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   modelValue: {
     type: Object as PropType<LocationInfo | null>,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const mapContainer = ref(null)
@@ -29,28 +29,30 @@ const customMarker = L.icon({
 })
 
 const centerLeafletMapOnMarker = (marker: L.Marker) => {
-  var latLngs = [ marker.getLatLng() ];
-  var markerBounds = L.latLngBounds(latLngs);
-  map.fitBounds(markerBounds);
+  var latLngs = [marker.getLatLng()]
+  var markerBounds = L.latLngBounds(latLngs)
+  map.fitBounds(markerBounds)
   map.setZoom(15)
 }
 
 const setMarker = async (lat: number, lng: number) => {
   if (marker.value) marker.value.remove()
   marker.value = L.marker([lat, lng], {
-    icon: customMarker
-  }).addTo(map);
+    icon: customMarker,
+  }).addTo(map)
 
   return marker.value
 }
 
-watch(() => props.modelValue, async (currentValue, oldValue) => {
-  if (currentValue) {
-    const newMarker = await setMarker(currentValue?.lat, currentValue?.lng)
-    centerLeafletMapOnMarker(newMarker)
-  }
-})
-
+watch(
+  () => props.modelValue,
+  async (currentValue, oldValue) => {
+    if (currentValue) {
+      const newMarker = await setMarker(currentValue?.lat, currentValue?.lng)
+      centerLeafletMapOnMarker(newMarker)
+    }
+  },
+)
 
 onMounted(() => {
   // create map with leaflet
@@ -59,7 +61,7 @@ onMounted(() => {
   }
 
   // create map inside of map container
-  map = L.map(mapContainer.value).setView([52.52437, 13.41053], 13);//   const markers: Array<L.Marker> = []
+  map = L.map(mapContainer.value).setView([52.52437, 13.41053], 13) //   const markers: Array<L.Marker> = []
 
   // reposition marker on click
   const onMapClick = async (event) => {
@@ -68,11 +70,11 @@ onMounted(() => {
     // make reverse location search
     const latlng = newMarker.getLatLng()
     const location = await reverseLocationSearch(latlng.lng, latlng.lat)
-    console.log(location);
+    console.log(location)
 
     emit('update:modelValue', location)
   }
-  map.on('click', onMapClick);
+  map.on('click', onMapClick)
 
   // reference to leaflet
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

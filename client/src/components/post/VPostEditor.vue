@@ -37,9 +37,7 @@
             : undefined
         "
       />
-      <map-selector
-        v-model="location"
-      ></map-selector>
+      <map-selector v-model="location"></map-selector>
       <v-input
         v-if="showAlt"
         v-model="description"

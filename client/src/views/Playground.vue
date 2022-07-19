@@ -9,7 +9,6 @@ import { ISighting } from '../../../server/src/models/sighting'
 import VLocationSelector from '@/components/VLocationSelector.vue'
 import { LocationInfo } from '../../../server/src/interfaces'
 
-
 const types = ['light', 'dark']
 
 // Text field variables
