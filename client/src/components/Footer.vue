@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
     <a @click="openPrivacy" class="footer-link"> Privacy </a>
-    <a @click="openLicense" class="footer-link"> License </a>
+    <!-- <a @click="openLicense" class="footer-link"> License </a> -->
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import router from '../router'
 
 const openPrivacy = () => router.push('/privacy')
-const openLicense = () => router.push('/license')
+// const openLicense = () => router.push('/license')
 </script>
 
 <style lang="sass">

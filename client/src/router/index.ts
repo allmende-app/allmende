@@ -120,17 +120,17 @@ const router = createRouter({
         fullSize: false,
       },
     },
-    {
-      path: '/license',
-      name: 'license',
-      component: () => import('../views/License.vue'),
-      meta: {
-        title: 'License',
-        requiresAuth: false,
-        hideNavigation: true,
-        fullSize: false,
-      },
-    },
+    // {
+    //   path: '/license',
+    //   name: 'license',
+    //   component: () => import('../views/License.vue'),
+    //   meta: {
+    //     title: 'License',
+    //     requiresAuth: false,
+    //     hideNavigation: true,
+    //     fullSize: false,
+    //   },
+    // },
   ],
 })
 
