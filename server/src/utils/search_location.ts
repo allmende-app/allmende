@@ -1,5 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { LocationInfo, MapType, OsmIdResponse, OsmSearchResult, OsmType } from "../interfaces";
+import {
+    LocationInfo,
+    MapType,
+    OsmIdResponse,
+    OsmSearchResult,
+    OsmType,
+} from "../interfaces";
 import { Logger } from "../lib";
 
 // Code copied from @JulianWels
@@ -97,19 +103,23 @@ export const locationSearchById = async (id: string): Promise<LocationInfo> => {
             addressdetails: "1",
             hierarchy: "0",
             group_hierarchy: "1",
-            format: "json"
+            format: "json",
         },
         headers: {
             "user-agent": "allmende v1.0 contact info@allmende-student.de",
         },
-    }
+    };
     const response = await axios.request<OsmIdResponse>(options);
     const { data } = response;
     const { localname, address, geometry, osm_id } = data;
 
     const localNames: string[] = [];
     address.forEach((a) => {
-        if (a.place_type === MapType.CITY || a.type === MapType.COUNTRY || a.type === MapType.POSTAL_CODE) {
+        if (
+            a.place_type === MapType.CITY ||
+            a.type === MapType.COUNTRY ||
+            a.type === MapType.POSTAL_CODE
+        ) {
             localNames.push(a.localname);
         }
     });
@@ -120,5 +130,5 @@ export const locationSearchById = async (id: string): Promise<LocationInfo> => {
         subname,
         lat: geometry.coordinates[1],
         lng: geometry.coordinates[0],
-    }
-}
+    };
+};

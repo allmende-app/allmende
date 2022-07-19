@@ -81,7 +81,7 @@ export interface LocationInfo {
 export enum OsmType {
     W = "W",
     R = "R",
-    N = "N"
+    N = "N",
 }
 
 export enum MapType {
@@ -94,7 +94,7 @@ export enum MapType {
     BOROUGH = "borough",
     SUBURB = "suburb",
     SERVICE = "service",
-    POSTAL_CODE = "postal_code"
+    POSTAL_CODE = "postal_code",
 }
 
 export enum MapClass {
