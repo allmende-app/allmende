@@ -1,5 +1,4 @@
 .DS_Store
-.vscode/
 .idea/
 /ml/venv
 /ml/__pycache__

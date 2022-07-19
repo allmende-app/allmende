@@ -113,3 +113,30 @@ export interface Comment {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface SpeciesSearchResult {
+  _id: string
+  nomenclaturalStatus: string[]
+  key: number
+  vernacularName: string
+  nubKey?: number
+  nameKey: number
+  taxonID: string
+  sourceTaxonKey?: number
+  phylumKey?: number
+  datasetKey: string
+  constituentKey?: string
+  parentKey: number
+  scientificName: string
+  canonicalName: string
+  numDescendants?: number
+  lastCrawled: Date
+  lastInterpreted: Date
+  createdAt: Date
+  updatedAt: Date
+  imageUrl?: string
+  remarks?: string
+  synonym?: boolean
+  name: string
+  binomial: string
+}

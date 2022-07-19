@@ -4,7 +4,9 @@
       <div class="modal-wrapper">
         <section class="modal">
           <div class="action">
+            <h1 v-if="props.title">{{props.title}}</h1>
             <v-button
+              v-if="props.showClose"
               :icon="SvgClose"
               tooltip="Cancel"
               @click="emit('close')"
@@ -21,9 +23,20 @@
 
 <script lang="ts" setup>
 import SvgClose from '@/assets/icon24/close.svg?component'
+import type { PropType } from 'vue';
 import VButton from './VButton.vue'
 
 const emit = defineEmits(['close'])
+
+const props = defineProps({
+  title: {
+    type: String as PropType<string | undefined>,
+  },
+  showClose: {
+    type: Boolean,
+    default: true,
+  },
+})
 </script>
 
 <style lang="sass" scoped>
@@ -57,6 +70,14 @@ const emit = defineEmits(['close'])
 .action
   display: flex
   justify-content: flex-end
+  align-items: center
+  min-height: allmende.$size-xlarge
+  h1
+    margin: 0
+    flex: 1
+    margin-inline-start: allmende.$size-medium
+    @include allmende.text-headline
+    font-family: inherit
 
 .content
   padding-inline: allmende.$size-medium

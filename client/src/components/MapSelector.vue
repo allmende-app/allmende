@@ -6,8 +6,8 @@
 import { onMounted, ref, watch, type PropType } from 'vue'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { LocationInfo } from '../../../server/src/interfaces'
 import { reverseLocationSearch } from '../utils'
+import type { LocationInfo } from '@/interfaces/types';
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -46,7 +46,7 @@ const setMarker = async (lat: number, lng: number) => {
 
 watch(
   () => props.modelValue,
-  async (currentValue, oldValue) => {
+  async (currentValue) => {
     if (currentValue) {
       const newMarker = await setMarker(currentValue?.lat, currentValue?.lng)
       centerLeafletMapOnMarker(newMarker)
@@ -89,7 +89,7 @@ onMounted(() => {
 .location-selector
   height: 250px
   width: 100%
-  border-radius: allmende.$radius-card
+  border-radius: allmende.$radius-menu
   z-index: 0
 
   .leaflet-control

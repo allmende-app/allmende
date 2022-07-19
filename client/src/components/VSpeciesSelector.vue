@@ -1,5 +1,63 @@
 <template>
   <div class="species-selector">
+    <Modal title="Manual selection" :show-close="false" v-if="modalOpen">
+      <v-input
+        label="Search..."
+        v-model="modalTextInput"
+        @input="
+          () => {
+            modalLoading = true
+            debouncedSearch()
+            modalSelected = undefined
+          }
+        "
+      />
+      <div class="selector-options">
+        <p class="explainer" v-if="modalTextInput.length < 1">
+          Manually select a species by typing in a search term.
+        </p>
+        <div v-else-if="modalLoading" class="selector-loading">
+          <div class="spinner"></div>
+        </div>
+        <p class="explainer" v-else-if="modalResults.length < 1">No results.</p>
+        <div
+          v-else
+          v-for="result in modalResults"
+          :key="result._id"
+          class="option"
+        >
+          <input
+            type="radio"
+            :value="result._id"
+            v-model="modalSelected"
+            :id="`${idModal}-${result._id}`"
+          />
+          <label :for="`${idModal}-${result._id}`">
+            <div class="info">
+              <div class="img">
+                <img
+                  v-if="result.imageUrl"
+                  :src="result.imageUrl"
+                  :alt="result.name"
+                />
+              </div>
+            </div>
+            <div class="details">
+              <span v-if="result.name" class="name">{{ result.name }}</span>
+              <span v-if="result.binomial" class="binomial">{{
+                result.binomial
+              }}</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="selector-actions">
+        <v-button @click="modalOpen = false">Cancel</v-button>
+        <v-button @click="modalSelect" type="primary" :disabled="!modalSelected"
+          >Select</v-button
+        >
+      </div>
+    </Modal>
     <div class="header">
       <label>Species</label>
       <button @click="showModal = true">Learn more</button>
@@ -41,7 +99,7 @@
               <div v-if="option.imageUrl" class="img">
                 <img :src="option.imageUrl" :alt="option.name" />
               </div>
-              <p>{{ Math.round(option.score) }}%</p>
+              <p v-if="option.score">{{ Math.round(option.score) }}%</p>
             </div>
           </label>
         </div>
@@ -49,14 +107,25 @@
           <input
             type="radio"
             name="species"
-            value="__xxx__"
+            :value="manualOption ? manualOption.id : '__undefined__'"
             :id="`${id}-custom`"
+            @click.prevent="openModal"
             v-model="species"
           />
           <label :for="`${id}-custom`" class="manual">
             <div class="details">
               <span class="type">Manual</span>
-              <span class="name">Select Species</span>
+              <span class="name">{{
+                manualOption ? manualOption.name : 'Select Species'
+              }}</span>
+              <span v-if="manualOption" class="binomial">{{
+                manualOption.binomial
+              }}</span>
+            </div>
+            <div class="info">
+              <div v-if="manualOption?.imageUrl" class="img">
+                <img :src="manualOption.imageUrl" :alt="manualOption.name" />
+              </div>
             </div>
           </label>
         </div>
@@ -85,12 +154,13 @@
 </template>
 
 <script setup lang="ts">
-import { backend, getRandomId } from '@/utils'
-import { ref, type PropType } from 'vue'
+import { backend, getRandomId, speciesSearch } from '@/utils'
+import { nextTick, ref, type PropType } from 'vue'
 import VButton from './VButton.vue'
 import SvgClose from '@/assets/icon24/close.svg?component'
-import type { PredictionResult } from '@/interfaces/types'
+import type { PredictionResult, SpeciesSearchResult } from '@/interfaces/types'
 import { computed } from '@vue/reactivity'
+import VInput from '@/components/VInput.vue'
 
 import SvgPlant from '@/assets/species/plant.svg?component'
 import SvgBird from '@/assets/species/bird.svg?component'
@@ -100,17 +170,19 @@ import SvgMollusca from '@/assets/species/mollusca.svg?component'
 import SvgReptile from '@/assets/species/reptile.svg?component'
 import SvgSquirrel from '@/assets/species/squirrel.svg?component'
 import Modal from './Modal.vue'
+import debounce from 'debounce'
 
 interface Suggestion {
-  id: number
-  score: number
+  id: string
+  score?: number
   type: string
   name: string
-  binomial: string
+  binomial?: string
   imageUrl?: string
 }
 
 const id = getRandomId()
+const idModal = getRandomId()
 
 const emit = defineEmits(['update:modelValue', 'updating'])
 
@@ -128,6 +200,7 @@ const showModal = ref(false)
 const loading = ref(false)
 
 const options = ref([] as Suggestion[])
+const manualOption = ref(undefined as Suggestion | undefined)
 
 const species = computed({
   get: () => {
@@ -173,6 +246,55 @@ async function selectGenus(genus: string) {
         : o.species.scientificName,
     }))
 }
+
+// MODAL
+
+const modalOpen = ref(false)
+const modalSelected = ref(undefined as string | undefined)
+const modalTextInput = ref('')
+const modalLoading = ref(false)
+const modalResults = ref([] as SpeciesSearchResult[])
+
+async function search() {
+  modalLoading.value = true
+  const result = await speciesSearch(modalTextInput.value)
+  modalResults.value = result
+  modalLoading.value = false
+}
+
+function openModal() {
+  modalSelected.value = undefined
+  modalTextInput.value = ''
+  modalOpen.value = true
+}
+function modalSelect() {
+  if (modalSelected.value == undefined) {
+    modalOpen.value = false
+    return
+  }
+  const selection = modalResults.value.find(
+    (o: SpeciesSearchResult) => o._id === modalSelected.value,
+  )
+
+  if (selection == undefined) {
+    modalOpen.value = false
+    return
+  }
+
+  manualOption.value = {
+    id: selection._id,
+    type: 'manual',
+    name: selection.name,
+    binomial: selection.binomial,
+    imageUrl: selection.imageUrl,
+  }
+  modalOpen.value = false
+  nextTick(() => {
+    emit('update:modelValue', modalSelected.value)
+  })
+}
+
+const debouncedSearch = debounce(search, 500)
 
 const genus = [
   {
@@ -341,4 +463,33 @@ button.genus-option
   padding-inline: allmende.$size-xxlarge
   border-radius: allmende.$size-xxxsmall
   background: var(--action-secondary)
+
+.selector-actions
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  gap: allmende.$size-xxxsmall
+.selector-options
+  overflow-y: auto
+  height: 40vh
+  margin-block: allmende.$size-xsmall
+  gap: allmende.$size-xxxsmall
+  display: flex
+  flex-direction: column
+  .selector-loading
+    margin: allmende.$size-medium
+    text-align: center
+  .explainer
+    margin: allmende.$size-medium
+    text-align: center
+  .option
+    label
+      padding: allmende.$size-xxsmall
+      height: auto
+    span
+      white-space: normal
+      word-break: break-all
+    .info .img
+      width: allmende.$size-xxlarge
+      height: allmende.$size-xxlarge
 </style>

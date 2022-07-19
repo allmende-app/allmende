@@ -1,7 +1,11 @@
 import { customAlphabet } from 'nanoid/non-secure'
 import _axios, { AxiosError } from 'axios'
 import router from './router'
-import type { LocationInfo, OsmSearchResult } from './interfaces/types'
+import type {
+  LocationInfo,
+  OsmSearchResult,
+  SpeciesSearchResult,
+} from './interfaces/types'
 import { formatDistance } from 'date-fns'
 
 const alphabet =
@@ -105,6 +109,27 @@ export const reverseLocationSearch = async (
 
   const response = await _axios.request(options)
   return osmToLocationInfo(response.data)
+}
+
+export const speciesSearch = async (
+  query: string,
+): Promise<SpeciesSearchResult[]> => {
+  if (query.length < 1) {
+    return []
+  }
+  const result = await backend.client.get('/api/species/search', {
+    params: {
+      q: query,
+    },
+  })
+  return result.data.species.map((item: SpeciesSearchResult) => ({
+    ...item,
+    name: item.vernacularName || item.canonicalName,
+    binomial: item.vernacularName
+      ? item.canonicalName
+      : item.scientificName,
+  }))
+  .slice(0, 15)
 }
 
 export const formatDate = (date: Date) =>
