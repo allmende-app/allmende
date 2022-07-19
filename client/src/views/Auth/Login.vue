@@ -24,7 +24,7 @@
       <v-button @click="login"> Log in </v-button>
 
       <div class="router-link">
-        <router-link to="/auth/register"> Create Acount </router-link>
+        <router-link to="/auth/register"> Create Account </router-link>
       </div>
     </template>
   </auth-layout>

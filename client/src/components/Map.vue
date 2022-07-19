@@ -3,15 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import type PropType from 'vue'
+import { onMounted, ref, type PropType } from 'vue'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import type { ISighting } from '../../../server/src/models/sighting'
+import type { Sighting } from '@/interfaces/types'
 
 const props = defineProps({
   sightings: {
-    type: Array as PropType<Array<ISighting>>,
+    type: Array as PropType<Sighting[]>,
     required: true,
   },
 })

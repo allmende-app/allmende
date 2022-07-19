@@ -1,13 +1,15 @@
 <template>
-  <img :src="`${baseURL}image/${source}`" alt="" height="16" width="16" />
+  <img
+    :src="`${BACKEND_URL}api/image/${props.source}`"
+    alt=""
+    height="16"
+    width="16"
+  />
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { ref } from 'vue'
-import { backend } from '../../utils'
-
-const baseURL = backend.baseURL
+import { BACKEND_URL } from '@/utils'
 
 const props = defineProps({
   source: {

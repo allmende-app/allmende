@@ -1,16 +1,15 @@
 <template>
   <div class="creator" @click="$emit('click')">
-    <profil-picture-vue :source="author.avatarUrl"></profil-picture-vue>
+    <profil-picture-vue :source="props.author.avatarUrl"></profil-picture-vue>
     <p class="name">
-      {{ name }}
+      {{ props.name }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { User } from '@/interfaces/types'
 import type { PropType } from 'vue'
-import { ref } from 'vue'
-import { backend } from '../../utils'
 import ProfilPictureVue from './ProfilPicture.vue'
 
 const props = defineProps({
@@ -18,12 +17,8 @@ const props = defineProps({
     type: String as PropType<string>,
     required: true,
   },
-  userId: {
-    type: String as PropType<string>,
-    required: true,
-  },
   author: {
-    type: Object as PropType<any>,
+    type: Object as PropType<User>,
     required: true,
   },
 })

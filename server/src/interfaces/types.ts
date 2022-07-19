@@ -16,6 +16,7 @@ export interface SightingInfo {
     description: string;
     lat: number;
     lng: number;
+    osmId: string;
 }
 
 export interface GBIFMediaFormat {

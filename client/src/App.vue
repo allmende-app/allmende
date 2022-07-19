@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-
-import { useRouter } from 'vue-router'
 import VNavigation from './components/VNavigation.vue'
 </script>
 
@@ -26,10 +24,10 @@ import VNavigation from './components/VNavigation.vue'
   box-sizing: border-box
   @include allmende.screen-laptop
     padding-inline: allmende.$size-medium
-
   > .main
     flex: 1
     margin-inline: allmende.$size-xsmall
+    margin-block-end: allmende.$size-medium
   &.withNavigation > .main
     padding-bottom: allmende.$size-huge
   &.fullSize

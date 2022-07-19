@@ -1,7 +1,7 @@
 <template>
   <div class="comments">
     <div class="add">
-      <profil-picture-vue :source="user.avatarUrl"></profil-picture-vue>
+      <profil-picture-vue :source="user?.avatarUrl"></profil-picture-vue>
       <input
         type="text"
         name="comment"
@@ -10,7 +10,11 @@
         v-model="commentMessage"
         @keypress.enter="addComment"
       />
-      <v-button class="secondary" @click="addComment">
+      <v-button
+        v-if="commentMessage.length > 0"
+        class="secondary"
+        @click="addComment"
+      >
         <SvgArrowLeft />
       </v-button>
     </div>
@@ -28,11 +32,7 @@
           @click="visitAuthor(comment.author.username)"
         ></v-creator-vue>
         <span class="creation-time">
-          {{
-            formatDistance(new Date(comment.createdAt), new Date(), {
-              addSuffix: true,
-            })
-          }}
+          {{ formatDate(new Date(comment.createdAt)) }}
         </span>
       </div>
 
@@ -44,22 +44,17 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from 'vue'
-import type { Ref } from 'vue'
+import { ref, type Ref, type PropType } from 'vue'
 import ProfilPictureVue from './post/ProfilPicture.vue'
 import VCreatorVue from './post/VCreator.vue'
-import LogoSvg from '@/assets/logo.svg?component'
 import { backend } from '../utils'
-import {
-  Comment,
-  type ICommentDocument,
-} from '../../../server/src/models/comment'
 import { useAuthStore } from '../stores/auth'
 import router from '../router'
-import { compareDesc, formatDistance, subDays } from 'date-fns'
-import { IUser } from '../../../server/src/models/user'
+import { compareDesc } from 'date-fns'
 import VButton from './VButton.vue'
 import SvgArrowLeft from '@/assets/icon24/arrow-right.svg?component'
+import { formatDate } from '@/utils'
+import type { AllmendeComment } from '@/interfaces/types'
 
 /**
  * Props
@@ -77,9 +72,9 @@ const props = defineProps({
 const emit = defineEmits(['comment-added'])
 
 const authStore = useAuthStore()
-const user: IUser = authStore.user
+const user = authStore.user
 
-const comments: Ref<Array<ICommentDocument>> = ref([])
+const comments: Ref<Array<AllmendeComment>> = ref([])
 const commentMessage: Ref<string> = ref('')
 
 /**
@@ -87,7 +82,7 @@ const commentMessage: Ref<string> = ref('')
  * @param a
  * @param b
  */
-const orderDesc = (a: any, b: any) => {
+const orderDesc = (a: AllmendeComment, b: AllmendeComment) => {
   return compareDesc(new Date(a.createdAt), new Date(b.createdAt))
 }
 
@@ -134,13 +129,14 @@ const visitAuthor = (username: string) => {
   display: flex
   flex-direction: column
   gap: 4px
-
   border-radius: allmende.$radius-card
   overflow: hidden
+  .comment
+    padding-block: allmende.$size-xxxsmall
 
   .comment, .add
     background-color: white
-    padding: allmende.$size-xsmall
+    padding-inline: allmende.$size-xsmall
     @include allmende.text-footnote
 
   .add
@@ -151,9 +147,9 @@ const visitAuthor = (username: string) => {
     gap: allmende.$size-xxxsmall
 
     input
-      border: 1px var(--border-seperator) solid
       width: 100%
       height: fit-content
+      height: allmende.$size-xlarge
       padding: allmende.$size-xxxsmall
       font-size: 16px
       border-radius: allmende.$radius-input
@@ -166,7 +162,7 @@ const visitAuthor = (username: string) => {
     display: flex
     flex-direction: row
     justify-content: space-between
-    margin-bottom: allmende.$size-xxxsmall
+    margin-bottom: allmende.$size-xxxxsmall
 
 
     .creation-time

@@ -19,20 +19,21 @@ export const createWhiteList = () => {
 };
 
 export const middlewareCors = () => {
-    const whiteList = createWhiteList();
+    // const whiteList = createWhiteList();
     return cors({
         credentials: true,
         origin: (origin: any, callback) => {
             // cases for frontend
-            if (process.env.NODE !== "production") {
-                callback(null, true);
-            } else {
-                if (whiteList.indexOf(origin) !== -1 || !origin) {
-                    callback(null, true);
-                } else {
-                    callback(null, false);
-                }
-            }
+            // if (process.env.NODE !== "production") {
+            //     callback(null, true);
+            // } else {
+            //     if (whiteList.indexOf(origin) !== -1 || !origin) {
+            //         callback(null, true);
+            //     } else {
+            //         callback(null, false);
+            //     }
+            // }
+            callback(null, true);
         },
     });
 };

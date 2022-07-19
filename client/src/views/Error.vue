@@ -1,8 +1,8 @@
 <template>
   <div class="error-wrapper">
     <div class="error">
-      <span class="error-code">{{ errorCode }}</span>
-      <h1>{{ errorMessage }}</h1>
+      <span class="error-code">{{ props.errorCode }}</span>
+      <h1>{{ props.errorMessage }}</h1>
     </div>
     <p class="getting-back">
       Take me to

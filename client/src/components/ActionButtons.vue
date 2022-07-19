@@ -1,10 +1,10 @@
 <template>
   <div class="actions">
     <button @click="$emit('likesClicked')">
-      <SvgLike :class="liked ? 'liked' : ''" />{{ likes }}
+      <SvgLike :class="props.liked ? 'liked' : ''" />{{ props.likes }}
     </button>
     <button @click="$emit('commentsClicked')">
-      <SvgComment />{{ comments }}
+      <SvgComment />{{ props.comments }}
     </button>
   </div>
 </template>
@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import SvgLike from '@/assets/icon24/like.svg?component'
 import SvgComment from '@/assets/icon24/comment.svg?component'
-import { PropType } from '@vue/runtime-core'
+import type { PropType } from 'vue'
 
 const props = defineProps({
   likes: {
@@ -33,7 +33,6 @@ const props = defineProps({
 <style lang="sass">
 .liked
   color: red
-
 
 .actions
   display: grid

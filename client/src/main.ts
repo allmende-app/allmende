@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
           authStore.setUser(response.data.user)
           next()
         })
-        .catch((error) => {
+        .catch(() => {
           router.push('/auth/login')
         })
     }

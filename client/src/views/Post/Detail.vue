@@ -6,58 +6,72 @@
       </template>
     </v-title-vue>
 
-    <section class="section">
-      <div class="post-text">
-        {{ text }}
+    <div class="content" v-if="post != null">
+      <div class="information">
+        <section class="section text">
+          <div class="meta">
+            <div class="author">
+              <div class="userpic">
+                <img
+                  :src="`${BACKEND_URL}api/image/${post.author.avatarUrl}`"
+                  alt="avatar"
+                />
+              </div>
+              {{ post.author.username }}
+            </div>
+            <div class="date">{{ formatDate(new Date(post.createdAt)) }}</div>
+          </div>
+          <div v-if="post.text.length > 0" class="post-text">
+            {{ post.text }}
+          </div>
+          <action-buttons
+            :likes="post.likes.length"
+            :liked="post.liked"
+            @likesClicked="toggleLike"
+            :comments="post.commentsCount"
+            @commentsClicked="scrollToComments"
+          ></action-buttons>
+        </section>
+
+        <section class="section" v-if="showMap">
+          <h2 class="headline">Map</h2>
+          <map-vue :sightings="post.sightings"> </map-vue>
+        </section>
       </div>
-      <action-buttons
-        :likes="likes"
-        :liked="liked"
-        @likesClicked="toggleLike"
-        :comments="commentsCount"
-        @commentsClicked="scrollToComments"
-      ></action-buttons>
-    </section>
 
-    <section class="section">
-      <h2 class="headline">Map</h2>
-      <map-vue v-if="ready" :sightings="sightings"> </map-vue>
-    </section>
+      <section class="posts">
+        <sighting-vue
+          v-for="sighting in post.sightings"
+          :key="sighting._id"
+          :sighting="sighting"
+        ></sighting-vue>
+      </section>
 
-    <section class="section" v-for="sighting in sightings" :key="sighting.id">
-      <sighting-vue
-        :location="sighting.location"
-        :kindom="sighting.kingdom"
-        :species="sighting.species"
-        :source="sighting.imageUrl"
-        :alt="sighting.alt"
-      ></sighting-vue>
-    </section>
-
-    <section class="section" id="comments">
-      <h2 class="headline">Comments</h2>
-      <comments-vue :post-id="postID" @comment-added="commentsCount++">
-      </comments-vue>
-    </section>
+      <section class="section" id="comments">
+        <h2 class="headline">Comments</h2>
+        <comments-vue
+          :post-id="postID"
+          @comment-added="() => post && post.commentsCount++"
+        >
+        </comments-vue>
+      </section>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, PropType, Ref, ref } from 'vue'
+import { computed, onMounted, ref, type PropType } from 'vue'
 import MapVue from '@/components/Map.vue'
 import CommentsVue from '@/components/Comments.vue'
 import ArrowLeftSVG from '@/assets/icon24/arrow-left.svg?component'
-import SvgLike from '@/assets/icon24/like.svg?component'
-import SvgComment from '@/assets/icon24/comment.svg?component'
 import SightingVue from '@/components/post/Sighting.vue'
 import VTitleVue from '@/components/VTitle.vue'
 import VButton from '@/components/VButton.vue'
 import router from '@/router'
 import ActionButtons from '@/components/ActionButtons.vue'
-import { backend } from '../../utils'
+import { formatDate, backend, BACKEND_URL } from '@/utils'
 import type { AxiosError } from 'axios'
-import type { ISighting } from '../../../../server/src/models/sighting'
-import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+import type { Post } from '@/interfaces/types'
 
 /**
  * Props
@@ -69,8 +83,6 @@ const props = defineProps({
   },
 })
 
-const ready = ref(false)
-
 onMounted(() => {
   if (router.currentRoute.value.hash == '#comments') {
     setTimeout(() => {
@@ -78,30 +90,23 @@ onMounted(() => {
     }, 200)
   }
 })
-
 /**
  * Data
  */
-const text = ref('')
-const commentsCount = ref(0) // TODO: get comments length with post detail request
-const likes = ref(0)
-const sightings: Ref<Array<ISighting>> = ref([])
-const liked = ref(false)
+const post = ref(null as null | Post)
+
+const showMap = computed(() => {
+  return (
+    post.value != null && post.value.sightings.some((sighting) => sighting.lat)
+  )
+})
 
 /**
  * Functions
  */
 const back = () => router.back()
-const setPost = (post: any) => {
-  text.value = post.text
-  likes.value = post.likes.length
-  sightings.value = post.sightings
-  commentsCount.value = post.commentsCount
-  liked.value = post.liked
-
-  console.log(post)
-
-  ready.value = true
+const setPost = (p: Post) => {
+  post.value = p
 }
 
 const scrollToComments = () =>
@@ -111,7 +116,7 @@ const toggleLike = () => {
   backend.client
     .put(`/api/posts/like/${props.postID}?`, null, {
       params: {
-        like: !liked.value,
+        like: !post.value?.liked,
       },
     })
     .then((response) => setPost(response.data.post))
@@ -136,6 +141,48 @@ backend.client
   background-color: white
   border-radius: allmende.$radius-card
   margin-bottom: allmende.$size-xxxsmall
+
+.posts
+  margin-bottom: allmende.$size-small
+  display: grid
+  gap: allmende.$size-small
+
+@include allmende.screen-laptop
+  .information
+    display: flex
+    gap: allmende.$size-small
+    > *
+      flex: 1
+    .text
+      display: flex
+      flex-direction: column
+      .post-text
+        flex: 1
+
+.meta
+  display: grid
+  grid-template-columns: minmax(0, 1fr) auto
+  grid-template: 1fr
+  padding-inline: allmende.$size-xxsmall
+  padding-block-end: allmende.$size-xxsmall
+  .author
+    display: flex
+    align-items: center
+    gap: allmende.$size-xxxxsmall
+    @include allmende.text-subhead
+  .date
+    @include allmende.text-footnote
+    color: var(--text-secondary)
+
+.userpic
+  width: allmende.$size-xsmall
+  height: allmende.$size-xsmall
+  border-radius: 50%
+  overflow: hidden
+  display: inline-block
+  img
+    width: 100%
+    height: 100%
 
 .section
   margin-bottom: allmende.$size-small

@@ -1,4 +1,5 @@
 import type { LoginInput, RegisterInput } from '@/interfaces/inputs'
+import type { User } from '@/interfaces/types'
 import { defineStore } from 'pinia'
 import { backend } from '../utils'
 
@@ -6,7 +7,7 @@ export const useAuthStore = defineStore({
   id: 'auth',
 
   state: () => ({
-    user: null,
+    user: null as null | User,
   }),
 
   actions: {
@@ -51,7 +52,7 @@ export const useAuthStore = defineStore({
       })
     },
 
-    setUser(user: any) {
+    setUser(user: User) {
       this.user = user
     },
   },
