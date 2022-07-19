@@ -4,8 +4,11 @@ import VInput from '@/components/VInput.vue'
 import SvgIcon from '@/assets/icon24/bell.svg?component'
 import { ref } from 'pinia/node_modules/vue-demi'
 import { computed } from '@vue/reactivity'
-import MapVue from '@/components/Map.vue'
+import MapSelector from '@/components/MapSelector.vue'
 import { ISighting } from '../../../server/src/models/sighting'
+import VLocationSelector from '@/components/VLocationSelector.vue'
+import { LocationInfo } from '../../../server/src/interfaces'
+
 
 const types = ['light', 'dark']
 
@@ -14,6 +17,8 @@ const text = ref('')
 const error = computed(() => {
   return text.value.length > 5 ? 'Too many characters' : undefined
 })
+
+const modelValue = ref({} as LocationInfo)
 
 const sightings: Array<ISighting> = [
   { lat: 51.504, lng: -0.09, alt: 'This is a way point description' },
@@ -32,7 +37,8 @@ function click() {
     <h1>Playground</h1>
 
     <section>
-      <map-vue :sightings="sightings"> </map-vue>
+      <map-selector v-model="modelValue"></map-selector>
+      <v-location-selector v-model="modelValue"></v-location-selector>
     </section>
 
     <section>

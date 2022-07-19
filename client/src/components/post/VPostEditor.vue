@@ -37,6 +37,9 @@
             : undefined
         "
       />
+      <map-selector
+        v-model="location"
+      ></map-selector>
       <v-input
         v-if="showAlt"
         v-model="description"
@@ -63,6 +66,7 @@
 <script setup lang="ts">
 import VInput from '@/components/VInput.vue'
 import VLocationSelector from '@/components/VLocationSelector.vue'
+import MapSelector from '@/components/MapSelector.vue'
 import VSpeciesSelector from '@/components/VSpeciesSelector.vue'
 import { computed, ref, type PropType } from 'vue'
 import exifr from 'exifr'
