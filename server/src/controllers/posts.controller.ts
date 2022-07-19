@@ -9,15 +9,24 @@ import {
     Sighting,
     User,
 } from "../models";
-import { PostInput, SightingInfo } from "../interfaces";
-import { ObjectId } from "mongoose";
-import { compressImage } from "../utils";
+import { LocationInfo, PostInput, SightingInfo } from "../interfaces";
+import { ObjectId, Schema } from "mongoose";
+import { compressImage, locationSearchById, reverseLocationSearch } from "../utils";
 import { ErrorMessages } from "../messages";
 import fs from "fs";
 import path from "path";
 import { Logger } from "../lib";
 
 export const userProps = ["username", "avatarUrl"];
+
+const saveSightingAfterFetch = (location: LocationInfo, sighting: ISightingDocument, resolve: (value: Schema.Types.ObjectId | PromiseLike<Schema.Types.ObjectId>) => void) => {
+    const { name, subname, lat, lng } = location;
+    sighting.location = name;
+    sighting.subname = subname;
+    sighting.lat = lat;
+    sighting.lng = lng;
+    sighting.save().then((d) => resolve(d["_id"]));
+}
 
 const createSightings = (
     files: Express.Multer.File[],
@@ -29,16 +38,24 @@ const createSightings = (
                 new Promise<ObjectId>((resolve) => {
                     const sighting = new Sighting();
                     const curr = sightings[i];
-                    const { species, lat, lng, description } = curr;
+                    const { species, lat, lng, description, osmId } = curr;
                     sighting.imageUrl = f["filename"];
                     sighting.originalName = f["originalname"];
 
-                    if (species) sighting.species = species;
-                    if (lat) sighting.lat = lat;
-                    if (lng) sighting.lng = lng;
                     if (description) sighting.alt = description;
-
-                    sighting.save().then((d) => resolve(d["_id"]));
+                    if (species) sighting.species = species;
+                    if (osmId) {
+                        sighting.osmId = osmId;
+                        locationSearchById(osmId).then(location => {
+                            saveSightingAfterFetch(location, sighting, resolve);
+                        })
+                    } else if (!osmId && (lat && lng)) {
+                        reverseLocationSearch(lng, lat).then(location => {
+                            saveSightingAfterFetch(location, sighting, resolve);
+                        });
+                    } else {
+                        sighting.save().then((d) => resolve(d["_id"]));
+                    }
                 }),
         );
         resolve(sightingsJob);
