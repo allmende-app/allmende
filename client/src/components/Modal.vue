@@ -12,7 +12,7 @@
               @click="emit('close')"
             />
           </div>
-          <div class="content">
+          <div class="modal-content">
             <slot></slot>
           </div>
         </section>
@@ -79,14 +79,14 @@ const props = defineProps({
     @include allmende.text-headline
     font-family: inherit
 
-.content
+.modal-content
   padding-inline: allmende.$size-medium
   padding-block-start: allmende.$size-xsmall
   padding-block-end: allmende.$size-xlarge
-  :global(h1)
-    @include allmende.text-navbar
-    margin-block-end: allmende.$size-xsmall
-  :global(p)
-    color: var(--text-secondary)
-    margin-block-end: allmende.$size-xxxsmall
+:global(.modal-content h1)
+  @include allmende.text-navbar
+  margin-block-end: allmende.$size-xsmall
+:global(.modal-content p)
+  color: var(--text-secondary)
+  margin-block-end: allmende.$size-xxxsmall
 </style>

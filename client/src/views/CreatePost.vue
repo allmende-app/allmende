@@ -146,8 +146,7 @@ async function nextStep() {
       text: description.value,
       sightings: sightingInfo.map((info) => ({
         description: info.description.length < 1 ? undefined : info.description,
-        lat: info.location?.lat,
-        lng: info.location?.lng,
+        osmId: info.location?.osmId,
         species: info?.species,
       })),
     }),

@@ -211,7 +211,7 @@ const species = computed({
   },
 })
 
-async function selectGenus(genus: string) {
+function selectGenus(genus: string) {
   const bodyFormData = new FormData()
   bodyFormData.append('file', props.file)
 
@@ -222,29 +222,35 @@ async function selectGenus(genus: string) {
   emit('updating', true)
   loading.value = true
   emit('update:modelValue', null)
-  const result = await backend.client({
-    method: 'post',
-    url: '/api/predict',
-    data: bodyFormData,
-    timeout: 25000, //25 seconds
-  })
-  emit('updating', false)
-  loading.value = false
+  backend
+    .client({
+      method: 'post',
+      url: '/api/predict',
+      data: bodyFormData,
+      timeout: 50000,
+    })
+    .then((result) => {
+      emit('updating', false)
+      loading.value = false
 
-  console.log(result)
-
-  options.value = result.data.predictions[0].result
-    .filter((o: PredictionResult | Record<string, never>) => o.id)
-    .map((o: PredictionResult) => ({
-      id: o.species._id,
-      score: o.score,
-      type: 'ml',
-      name: o.species.vernacularName || o.species.canonicalName,
-      imageUrl: o.species.imageUrl,
-      binomial: o.species.vernacularName
-        ? o.species.canonicalName
-        : o.species.scientificName,
-    }))
+      options.value = result.data.predictions[0].result
+        .filter((o: PredictionResult | Record<string, never>) => o.id)
+        .map((o: PredictionResult) => ({
+          id: o.species._id,
+          score: o.score,
+          type: 'ml',
+          name: o.species.vernacularName || o.species.canonicalName,
+          imageUrl: o.species.imageUrl,
+          binomial: o.species.vernacularName
+            ? o.species.canonicalName
+            : o.species.scientificName,
+        }))
+    }).catch((error) => {
+      options.value = []
+      emit('updating', false)
+      loading.value = false
+      console.error(error)
+    })
 }
 
 // MODAL
