@@ -58,11 +58,19 @@ const createSightings = (
                         if (osmId) {
                             sighting.osmId = osmId;
                             locationSearchById(osmId).then((location) => {
-                                saveSightingAfterFetch(location, sighting, resolve);
-                            })
+                                saveSightingAfterFetch(
+                                    location,
+                                    sighting,
+                                    resolve,
+                                );
+                            });
                         } else if (!osmId && lat && lng) {
                             reverseLocationSearch(lng, lat).then((location) => {
-                                saveSightingAfterFetch(location, sighting, resolve);
+                                saveSightingAfterFetch(
+                                    location,
+                                    sighting,
+                                    resolve,
+                                );
                             });
                         } else {
                             sighting.save().then((d) => resolve(d["_id"]));
