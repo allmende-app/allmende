@@ -69,7 +69,6 @@ const self = ref(useAuthStore().user)
 
 const props = defineProps({
   username: {
-    type: Object as PropType<string | Array<string>>,
     required: false,
     default: () => {
       return ''
