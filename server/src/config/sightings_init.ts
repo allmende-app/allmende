@@ -20,9 +20,9 @@ export const initializeLocations = async () => {
                 locations.map((l, index) => {
                     const { subname, name, osmId } = l;
                     const sighting = elements[index];
-                    sighting.location = name;
-                    sighting.subname = subname;
-                    sighting.osmId = osmId;
+                    if (name) sighting.location = name;
+                    if (subname) sighting.subname = subname;
+                    if (osmId) sighting.osmId = osmId;
                     return sighting.save();
                 }),
             );

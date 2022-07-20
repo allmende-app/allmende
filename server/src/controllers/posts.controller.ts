@@ -30,11 +30,12 @@ const saveSightingAfterFetch = (
         value: Schema.Types.ObjectId | PromiseLike<Schema.Types.ObjectId>,
     ) => void,
 ) => {
-    const { name, subname, lat, lng } = location;
-    sighting.location = name;
-    sighting.subname = subname;
-    sighting.lat = lat;
-    sighting.lng = lng;
+    const { name, subname, lat, lng, osmId } = location;
+    if (osmId) sighting.osmId = osmId;
+    if (name) sighting.location = name;
+    if (subname) sighting.subname = subname;
+    if (lat) sighting.lat = lat;
+    if (lng) sighting.lng = lng;
     sighting.save().then((d) => resolve(d["_id"]));
 };
 
@@ -56,7 +57,6 @@ const createSightings = (
                     if (species) sighting.species = species;
                     try {
                         if (osmId) {
-                            sighting.osmId = osmId;
                             locationSearchById(osmId).then((location) => {
                                 saveSightingAfterFetch(
                                     location,

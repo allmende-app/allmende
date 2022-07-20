@@ -72,10 +72,10 @@ export interface GBIFInfo {
  */
 export interface LocationInfo {
     osmId?: string;
-    name: string;
-    subname: string;
-    lat: number;
-    lng: number;
+    name: string | null;
+    subname: string | null;
+    lat: number | null;
+    lng: number | null;
 }
 
 export enum OsmType {
