@@ -1,28 +1,24 @@
 <template>
-  <v-button type="primary" @click="logout()">
-    Logout
-  </v-button>
+  <v-button type="primary" @click="logout()"> Logout </v-button>
 </template>
 
 <script setup lang="ts">
-import router from '../../router';
-import { useAuthStore } from '../../stores/auth';
-import VButton from '../VButton.vue';
+import router from '../../router'
+import { useAuthStore } from '../../stores/auth'
+import VButton from '../VButton.vue'
 
 const authStore = useAuthStore()
 
 const logout = () => {
-  authStore.logout()
-    .then(response => {
-      router.push("/auth/login")
+  authStore
+    .logout()
+    .then((response) => {
+      router.push('/auth/login')
     })
-    .catch(error => {
-      console.error("Error while logging out!");
+    .catch((error) => {
+      console.error('Error while logging out!')
     })
 }
-
 </script>
 
-<style lang="sass" scoped>
-
-</style>
+<style lang="sass" scoped></style>
