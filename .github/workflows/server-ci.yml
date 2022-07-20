@@ -31,6 +31,10 @@ jobs:
         cache-dependency-path: ./server/package-lock.json
     - run: npm install
     
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:  
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
