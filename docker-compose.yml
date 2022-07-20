@@ -55,6 +55,8 @@ services:
       - mongo-db
       - redis-db
       - allmende-ml
+    ports:
+      - 3000:3000
   allmende-client: 
     depends_on:
      - allmende-server
