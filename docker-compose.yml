@@ -8,6 +8,8 @@ services:
       FLASK_APP: api
     volumes:
      - ./ml/saved_model:/var/src/allmende-ml/saved_model
+    ports:
+      - 5000:5000
   mongo-db:
     image: mongo
     restart: always
@@ -16,11 +18,15 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PW}
     volumes:
       - allmende:/data/db
+    ports:
+      - 27017:27017
   redis-db:
     image: redis
     restart: always
     volumes:
       - allmende:/data
+    ports:
+      - 6379:6379
   nginx:
     image: jwilder/nginx-proxy
     ports:
