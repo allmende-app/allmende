@@ -98,28 +98,36 @@ export const locationSearchById = async (id: string): Promise<LocationInfo> => {
     try {
         const types = Object.values(OsmType);
 
-        const promises = await Promise.all(types.map(type => {
-            const options: AxiosRequestConfig = {
-                url: "https://nominatim.openstreetmap.org/details.php",
-                params: {
-                    osmtype: type,
-                    osmid: id,
-                    addressdetails: "1",
-                    hierarchy: "0",
-                    group_hierarchy: "1",
-                    format: "json",
-                },
-                headers: {
-                    "user-agent": "allmende v1.0 contact info@allmende-student.de",
-                },
-            };
+        const promises = await Promise.all(
+            types.map((type) => {
+                const options: AxiosRequestConfig = {
+                    url: "https://nominatim.openstreetmap.org/details.php",
+                    params: {
+                        osmtype: type,
+                        osmid: id,
+                        addressdetails: "1",
+                        hierarchy: "0",
+                        group_hierarchy: "1",
+                        format: "json",
+                    },
+                    headers: {
+                        "user-agent":
+                            "allmende v1.0 contact info@allmende-student.de",
+                    },
+                };
 
-            return new Promise<OsmIdResponse | null>((resolve) => {
-                axios.request<OsmIdResponse>(options).then(d => resolve(d.data)).catch(e => resolve(null));
-            });
-        }));
+                return new Promise<OsmIdResponse | null>((resolve) => {
+                    axios
+                        .request<OsmIdResponse>(options)
+                        .then((d) => resolve(d.data))
+                        .catch((e) => resolve(null));
+                });
+            }),
+        );
 
-        const fullfilled: OsmIdResponse[] = promises.filter(p => p !== null) as OsmIdResponse[];
+        const fullfilled: OsmIdResponse[] = promises.filter(
+            (p) => p !== null,
+        ) as OsmIdResponse[];
         const r = fullfilled[0];
         if (r) {
             const { localname, address, geometry, osm_id } = r;
@@ -148,7 +156,7 @@ export const locationSearchById = async (id: string): Promise<LocationInfo> => {
                 subname: null,
                 lat: null,
                 lng: null,
-            }
+            };
         }
     } catch (err: any) {
         Logger.error(err.message);
