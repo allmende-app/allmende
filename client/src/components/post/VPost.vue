@@ -157,6 +157,7 @@ const activeImages = computed(() => {
   display: grid
   grid-template-columns: minmax(0, 1fr) auto
   grid-template: 1fr
+  overflow: hidden
   padding-inline: allmende.$size-xxsmall
   padding-block-end: allmende.$size-xxsmall
   .author, .location

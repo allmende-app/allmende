@@ -4,6 +4,11 @@
       <template v-slot:left v-if="!isSelf">
         <v-button :icon="ArrowLeftSVG" tooltip="Back" @click="back" />
       </template>
+      <template v-slot:right v-if="isSelf">
+        <logout-button>
+
+        </logout-button>
+      </template>
     </v-title-vue>
 
     <section class="section">
@@ -62,6 +67,8 @@ import { ref, type PropType } from 'vue'
 import type { Post, User } from '@/interfaces/types'
 import { BACKEND_URL } from '@/utils'
 import VPostPlaceholder from '@/components/VPostPlaceholder.vue'
+import LogoutButton from '@/components/auth/LogoutButton.vue'
+
 
 const user = ref(null as User | null)
 const posts = ref(null as Post[] | null)
