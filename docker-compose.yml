@@ -22,11 +22,14 @@ services:
     volumes:
       - allmende:/data
   nginx:
-    build: ./nginx
+    image: jwilder/nginx-proxy
     ports:
       - "80:80"
     depends_on:
       - allmende-server
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
   allmende-server: 
     build: ./server
     restart: always
@@ -52,5 +55,20 @@ services:
     build: ./client
     stdin_open: true
     restart: always
+  allmende-portainer:
+    image: portainer/portainer-ce:latest
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer:/data
+    ports:
+      - "9000:9000"
+      - 8000:8000
+    environment:
+      - VIRTUAL_HOST=portainer.allmendeapp.xyz
+      - VIRTUAL_PORT=9000
 volumes:
   allmende:
+  portainer:
