@@ -69,16 +69,20 @@ const self = ref(useAuthStore().user)
 
 const props = defineProps({
   username: {
-    type: String as PropType<string>,
+    type: Object as PropType<string | Array<string>>,
     required: false,
-    default: '',
+    default: () => {
+      return ''
+    },
   },
 })
 
 const isSelf = ref(true)
 
+const username = props.username[0] || props.username
+
 backend.client
-  .get(`/api/users/${props.username}`)
+  .get(`/api/users/${username}`)
   .then((response) => {
     user.value = response.data.user
 
@@ -91,7 +95,7 @@ backend.client
     console.log(error)
   })
 
-const realUsername = props.username || self.value?.username
+const realUsername = username || self.value?.username
 backend.client
   .get(`/api/posts/profile/${realUsername}`)
   .then((response) => {
