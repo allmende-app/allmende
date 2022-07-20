@@ -245,7 +245,8 @@ function selectGenus(genus: string) {
             ? o.species.canonicalName
             : o.species.scientificName,
         }))
-    }).catch((error) => {
+    })
+    .catch((error) => {
       options.value = []
       emit('updating', false)
       loading.value = false
