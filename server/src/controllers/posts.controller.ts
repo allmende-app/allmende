@@ -43,7 +43,7 @@ const createSightings = (
     sightings: SightingInfo[],
 ) => {
     return new Promise<Promise<ObjectId>[]>((resolve) => {
-        const sightingsJob = files.map(
+        const sightingsJob: Promise<ObjectId>[] = files.map(
             (f: Express.Multer.File, i: number) =>
                 new Promise<ObjectId>((resolve) => {
                     const sighting = new Sighting();
@@ -54,17 +54,30 @@ const createSightings = (
 
                     if (description) sighting.alt = description;
                     if (species) sighting.species = species;
-                    if (osmId) {
-                        sighting.osmId = osmId;
-                        locationSearchById(osmId).then((location) => {
-                            saveSightingAfterFetch(location, sighting, resolve);
-                        });
-                    } else if (!osmId && lat && lng) {
-                        reverseLocationSearch(lng, lat).then((location) => {
-                            saveSightingAfterFetch(location, sighting, resolve);
-                        });
-                    } else {
-                        sighting.save().then((d) => resolve(d["_id"]));
+                    try {
+                        if (osmId) {
+                            sighting.osmId = osmId;
+                            locationSearchById(osmId).then((location) => {
+                                saveSightingAfterFetch(
+                                    location,
+                                    sighting,
+                                    resolve,
+                                );
+                            });
+                        } else if (!osmId && lat && lng) {
+                            reverseLocationSearch(lng, lat).then((location) => {
+                                saveSightingAfterFetch(
+                                    location,
+                                    sighting,
+                                    resolve,
+                                );
+                            });
+                        } else {
+                            sighting.save().then((d) => resolve(d["_id"]));
+                        }
+                    } catch (err) {
+                        Logger.error(err);
+                        throw err;
                     }
                 }),
         );
@@ -172,7 +185,6 @@ export class PostsController {
                 }
             } catch (e) {
                 Logger.error(e);
-                // Logger.error(e);
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     createPostErr: {
                         error: ErrorMessages.INTERNAL_ERROR,
