@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 
-beforeAll(done => done());
-afterAll(done => {
+beforeAll((done) => done());
+afterAll((done) => {
     mongoose.connection.close();
     done();
 });
@@ -17,7 +17,7 @@ describe("Basic tests", () => {
         };
         const res = {
             statusCode: StatusCodes.OK,
-            body: expectedResponse
+            body: expectedResponse,
         };
         expect(res.statusCode).toBe(StatusCodes.OK);
         expect(res.body).toStrictEqual(expectedResponse);
@@ -36,9 +36,9 @@ describe("Basic tests", () => {
         };
         const res = {
             statusCode: StatusCodes.OK,
-            body: expectedResponse
+            body: expectedResponse,
         };
         expect(res.statusCode).toBe(StatusCodes.OK);
         expect(res.body).not.toBe(wrongExpectation);
     });
-})
+});
