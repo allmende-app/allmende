@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "NODE_ENV=test dotenv -- jest --detectOpenHandles",
+        "test": "NODE_ENV=test dotenv -e ./.env.local -- jest --detectOpenHandles",
         "start": "dotenv -e ./.env -- node dist/index.js",
         "dev": "dotenv -e ./.env -- nodemon",
         "lint": "eslint --ext .js,.ts -c .eslintrc.js src/",
