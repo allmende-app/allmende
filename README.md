@@ -38,19 +38,32 @@ The Nginx folder contains the configurations for the the requests proxys.
 You can run the services with the normal "docker-compose.yml" or the local "docker-compose.local.yml" file.
 
 ### Staging/production environment
-To start the architecture, first initialize the environment variables.
+To start the architecture, first initialize the environment variables by inserting these inside a .env file.
 ```bash
-export MONGO_USER=admin \
-MONGO_PW=password \
-MONGO_HOST=mongo-db \
+MONGO_USER=admin
+MONGO_PW=someRandomPassword
+MONGO_HOST=mongo-db 
 PORT=3000 \
-NODE_ENV=production \
-REDIS_HOST=redis-db \
-SECRET=allmende_super_secret
+NODE_ENV=production
+REDIS_HOST=redis-db
+SECRET=someRandomSuperSecret
 ```
-Keep in mind that, if you're closing the terminal the setted enviroment variables disapper. You need to re-initialize the environment every time you are starting a new terminal session.
+These variables are mandatory for the server service. After you inserted this code snippet, you can run the services with this command:
+```bash
+docker-compose -f ./docker-compose.production.yml up -d
+```
+If you want to stop the application, then run this command:
+```bash
+docker-compose down
+```
+When a new feature of a service is delivered and you need the new version of if, run this command:
+This command will build new images for the running containers.
+```bash
+docker-compose -f ./docker-compose.production.yml up -d --build
+```
 
-These variables are mandatory for the server service. After you entered this code snippet, you can run the services with this command:
+### Local enviroment
+To run the services locally without headache and without setting the variables, run this command instead:
 ```bash
 docker-compose up -d
 ```
@@ -62,19 +75,4 @@ When a new feature of a service is delivered and you need the new version of if,
 This command will build new images for the running containers.
 ```bash
 docker-compose up -d --build
-```
-
-### Local enviroment
-To run the services locally without headache and without setting the variables, run this command instead:
-```bash
-docker-compose up -f ./docker-compose.local.yml -d
-```
-If you want to stop the application, then run this command:
-```bash
-docker-compose down
-```
-When a new feature of a service is delivered and you need the new version of if, run this command:
-This command will build new images for the running containers.
-```bash
-docker-compose up -f ./docker-compose.local.yaml -d --build
 ```
