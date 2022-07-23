@@ -6,5 +6,5 @@ export function randomIndex(array: any[]) {
 }
 
 export function randomAvatarURL() {
-    return `${randomIndex(avatarURLs)}.jpg`;
+    return `${randomIndex(avatarURLs) + 1}.jpg`;
 }
