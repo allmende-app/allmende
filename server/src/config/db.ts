@@ -24,7 +24,7 @@ export const connectRedis = () => {
         port: 6379,
         host: process.env.REDIS_HOST || "localhost",
     });
-    client.on("error", Logger.error);
+    if (process.env.NODE_ENV !== "test") client.on("error", Logger.error);
     return client;
 };
 
