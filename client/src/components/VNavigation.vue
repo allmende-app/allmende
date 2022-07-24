@@ -29,7 +29,7 @@
           @change="handleFileEvent"
           accept="image/png, image/gif, image/jpeg"
         />
-        <label for="file-button" class="nav-button search" tabindex="0"
+        <label for="file-button" class="nav-button search"
           ><SvgPlus
         /></label>
       </div>
@@ -64,6 +64,9 @@ function handleFileEvent(event: Event) {
   > input
     width: 0
     height: 0
+    position: absolute
+    &:focus
+      outline: none
 
 nav
   background: var(--layer-20)
