@@ -14,17 +14,17 @@
     </v-title>
     <v-title v-else title="Create post">
       <template v-slot:left>
-        <v-button type="primary" @click="step = 0">Back</v-button>
+        <v-button type="primary" :disabled="step > 1" @click="step = 0">Back</v-button>
       </template>
       <template v-slot:right>
-        <v-button type="primary" @click="nextStep">Next</v-button>
+        <v-button type="primary" :disabled="step > 1" @click="nextStep">Next</v-button>
       </template>
     </v-title>
-    <div class="posts" :class="{ 'preview-mode': step == 1 }">
+    <div class="posts" :class="{ 'preview-mode': step > 0 }">
       <v-post-editor
         v-for="(info, i) in sightingInfo"
         :key="info.rid"
-        :preview-mode="step == 1"
+        :preview-mode="step > 0"
         v-model="sightingInfo[i]"
         class="post"
         @remove="removeSighting(i)"
@@ -32,6 +32,13 @@
     </div>
     <div class="notice" v-if="step == 0 && sightingInfo.length < 1">
       <p>To create a post, upload photos</p>
+    </div>
+    <div class="notice" v-else-if="step == 2">
+      <p><span class="spinner"></span> Uploading photos...</p>
+    </div>
+    <div class="notice" v-else-if="step == 3">
+      <p>Post created.</p>
+      <p class="fade-in-offset"><span class="spinner"></span> Redirecting to post...</p>
     </div>
     <div class="upload-button" v-if="step == 0">
       <input
@@ -138,8 +145,6 @@ async function nextStep() {
     bodyFormData.append('file', info.file)
   })
 
-  console.log('sightingInfo', sightingInfo)
-
   bodyFormData.append(
     'post',
     JSON.stringify({
@@ -152,17 +157,23 @@ async function nextStep() {
     }),
   )
 
+  step.value = 2
   const result = await backend.client({
     method: 'post',
     url: '/api/posts',
     data: bodyFormData,
+    timeout: 80000, // 50000ms = 80s
   })
+  step.value = 3
 
   if (result.status === 201) {
     const post = result.data.post as Post
-    router.push({ name: 'post-detail', params: { postID: post._id } })
+    setTimeout(() => {
+      router.push({ name: 'post-detail', params: { postID: post._id } })
+    }, 250)
   } else {
     console.error(result)
+    step.value = 1
   }
 }
 </script>
@@ -183,6 +194,12 @@ async function nextStep() {
 .notice
   text-align: center
   padding: allmende.$size-medium
+  p
+    margin-block-end: allmende.$size-xxxsmall
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: allmende.$size-xxxsmall
 
 .file-input
   display: none
