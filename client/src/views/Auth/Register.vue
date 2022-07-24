@@ -10,6 +10,7 @@
         name="email"
         label="Email"
         v-model="email.value"
+        type="email"
         :error="email.error"
         autocomplete="email"
       />
@@ -111,29 +112,32 @@ const sendRequest = (event: Event) => {
     })
     .catch((error) => {
       if (error.message === 'Network Error') {
-        email.error = 'Network Error, please try again later.'
+        globalError.value = 'Network Error, please try again later.'
+        return
       }
 
-      const errorMessage = error.response.data
-      if (errorMessage instanceof Object) {
-        if (errorMessage.message.includes('username')) {
-          username.error = 'Username is required'
-        } else {
-          globalError.value = errorMessage.message
-        }
-      } else if (errorMessage.includes('EmailError')) {
-        email.error = 'Email address is not valid'
-      } else if (errorMessage.includes('Email address already exists')) {
-        email.error = 'Email address is already in use'
-      } else if (errorMessage.includes('Username already exists')) {
-        username.error = 'Username is already in use'
-      } else if (errorMessage.includes('confirm password')) {
-        confirmPassword.error = "Passwords don't match"
-      } else if (errorMessage.includes('Password')) {
-        password.error = errorMessage
-      } else {
-        globalError.value = errorMessage
+      const errorMessage = error.response.data.signUpErr
+      if (errorMessage == undefined) {
+        globalError.value = 'Unknown error, please try again later.'
+        return
       }
+
+      if (errorMessage.username) {
+        username.error = errorMessage.username
+      }
+      if (errorMessage.email) {
+        email.error = errorMessage.email
+      }
+      if (errorMessage.password) {
+        password.error = errorMessage.password
+      }
+      if (errorMessage.repeatPassword) {
+        confirmPassword.error = errorMessage.repeatPassword
+      }
+      if (errorMessage.error) {
+        globalError.value = errorMessage.repeatPassword
+      }
+
     })
 }
 </script>
