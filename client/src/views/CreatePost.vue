@@ -14,10 +14,14 @@
     </v-title>
     <v-title v-else title="Create post">
       <template v-slot:left>
-        <v-button type="primary" :disabled="step > 1" @click="step = 0">Back</v-button>
+        <v-button type="primary" :disabled="step > 1" @click="step = 0"
+          >Back</v-button
+        >
       </template>
       <template v-slot:right>
-        <v-button type="primary" :disabled="step > 1" @click="nextStep">Next</v-button>
+        <v-button type="primary" :disabled="step > 1" @click="nextStep"
+          >Next</v-button
+        >
       </template>
     </v-title>
     <div class="posts" :class="{ 'preview-mode': step > 0 }">
@@ -38,7 +42,9 @@
     </div>
     <div class="notice" v-else-if="step == 3">
       <p>Post created.</p>
-      <p class="fade-in-offset"><span class="spinner"></span> Redirecting to post...</p>
+      <p class="fade-in-offset">
+        <span class="spinner"></span> Redirecting to post...
+      </p>
     </div>
     <div class="upload-button" v-if="step == 0">
       <input

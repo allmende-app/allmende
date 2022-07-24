@@ -137,7 +137,6 @@ const sendRequest = (event: Event) => {
       if (errorMessage.error) {
         globalError.value = errorMessage.repeatPassword
       }
-
     })
 }
 </script>

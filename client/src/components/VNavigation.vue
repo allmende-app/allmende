@@ -29,9 +29,7 @@
           @change="handleFileEvent"
           accept="image/png, image/gif, image/jpeg"
         />
-        <label for="file-button" class="nav-button search"
-          ><SvgPlus
-        /></label>
+        <label for="file-button" class="nav-button search"><SvgPlus /></label>
       </div>
     </nav>
   </div>
