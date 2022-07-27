@@ -17,15 +17,15 @@ export function compressImage(file: Express.Multer.File) {
     sharp(p)
         .jpeg({
             force: false,
-            quality: 92,
+            quality: 12,
         })
         .png({
             force: false,
-            quality: 92,
+            quality: 12,
         })
         .webp({
             force: false,
-            quality: 92,
+            quality: 12,
         })
         .toBuffer((err, buffer) => {
             if (err) {
