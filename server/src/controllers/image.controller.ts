@@ -29,10 +29,7 @@ export class ImageController {
                             force: false,
                         }).jpeg({
                             force: false,
-                        }).withMetadata({
-                            orientation: 1,
-                        })
-                            .toBuffer();
+                        }).toBuffer();
                         return res.type(type).send(newBuffer);
                     }
 
