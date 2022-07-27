@@ -16,7 +16,9 @@ export class ImageController {
                         .status(StatusCodes.BAD_REQUEST)
                         .send("Not a image");
                 if (fs.existsSync(path.join(process.cwd(), "/uploads", file))) {
-                    const buffer = fs.readFileSync(path.join(process.cwd(), "uploads", file));
+                    const buffer = fs.readFileSync(
+                        path.join(process.cwd(), "uploads", file),
+                    );
                     const exif = await sharp(buffer).metadata();
 
                     const { width, height } = exif;
@@ -25,11 +27,14 @@ export class ImageController {
                         if (file.toLowerCase().includes("jpeg")) type = "jpeg";
                         if (file.toLowerCase().includes("jpg")) type = "jpg";
                         if (file.toLowerCase().includes("png")) type = "png";
-                        const newBuffer = await sharp(buffer).png({
-                            force: false,
-                        }).jpeg({
-                            force: false,
-                        }).toBuffer();
+                        const newBuffer = await sharp(buffer)
+                            .png({
+                                force: false,
+                            })
+                            .jpeg({
+                                force: false,
+                            })
+                            .toBuffer();
                         return res.type(type).send(newBuffer);
                     }
 
