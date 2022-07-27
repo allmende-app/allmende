@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import path from "path";
 import fs from "fs";
 import { checkIfImage } from "../utils";
+import sharp from "sharp";
 import { Logger } from "../lib";
 
 export class ImageController {
@@ -15,6 +16,26 @@ export class ImageController {
                         .status(StatusCodes.BAD_REQUEST)
                         .send("Not a image");
                 if (fs.existsSync(path.join(process.cwd(), "/uploads", file))) {
+                    const buffer = fs.readFileSync(path.join(process.cwd(), "uploads", file));
+                    const exif = await sharp(buffer).metadata();
+
+                    const { width, height } = exif;
+                    if (width && height && width / height > 1.6) {
+                        let type = "";
+                        if (file.toLowerCase().includes("jpeg")) type = "jpeg";
+                        if (file.toLowerCase().includes("jpg")) type = "jpg";
+                        if (file.toLowerCase().includes("png")) type = "png";
+                        const newBuffer = await sharp(buffer).png({
+                            force: false,
+                        }).jpeg({
+                            force: false,
+                        }).withMetadata({
+                            orientation: 1,
+                        })
+                            .toBuffer();
+                        return res.type(type).send(newBuffer);
+                    }
+
                     return res
                         .status(StatusCodes.OK)
                         .sendFile(path.join(process.cwd(), "/uploads", file));
