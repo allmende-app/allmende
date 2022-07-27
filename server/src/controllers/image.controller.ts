@@ -28,6 +28,7 @@ export class ImageController {
                         if (file.toLowerCase().includes("jpg")) type = "jpg";
                         if (file.toLowerCase().includes("png")) type = "png";
                         const newBuffer = await sharp(buffer)
+                            .rotate(90)
                             .png({
                                 force: false,
                             })
@@ -37,7 +38,6 @@ export class ImageController {
                             .toBuffer();
                         return res.type(type).send(newBuffer);
                     }
-
                     return res
                         .status(StatusCodes.OK)
                         .sendFile(path.join(process.cwd(), "/uploads", file));
