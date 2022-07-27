@@ -13,6 +13,7 @@ services:
   mongo-db:
     image: mongo
     restart: always
+    container_name: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PW}
@@ -20,6 +21,22 @@ services:
       - allmende:/data/db
     ports:
       - 27017:27017
+  
+  mongo-express:
+    image: mongo-express:latest # latest image
+    container_name: mongo-express
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    volumes:
+      - allmende:/data/dbui
+    depends_on:
+      - mongo-db
+      - allmende-server
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PW}
+      ME_CONFIG_MONGODB_SERVER: mongo
   redis-db:
     image: redis
     restart: always
