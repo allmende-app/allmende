@@ -47,10 +47,12 @@ function saveImage(p: string, filename: string, orientation?: number) {
  */
 export function compressImage(file: Express.Multer.File) {
     const { path: p, filename } = file;
-    sharp(p).metadata().then(meta => {
-        const { orientation } = meta;
-        saveImage(p, filename, orientation);
-    })
+    sharp(p)
+        .metadata()
+        .then((meta) => {
+            const { orientation } = meta;
+            saveImage(p, filename, orientation);
+        });
 }
 
 /**
