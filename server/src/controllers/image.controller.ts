@@ -20,8 +20,6 @@ export class ImageController {
                         path.join(process.cwd(), "uploads", file),
                     );
 
-                    // const exif = await sharp(buffer).metadata();
-                    // const { width, height } = exif;
                     let type = "";
                     if (file.toLowerCase().includes("jpeg")) type = "jpeg";
                     if (file.toLowerCase().includes("jpg")) type = "jpg";
@@ -36,9 +34,6 @@ export class ImageController {
                         })
                         .toBuffer();
                     return res.status(StatusCodes.OK).type(type).send(newBuffer);
-                    // return res
-                    //     .status(StatusCodes.OK)
-                    //     .sendFile(path.join(process.cwd(), "/uploads", file));
                 }
                 return res.status(StatusCodes.NOT_FOUND).send("File not found");
             } catch (e) {

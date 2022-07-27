@@ -6,7 +6,7 @@
     "scripts": {
         "test": "NODE_ENV=test jest --detectOpenHandles",
         "start": "dotenv -e ./.env -- node dist/index.js",
-        "dev": "dotenv -e ./.env -- nodemon",
+        "dev": "dotenv -e ./.env.local -- nodemon",
         "lint": "eslint --ext .js,.ts -c .eslintrc.js src/",
         "prettier": "prettier --config .prettierrc.js --write --check .",
         "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",

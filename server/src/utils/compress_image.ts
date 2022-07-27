@@ -8,25 +8,21 @@ export interface ImageInfo extends sharp.OutputInfo {
     filename: string;
 }
 
-/**
- * Compresses the image, uses the multer middleware by default. Uploaded file be uploaded automatically.
- * @param file
- */
-export function compressImage(file: Express.Multer.File) {
-    const { path: p, filename } = file;
+function saveImage(p: string, filename: string, orientation?: number) {
     sharp(p)
         .jpeg({
             force: false,
-            quality: 12,
+            quality: 15,
         })
         .png({
             force: false,
-            quality: 12,
+            quality: 15,
         })
         .webp({
             force: false,
-            quality: 12,
+            quality: 15,
         })
+        .withMetadata({ orientation })
         .toBuffer((err, buffer) => {
             if (err) {
                 Logger.error(err);
@@ -43,6 +39,18 @@ export function compressImage(file: Express.Multer.File) {
                 },
             );
         });
+}
+
+/**
+ * Compresses the image, uses the multer middleware by default. Uploaded file be uploaded automatically.
+ * @param file
+ */
+export function compressImage(file: Express.Multer.File) {
+    const { path: p, filename } = file;
+    sharp(p).metadata().then(meta => {
+        const { orientation } = meta;
+        saveImage(p, filename, orientation);
+    })
 }
 
 /**
