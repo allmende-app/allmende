@@ -35,7 +35,10 @@ export class ImageController {
                             force: false,
                         })
                         .toBuffer();
-                    return res.status(StatusCodes.OK).type(type).send(newBuffer);
+                    return res
+                        .status(StatusCodes.OK)
+                        .type(type)
+                        .send(newBuffer);
                     // return res
                     //     .status(StatusCodes.OK)
                     //     .sendFile(path.join(process.cwd(), "/uploads", file));
