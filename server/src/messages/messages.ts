@@ -22,7 +22,7 @@ export const ErrorMessages = {
     PW_TOO_WEAK:
         "Your given password is too weak. Use a combination of at least one symbol, one uppercase letter and the length must be greater than 8!",
     PW_WEAK:
-        "Your given password is weak. Use a combination at minimum of one symbol, one uppercase letter and the lenth must be greater than 8.",
+        "Your given password is weak. Use a combination at minimum of one symbol, one uppercase letter and the length must be greater than 8.",
     ID_POST_MISSING: (id: string) => `Post '${id}' not found.`,
     POST_NO_ID: "ID of post missing.",
     POST_NOT_FOUND: "Post not found.",
