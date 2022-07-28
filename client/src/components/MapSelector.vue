@@ -13,7 +13,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   modelValue: {
-    type: Object as PropType<LocationInfo | null>,
+    type: [Object, null] as PropType<LocationInfo | null>,
     required: true,
   },
 })

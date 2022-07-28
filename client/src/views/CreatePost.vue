@@ -175,7 +175,8 @@ async function nextStep() {
   if (result.status === 201) {
     const post = result.data.post as Post
     setTimeout(() => {
-      router.push({ name: 'post-detail', params: { postID: post._id } })
+      router.replace({ name: 'post-detail', params: { postID: post._id } })
+      // router.push({ name: 'post-detail', params: { postID: post._id } })
     }, 250)
   } else {
     console.error(result)
